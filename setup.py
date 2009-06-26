@@ -37,7 +37,7 @@ except AttributeError:
 
 # REGIONLIBFILES = [join(REGIONLIB, x) for x in REGIONLIBFILES]
 
- 
+
 
 def main():
     #dolocal()
@@ -51,7 +51,24 @@ def main():
           packages = ['pyregion'],
           package_dir={'pyregion':'lib'},
           #package_data={'pysao': ["ds9_xpa_help.pickle"]},
-          
+
+          test_suite = 'nose.collector',
+          )
+
+
+def main_with_pyx():
+    #dolocal()
+    setup(name = "pyregion",
+          version = "0.1b1",
+          description = "python wrapper around some region library",
+          author = "Jae-Joon Lee",
+          maintainer_email = "lee.j.joon@gmail.com",
+          license = "???",
+          platforms = ["Linux","Mac OS X"], # "Solaris"?
+          packages = ['pyregion'],
+          package_dir={'pyregion':'lib'},
+          #package_data={'pysao': ["ds9_xpa_help.pickle"]},
+
           ext_modules=[ Extension("pyregion._region",
                                   ["_region.pyx"], #+REGIONLIBFILES,
                                   include_dirs=['./region',
@@ -66,6 +83,7 @@ def main():
           #test_suite = "test.saods9_test",
           test_suite = 'nose.collector',
           )
+
 
 if __name__ == "__main__":
     main()
