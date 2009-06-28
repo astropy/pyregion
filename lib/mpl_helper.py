@@ -1,4 +1,8 @@
 import matplotlib.patches as patches
+from matplotlib.text import Text
+from matplotlib.path import Path
+from matplotlib.lines import Line2D
+from matplotlib.transforms import Affine2D
 
 import numpy as np
 import math
@@ -26,26 +30,54 @@ def rotated_polygon(xy, ox, oy, angle):
 
    # sss3 = [s1[0] for s1 in sss2 if isinstance(s1[0], parser_ds9.Shape)]
 
+_point_type_dict=dict(circle="o",
+                      box="s",
+                      daimond="D",
+                      cross="x",
+                      boxcircle="*")
+
 def properties_func_default(shape):
+
     attr_list = shape.attr[0]
     attr_dict = shape.attr[1]
 
-    kwargs = dict(edgecolor=attr_dict.get("color", None),
-                  linewidth=int(attr_dict.get("width", 1)),
-                  facecolor="none"
-                  )
+    if shape.name == "text":
+        kwargs = dict(color=attr_dict.get("color", None),
+                      rotation=shape.attr[1].get("textangle", 0),
+                      ha="center", va="center",
+                      )
+        font = shape.attr[1].get("font")
+        if font:
+            a = font.split()
+            if len(a) == 3:
+                fontsize=float(a[1])
+            kwargs["fontsize"]=fontsize
+    elif shape.name == "point":
+        marker = _point_type_dict.get(attr_dict.get("point"), "o")
+        kwargs = dict(markeredgecolor=attr_dict.get("color", None),
+                      markerfacecolor="none",
+                      marker=marker,
+                      )
+    else:
+        kwargs = dict(edgecolor=attr_dict.get("color", None),
+                      linewidth=int(attr_dict.get("width", 1)),
+                      facecolor="none"
+                      )
 
-    if "background" in attr_list:
-        kwargs["linestyle"] = "dashed"
+        if "background" in attr_list:
+            kwargs["linestyle"] = "dashed"
 
-    if shape.exclude:
-        kwargs["hatch"] = "/"
+        if shape.exclude:
+            kwargs["hatch"] = "/"
 
     return kwargs
 
 
-def _as_mpl_patches(shape_list,
-                    properties_func=properties_func_default):
+def as_mpl_artists(shape_list,
+                   properties_func=properties_func_default):
+
+    patch_list = []
+    artist_list = []
 
     for shape in shape_list:
         kwargs = properties_func(shape)
@@ -54,7 +86,7 @@ def _as_mpl_patches(shape_list,
             xy = np.array(shape.coord_list)
             xy.shape = -1,2
 
-            yield patches.Polygon(xy, closed=True, **kwargs)
+            patch_list.append(patches.Polygon(xy, closed=True, **kwargs))
 
         elif shape.name == "rotbox" or shape.name == "box":
             xc, yc, w, h, rot = shape.coord_list
@@ -64,7 +96,7 @@ def _as_mpl_patches(shape_list,
                              [w/2., -h/2.]])
             box = _box + [xc, yc]
             rotbox = rotated_polygon(box, xc, yc, rot)
-            yield patches.Polygon(rotbox, closed=True, **kwargs)
+            patch_list.append(patches.Polygon(rotbox, closed=True, **kwargs))
 
         elif shape.name == "ellipse":
             xc, yc  = shape.coord_list[:2]
@@ -74,7 +106,7 @@ def _as_mpl_patches(shape_list,
             for maj, min in zip(maj_list, min_list):
                 ell = patches.Ellipse((xc, yc), 2*maj, 2*min, angle=angle,
                                       **kwargs)
-                yield ell
+                patch_list.append(ell)
 
         elif shape.name == "annulus":
             xc, yc  = shape.coord_list[:2]
@@ -83,21 +115,61 @@ def _as_mpl_patches(shape_list,
             for r in r_list:
                 ell = patches.Ellipse((xc, yc), 2*r, 2*r,
                                       **kwargs)
-                yield ell
+                patch_list.append(ell)
 
         elif shape.name == "circle":
             xc, yc, major = shape.coord_list
             ell = patches.Ellipse((xc, yc), 2*major, 2*major, angle=0,
                                   **kwargs)
-            yield ell
+            patch_list.append(ell)
 
+        elif shape.name == "panda":
+            xc, yc, a1, a2, an, r1, r2, rn = shape.coord_list
+            for rr in np.linspace(r1, r2, rn+1):
+                ell = patches.Arc((xc, yc), rr*2, rr*2, angle=0,
+                                  theta1=a1, theta2=a2,
+                                  **kwargs)
+                patch_list.append(ell)
+
+            for aa in np.linspace(a1, a2, an+1):
+                xx = np.array([r1, r2]) * np.cos(aa/180.*np.pi) + xc
+                yy = np.array([r1, r2]) * np.sin(aa/180.*np.pi) + yc
+                p = Path(np.transpose([xx,yy]))
+                r_line = patches.PathPatch(p, **kwargs)
+                patch_list.append(r_line)
+
+        elif shape.name == "epanda":
+            xc, yc, a1, a2, an, r11, r12,r21, r22, rn, angle = shape.coord_list
+            for rr1, rr2 in zip(np.linspace(r11, r21, rn+1),
+                                np.linspace(r12, r22, rn+1)):
+                ell = patches.Arc((xc, yc), rr1*2, rr2*2, angle=angle,
+                                  theta1=a1, theta2=a2,
+                                  **kwargs)
+                patch_list.append(ell)
+
+            for aa in np.linspace(a1, a2, an+1):
+                xx = np.array([r11, r21]) * np.cos(aa/180.*np.pi)
+                yy = np.array([r11, r21]) * np.sin(aa/180.*np.pi)
+                p = Path(np.transpose([xx,yy]))
+                tr = Affine2D().scale(1, r12/r11).rotate_deg(angle).translate(xc, yc)
+                p2 = tr.transform_path(p)
+                r_line = patches.PathPatch(p2, **kwargs)
+                patch_list.append(r_line)
+
+        elif shape.name == "text":
+            xc, yc  = shape.coord_list[:2]
+            txt = shape.attr[1].get("text")
+            if txt:
+                artist_list.append(Text(xc, yc, txt,
+                                        **kwargs))
+        elif shape.name == "point":
+            xc, yc  = shape.coord_list[:2]
+            artist_list.append(Line2D([xc], [yc],
+                                      **kwargs))
         else:
             print "Unknown shape"
 
-def as_mpl_patches(shape_list,
-                   properties_func=properties_func_default):
-    return list(_as_mpl_patches(shape_list,
-                                properties_func=properties_func_default))
+    return patch_list, artist_list
 
 
 if 0:

@@ -1,21 +1,16 @@
-
-import copy
-
 from pyparsing import Literal, CaselessKeyword, CaselessLiteral, \
      Word, Optional, OneOrMore, Group, Combine, ZeroOrMore, nums, \
      Forward, StringEnd, restOfLine, alphas, alphanums, CharsNotIn, \
      MatchFirst, And, Or
 
-from region_numbers import CoordOdd, CoordEven, Distance, Angle
+from region_numbers import CoordOdd, CoordEven, Distance, Angle, Integer
+from region_numbers import SimpleNumber, SimpleInteger
 
 from region_attr import attr_parser
 import copy
 import numpy as np
 
 import warnings
-
-ds9_attr_parser = attr_parser("color font select highlite edit move delete include fixed source background tag width".split())
-parse_attr = ds9_attr_parser.parseString
 
 from kapteyn_helper import get_kapteyn_projection, sky2sky
 import kapteyn.wcs as wcs
@@ -83,7 +78,10 @@ def _convert(cl, fl, wcs_proj, sky_to_sky, xy0):
             cl = cl[1:]
             fl = fl[1:]
         else:
-            raise Exception("Unknown format: %s" % fl[0])
+            new_cl.append(cl[0])
+            cl = cl[1:]
+            fl = fl[1:]
+            #raise Exception("Unknown format: %s" % fl[0])
 
     return new_cl, xy0
 
@@ -218,7 +216,8 @@ def check_wcs_and_convert(args, all_dms=False):
 
     value_list = []
     for a in args:
-        if isinstance(a, SimpleNumber) or all_dms:
+        if isinstance(a, SimpleNumber) or isinstance(a, SimpleInteger) \
+               or all_dms:
             value_list.append(a.v)
         else:
             value_list.append(a.degree)
@@ -258,45 +257,60 @@ def check_wcs(l):
 
 
 
+def _get_attr(attr_list, global_attrs):
+    local_attr = [], {}
+    for kv in attr_list:
+        if len(kv) == 1:
+            local_attr[0].append(kv[0])
+        elif len(kv) == 2:
+            local_attr[1][kv[0]] = kv[1]
+        elif len(kv) > 2:
+            local_attr[1][kv[0]] = kv[1:]
+
+    attr0 = copy.copy(global_attrs[0])
+    attr1 = copy.copy(global_attrs[1])
+
+    if local_attr[0]:
+        attr0.extend(local_attr[0])
+
+    if local_attr[1]:
+        attr1.update(local_attr[1])
+
+    return attr0, attr1
+
+
 def convert_attr(l):
     global_attr = [], {}
 
+    parser = AttrParser()
+
     for l1, c1 in l:
         if isinstance(l1, Global):
-            for kv in parse_attr(l1.text):
+            for kv in parser.parse_default(l1.text):
                 if len(kv) == 1:
                     global_attr[0].append(kv[0])
                 elif len(kv) == 2:
                     global_attr[1][kv[0]] = kv[1]
 
         elif isinstance(l1, Shape):
-            local_attr = [], {}
             if c1:
-                for kv in parse_attr(c1):
-                    if len(kv) == 1:
-                        local_attr[0].append(kv[0])
-                    elif len(kv) == 2:
-                        local_attr[1][kv[0]] = kv[1]
-            if local_attr[0]:
-                attr0 = copy.copy(global_attr[0])
-                attr0.extend(local_attr[0])
+                attr_list = parser.parse_default(c1)
+                attr0, attr1 = _get_attr(attr_list, global_attr)
             else:
-                attr0 = global_attr[0]
-
-            if local_attr[1]:
-                attr1 = copy.copy(global_attr[1])
-                attr1.update(local_attr[1])
-            else:
-                attr1 = global_attr[1]
-
+                attr0, attr1 = global_attr
             l1n = copy.copy(l1)
             l1n.attr = attr0, attr1
             yield l1n, c1
+
+        elif not l1 and c1:
+            shape, attr_list = parser.parse_check_shape(c1)
+            if shape:
+                shape.attr = _get_attr(attr_list, global_attr)
+                yield shape, c1
         else:
             yield l1, c1
 
 
-from region_numbers import SimpleNumber
 
 
 
@@ -372,19 +386,9 @@ class wcs_shape(object):
     def __init__(self, *kl, **kw):
         self.args_list = kl
         self.args_repeat = kw.get("repeat", None)
-        #self._repeat = kw.get("repeat", None)
 
     def get_pyparsing(self):
         return [a.parser for a in self.args_list]
-
-
-class wcs_shape_repeat(wcs_shape):
-    def __init__(self, *kl):
-        kw = dict(args_repeat=True)
-        wcs_shape.__init__(self, *kl, **kw)
-        #self.args_repeat = kw.get("args_repeat", False)
-
-
 
 
 
@@ -395,8 +399,6 @@ def define_shape(name, shape_args, args_repeat=None):
 
     shape_name = CaselessKeyword(name)
 
-
-    #shape_args_nospace = [a.leaveWhitespace() for a in shape_args]
 
     if args_repeat is None:
         shape_with_parens = And([shape_name, lparen,
@@ -487,10 +489,8 @@ def define_shape_helper(shape_defs):
 
 
 ds9_shape_defs = dict(circle=wcs_shape(CoordOdd, CoordEven, Distance),
-                      #ellipse=wcs_shape(CoordOdd, CoordEven, Distance, Distance, Angle),
                       rotbox=wcs_shape(CoordOdd, CoordEven, Distance, Distance, Angle),
                       box=wcs_shape(CoordOdd, CoordEven, Distance, Distance, Angle),
-                      #polygon=wcs_shape_repeat(CoordOdd, CoordEven),
                       polygon=wcs_shape(CoordOdd, CoordEven,
                                         repeat=(0,2)),
                       ellipse=wcs_shape(CoordOdd, CoordEven,
@@ -498,6 +498,18 @@ ds9_shape_defs = dict(circle=wcs_shape(CoordOdd, CoordEven, Distance),
                                         Angle, repeat=(2,4)),
                       annulus=wcs_shape(CoordOdd, CoordEven,
                                         Distance, repeat=(2,3)),
+                      panda=wcs_shape(CoordOdd, CoordEven,
+                                      Angle, Angle, Integer,
+                                      Distance, Distance, Integer),
+                      epanda=wcs_shape(CoordOdd, CoordEven,
+                                       Angle, Angle, Integer,
+                                       Distance, Distance, Distance, Distance, Integer,
+                                       Angle),
+                      bpanda=wcs_shape(CoordOdd, CoordEven,
+                                       Angle, Angle, Integer,
+                                       Distance, Distance, Distance, Distance, Integer,
+                                       Angle),
+                      point=wcs_shape(CoordOdd, CoordEven),
                       )
 
 
@@ -523,6 +535,8 @@ def define_line(atom,
            comment
 
     return line
+
+
 
 
 def comment_shell_like(comment_begin, parseAction=None):
@@ -575,10 +589,15 @@ class RegionParser(RegionPusher):
         regionComment = comment_shell_like(Literal("#"),
                                            parseAction=self.pushComment)
 
-        line = define_line(atom=regionAtom,
-                           separator=Literal(";"),
-                           comment=regionComment
-                           )
+        line_simple = define_line(atom=regionAtom,
+                                  separator=Literal(";"),
+                                  comment=regionComment
+                                  )
+
+        line_w_composite = And([regionAtom, CaselessKeyword("||")]) \
+                           + Optional(regionComment)
+
+        line = Or([line_simple, line_w_composite])
 
         self.parser = Optional(line) + StringEnd()
         #self.parser.ignore(regionComment)
@@ -621,7 +640,32 @@ class RegionParser(RegionPusher):
 #test()
 
 
+class AttrParser(object):
+    def __init__(self):
+        ds9_attr_parser = attr_parser()
 
+        ds9_shape_in_comment_defs = dict(text=wcs_shape(CoordOdd, CoordEven))
+        regionShape = define_shape_helper(ds9_shape_in_comment_defs)
+        regionShape = regionShape.setParseAction(lambda s, l, tok: Shape(tok[0], tok[1:]))
+
+
+        self.parser_default = ds9_attr_parser
+
+        line = Optional(And([regionShape, Optional(CaselessKeyword("||").suppress())])) + \
+               ds9_attr_parser
+
+        self.parser_with_shape = line
+
+
+    def parse_default(self, s):
+        return self.parser_default.parseString(s)
+
+    def parse_check_shape(self, s):
+        l = self.parser_with_shape.parseString(s)
+        if isinstance(l[0], Shape):
+            return l[0], l[1:]
+        else:
+            return None, l
 
 def test_regionLine():
 
@@ -710,8 +754,8 @@ def read_region(s):
     " s: string "
     rp = RegionParser()
     ss = rp.parse(s)
-    sss1 = check_wcs(ss)
-    sss2 = convert_attr(sss1)
+    sss1 = convert_attr(ss)
+    sss2 = check_wcs(sss1)
 
     r = [s1[0] for s1 in sss2 if isinstance(s1[0], Shape)]
     return r
@@ -719,8 +763,8 @@ def read_region(s):
 def read_region_as_imagecoord(s, header):
     rp = RegionParser()
     ss = rp.parse(s)
-    sss1 = check_wcs(ss)
-    sss2 = convert_attr(sss1)
+    sss1 = convert_attr(ss)
+    sss2 = check_wcs(sss1)
     sss3 = sky_to_image(sss2, header)
 
     r = [s1[0] for s1 in sss3 if isinstance(s1[0], Shape)]
@@ -763,17 +807,28 @@ def test_wcs_old():
     print sss2[-1].coord_list
     #print sss2
 
-if __name__ == "__main__":
-    #test_regionLine()
-    #test_comment()
-    #test_global()
-
-    #test_all()
-    #test_wcs()
-
+def test_ttt():
     s = open("../examples/test_annuli.reg").read()
     ss1 = read_region(s)
 
     fname="../examples/test01.fits"
     f = pyfits.open(fname)
     ss2 = read_region_as_imagecoord(s, f[0].header)
+
+
+if __name__ == "__main__":
+    #s2 = "panda(4112,4135,0,360,4,37.006913,74.013826,1)\n"
+
+    #s2 = "panda(4112,4135,0,90,1,37.006913,74.013826,1) ||\n"
+    #s = open("../examples/test_annuli.reg").read()
+    s = open("../examples/test_text.reg").read()
+    rp = RegionParser()
+    #ss = list(rp.parse(s))
+    ss1 = read_region(s)
+
+
+
+    #print list(ss1)
+    #att = AttrParser()
+    #print att.parse_default("abc=3 def=2")
+

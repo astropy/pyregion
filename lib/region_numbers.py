@@ -55,6 +55,7 @@ class SimpleNumber(object):
         self.v = float(text)
 
 
+
 def _simple_number():
     s = Combine(optional_sign + usn)
     s.setParseAction(lambda s, l, tok: SimpleNumber(tok[0]))
@@ -70,7 +71,32 @@ def test_usn():
 
 
 
+class SimpleInteger(object):
+    def __repr__(self):
+        return "Number(%s)" % (self.text,)
 
+    def __str__(self):
+        return self.__repr__()
+
+    def __init__(self, text):
+        self.text = text
+        self.v = int(text)
+
+def _unsigned_integer():
+    s = Combine(Optional("+") + Word(nums))
+    s.setParseAction(lambda s, l, tok: SimpleInteger(tok[0]))
+
+    return s
+
+
+simple_integer = _unsigned_integer()
+
+def test_integer():
+    for f in ["32", "+3"]:
+        print simple_integer.parseString(f)
+
+        assert usn.parseString(f)[0] == f
+        #assert usn.parseString(f)[0][0] == float(f)
 
 
 def get_degree(s, l, tok):
@@ -296,6 +322,10 @@ class Distance:
 
 class Angle:
     parser = (simple_number)
+    type = simple_number
+
+class Integer:
+    parser = simple_integer
     type = simple_number
 
 
