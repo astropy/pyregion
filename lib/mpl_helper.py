@@ -58,6 +58,20 @@ def properties_func_default(shape):
                       markerfacecolor="none",
                       marker=marker,
                       )
+    elif shape.name in ["line", "vector"]:
+        font = attr_dict.get("font")
+        if font:
+            fontsize = int(font.split()[1])
+        else:
+            fontsize = 10
+
+        kwargs = dict(color=attr_dict.get("color", None),
+                      linewidth=int(attr_dict.get("width", 1)),
+                      mutation_scale=fontsize,
+                      )
+        if int(attr_dict.get("dash","0")):
+            kwargs["linestyle"] = "dashed"
+
     else:
         kwargs = dict(edgecolor=attr_dict.get("color", None),
                       linewidth=int(attr_dict.get("width", 1)),
@@ -90,6 +104,7 @@ def as_mpl_artists(shape_list,
 
         elif shape.name == "rotbox" or shape.name == "box":
             xc, yc, w, h, rot = shape.coord_list
+            xc, yc = xc-1, yc-1
             _box = np.array([[-w/2., -h/2.],
                              [-w/2., h/2.],
                              [w/2., h/2.],
@@ -100,6 +115,7 @@ def as_mpl_artists(shape_list,
 
         elif shape.name == "ellipse":
             xc, yc  = shape.coord_list[:2]
+            xc, yc = xc-1, yc-1
             angle = shape.coord_list[-1]
 
             maj_list, min_list = shape.coord_list[2:-1:2], shape.coord_list[3:-1:2]
@@ -110,6 +126,7 @@ def as_mpl_artists(shape_list,
 
         elif shape.name == "annulus":
             xc, yc  = shape.coord_list[:2]
+            xc, yc = xc-1, yc-1
             r_list = shape.coord_list[2:]
 
             for r in r_list:
@@ -119,12 +136,14 @@ def as_mpl_artists(shape_list,
 
         elif shape.name == "circle":
             xc, yc, major = shape.coord_list
+            xc, yc = xc-1, yc-1
             ell = patches.Ellipse((xc, yc), 2*major, 2*major, angle=0,
                                   **kwargs)
             patch_list.append(ell)
 
         elif shape.name == "panda":
             xc, yc, a1, a2, an, r1, r2, rn = shape.coord_list
+            xc, yc = xc-1, yc-1
             for rr in np.linspace(r1, r2, rn+1):
                 ell = patches.Arc((xc, yc), rr*2, rr*2, angle=0,
                                   theta1=a1, theta2=a2,
@@ -138,8 +157,25 @@ def as_mpl_artists(shape_list,
                 r_line = patches.PathPatch(p, **kwargs)
                 patch_list.append(r_line)
 
+        elif shape.name == "pie":
+            xc, yc, r1, r2, a1, a2 = shape.coord_list
+            xc, yc = xc-1, yc-1
+            for rr in [r1, r2]:
+                ell = patches.Arc((xc, yc), rr*2, rr*2, angle=0,
+                                  theta1=a1, theta2=a2,
+                                  **kwargs)
+                patch_list.append(ell)
+
+            for aa in [a1, a2]:
+                xx = np.array([r1, r2]) * np.cos(aa/180.*np.pi) + xc
+                yy = np.array([r1, r2]) * np.sin(aa/180.*np.pi) + yc
+                p = Path(np.transpose([xx,yy]))
+                r_line = patches.PathPatch(p, **kwargs)
+                patch_list.append(r_line)
+
         elif shape.name == "epanda":
             xc, yc, a1, a2, an, r11, r12,r21, r22, rn, angle = shape.coord_list
+            xc, yc = xc-1, yc-1
             for rr1, rr2 in zip(np.linspace(r11, r21, rn+1),
                                 np.linspace(r12, r22, rn+1)):
                 ell = patches.Arc((xc, yc), rr1*2, rr2*2, angle=angle,
@@ -158,14 +194,47 @@ def as_mpl_artists(shape_list,
 
         elif shape.name == "text":
             xc, yc  = shape.coord_list[:2]
+            xc, yc = xc-1, yc-1
             txt = shape.attr[1].get("text")
             if txt:
                 artist_list.append(Text(xc, yc, txt,
                                         **kwargs))
         elif shape.name == "point":
             xc, yc  = shape.coord_list[:2]
+            xc, yc = xc-1, yc-1
             artist_list.append(Line2D([xc], [yc],
                                       **kwargs))
+        elif shape.name in ["line", "vector"]:
+            if shape.name == "line":
+                x1, y1, x2, y2  = shape.coord_list[:4]
+                x1, y1, x2, y2 = x1-1, y1-1, x2-1, y2-1
+
+                a1, a2 = shape.attr[1].get("line", "0 0").strip().split()[:2]
+
+                arrowstyle = "-"
+                if int(a1):
+                    arrowstyle = "<" + arrowstyle
+                if int(a2):
+                    arrowstyle = arrowstyle + ">"
+
+            else: # shape.name == "vecotr"
+                x1, y1, l, a  = shape.coord_list[:4]
+                x1, y1 = x1-1, y1-1
+                x2, y2 = x1 + l * np.cos(a/180.*np.pi), y1 + l * np.sin(a/180.*np.pi)
+                v1 = int(shape.attr[1].get("vector", "0").strip())
+
+                if v1:
+                    arrowstyle="->"
+                else:
+                    arrowstyle="-"
+
+            arrow = patches.FancyArrowPatch(posA=(x1, y1), posB=(x2, y2),
+                                            arrowstyle=arrowstyle,
+                                            arrow_transmuter=None,
+                                            connectionstyle="arc3",
+                                            connector=None,
+                                            **kwargs)
+            patch_list.append(arrow)
         else:
             print "Unknown shape"
 

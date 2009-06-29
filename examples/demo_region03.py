@@ -1,11 +1,17 @@
 import pyfits
 import matplotlib.pyplot as plt
-import pywcsgrid2
-from pyregion.parser_ds9 import read_region_as_imagecoord
+from pyregion import read_region_as_imagecoord
 from pyregion.mpl_helper import as_mpl_artists
 
 import math
-from mpl_toolkits.axes_grid.axes_grid import AxesGrid
+
+try:
+    import pywcsgrid2
+    from mpl_toolkits.axes_grid.axes_grid import AxesGrid
+except ImportError:
+    import sys
+    print "You require svn version of matplotlib and pywcsgrid2 installed."
+    sys.exit(0)
 
 def test_header():
     cards = pyfits.CardList()
@@ -35,8 +41,8 @@ if 1:
                    axes_class=(pywcsgrid2.Axes, dict(header=h)))
 
     ax = grid[0]
-    ax.set_xlim(100, 1500)
-    ax.set_ylim(100, 1500)
+    ax.set_xlim(300, 1300)
+    ax.set_ylim(300, 1300)
     ax.set_aspect(1)
 
     #plt.imshow(d, origin="lower", cmap=plt.cm.gray_r)

@@ -1,60 +1,19 @@
-import pyfits
 import matplotlib.pyplot as plt
-import pywcsgrid2
-from pyregion.parser_ds9 import read_region_as_imagecoord
-from pyregion.mpl_helper import as_mpl_artists
 
-import math
-from mpl_toolkits.axes_grid.axes_grid import AxesGrid
+from demo_region01 import show_region
 
-def test_header():
-    cards = pyfits.CardList()
-    for l in open("test.header"):
-        card = pyfits.Card()
-        card.fromstring(l.strip())
-        cards.append(card)
-    h = pyfits.Header(cards)
-    return h
+if __name__ == "__main__":
 
-if 1:
+    region_list = ["test_annuli.reg", "test_annuli_wcs.reg",
+                   "test_annuli_ciao.reg"]
 
-    region_list = ["test_annuli.reg", "test_annuli_wcs.reg"]
-
-    h = test_header()
-
-    n = len(region_list)
-    nx = int(math.ceil(n**.5))
-    ny = int(math.ceil(1.*n/nx))
-
-
-    fig = plt.figure(1, figsize=(7,5))
+    fig = plt.figure(1, figsize=(6,6))
     fig.clf()
-    nrows_ncols = (ny, nx)
-    grid= AxesGrid(fig, 111, nrows_ncols,
-                   ngrids=n,  add_all=True, share_all=True,
-                   axes_class=(pywcsgrid2.Axes, dict(header=h)))
 
-    ax = grid[0]
-    ax.set_xlim(596, 1075)
-    ax.set_ylim(585, 1057)
-    ax.set_aspect(1)
-
-    #plt.imshow(d, origin="lower", cmap=plt.cm.gray_r)
-
-    from mpl_toolkits.axes_grid.anchored_artists import AnchoredText
-
-    for ax, reg_name in zip(grid, region_list):
-        r = read_region_as_imagecoord(open(reg_name).read(), header=h)
-
-        patch_list, text_list = as_mpl_artists(r)
-        for p in patch_list:
-            ax.add_patch(p)
-        for t in text_list:
-            ax.add_artist(t)
-
-        atext = AnchoredText(reg_name.replace("_", r"\_"),
-                             loc=2)
-        ax.add_artist(atext)
+    ax_list = show_region(fig, region_list)
+    for ax in ax_list:
+        ax.set_xlim(596, 1075)
+        ax.set_ylim(585, 1057)
 
     plt.draw()
     plt.show()
