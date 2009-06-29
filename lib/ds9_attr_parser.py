@@ -54,7 +54,7 @@ class Ds9AttrParser(object):
 
     def parse_check_shape(self, s):
         l = self.parser_with_shape.parseString(s)
-        if isinstance(l[0], Shape):
+        if l and isinstance(l[0], Shape):
             return l[0], l[1:]
         else:
             return None, l

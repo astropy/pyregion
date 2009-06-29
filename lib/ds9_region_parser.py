@@ -3,7 +3,7 @@ import copy
 from pyparsing import Literal, CaselessKeyword, CaselessLiteral, \
      Word, Optional, OneOrMore, Group, Combine, ZeroOrMore, nums, \
      Forward, StringEnd, restOfLine, alphas, alphanums, CharsNotIn, \
-     MatchFirst, And, Or
+     MatchFirst, And, Or, ParseException
 
 from region_numbers import CoordOdd, CoordEven, Distance, Angle, Integer
 from region_numbers import SimpleNumber, SimpleInteger
@@ -15,14 +15,14 @@ import warnings
 from ds9_attr_parser import Ds9AttrParser, get_attr
 
 from wcs_helper import UnknownWcs, image_like_coordformats, select_wcs, \
-     convert_to_imagecoord
+     convert_to_imagecoord, convert_physical_to_imagecoord
 
 from parser_helper import as_comma_separated_list, wcs_shape, \
      define_shape, define_shape_helper, define_expr, define_line, \
      comment_shell_like, define_simple_literals, \
      Shape, Property, CoordCommand, Global, Comment, RegionPusher
 
-
+from physical_coordinate import PhysicalCoordinate
 
 
 ds9_shape_defs = dict(circle=wcs_shape(CoordOdd, CoordEven, Distance),
@@ -100,7 +100,6 @@ class RegionParser(RegionPusher):
         self.parser = Optional(line) + StringEnd()
 
 
-
     def parseLine(self, l):
         self.parser.parseString(l)
         s, c = self.stack, self.comment
@@ -112,7 +111,12 @@ class RegionParser(RegionPusher):
     def parse(self, s):
 
         for l in s.split("\n"):
-            s, c = self.parseLine(l)
+            try:
+                s, c = self.parseLine(l)
+            except ParseException:
+                print "Failed to parse : " + l
+                self.flush()
+                continue
 
             if len(s) > 1:
                 for s1 in s[:-1]:
@@ -161,9 +165,11 @@ class RegionParser(RegionPusher):
 
 
 
-    def sky_to_image(self, l, wcs):
+    def sky_to_image(self, l, header):
 
-        wcs_proj = get_kapteyn_projection(wcs)
+        pc = PhysicalCoordinate(header)
+
+        wcs_proj = get_kapteyn_projection(header)
 
         for l1, c1 in l:
             if isinstance(l1, Shape) and \
@@ -179,6 +185,7 @@ class RegionParser(RegionPusher):
                 cl = l1.coord_list
                 fl = ds9_shape_defs[l1.name].args_list
 
+                # take care of repeated items
                 if ds9_shape_defs[l1.name].args_repeat:
                     n1, n2 = ds9_shape_defs[l1.name].args_repeat
                 else:
@@ -197,6 +204,42 @@ class RegionParser(RegionPusher):
 
                 cl3, fl3 = cl[nn2:], fl[n2:]
                 cl30, xy0 = convert_to_imagecoord(cl3, fl3, wcs_proj, sky_to_sky, xy0)
+
+                new_cl = cl10 + cl20 + cl30
+
+
+                l1n = copy.copy(l1)
+
+                l1n.coord_list = new_cl
+                l1n.coord_format = "image"
+                yield l1n, c1
+
+            if isinstance(l1, Shape) and (l1.coord_format == "physical"):
+
+                cl = l1.coord_list
+                fl = ds9_shape_defs[l1.name].args_list
+
+                # take care of repeated items
+                if ds9_shape_defs[l1.name].args_repeat:
+                    n1, n2 = ds9_shape_defs[l1.name].args_repeat
+                else:
+                    n1 = 0
+                    n2 = len(cl)
+                #new_cl = []
+
+                xy0 = None
+
+                cl1, fl1 = cl[:n1], fl[:n1]
+                cl10 = convert_physical_to_imagecoord(cl1, fl1, pc)
+                #cl10, xy0 = convert_to_imagecoord(cl1, fl1, wcs_proj, sky_to_sky, xy0)
+
+                nn2 = len(cl)-(len(fl) - n2)
+                cl2, fl2 = cl[n1:nn2], fl[n1:n2]
+                cl20 = convert_physical_to_imagecoord(cl2, fl2, pc)
+                #cl20, xy0 = convert_to_imagecoord(cl2, fl2, wcs_proj, sky_to_sky, xy0)
+
+                cl3, fl3 = cl[nn2:], fl[n2:]
+                cl30 = convert_physical_to_imagecoord(cl3, fl3, pc)
 
                 new_cl = cl10 + cl20 + cl30
 

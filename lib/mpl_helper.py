@@ -232,11 +232,13 @@ def as_mpl_artists(shape_list,
                                             arrowstyle=arrowstyle,
                                             arrow_transmuter=None,
                                             connectionstyle="arc3",
+                                            patchA=None, patchB=None,
+                                            shrinkA=0, shrinkB=0,
                                             connector=None,
                                             **kwargs)
             patch_list.append(arrow)
         else:
-            print "Unknown shape"
+            print "Conversion of '%s' to mpl patch is not supported" % (shape.name,)
 
     return patch_list, artist_list
 

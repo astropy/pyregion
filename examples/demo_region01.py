@@ -51,9 +51,12 @@ if __name__ == "__main__":
     region_list = ["test01_fk5_sexagecimal.reg",
                    "test01_gal.reg",
                    "test01_img.reg",
-                   "test01_ciao.reg",
+                   "test01_ds9_physical.reg",
                    "test01_fk5_degree.reg",
-                   "test01_mixed.reg"]
+                   "test01_mixed.reg",
+                   "test01_ciao.reg",
+                   "test01_ciao_physical.reg",
+                   ]
 
     fig = plt.figure(1, figsize=(6,5))
     fig.clf()

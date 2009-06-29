@@ -14,7 +14,7 @@ import kapteyn.wcs as wcs
 
 UnknownWcs = "unknown wcs"
 
-image_like_coordformats = ["image", "pysical","detector","logical"]
+image_like_coordformats = ["image", "physical","detector","logical"]
 
 
 def estimate_cdelt(wcs_proj, x0, y0): #, sky_to_sky):
@@ -110,6 +110,40 @@ def convert_to_imagecoord(cl, fl, wcs_proj, sky_to_sky, xy0):
     return new_cl, xy0
 
 
+def convert_physical_to_imagecoord(cl, fl, pc):
+    fl0 = fl
+    new_cl = []
+
+    while cl:
+        if len(fl) == 0:
+            fl = fl0
+
+        if fl[0] == CoordOdd and fl[1] == CoordEven:
+
+            #ll = sky_to_sky(tuple(cl[:2]))
+            xy0 = pc.to_image(cl[0], cl[1])
+            new_cl.extend(xy0)
+            cl = cl[2:]
+            fl = fl[2:]
+        elif fl[0] == Distance:
+            #degree_per_pixel = estimate_cdelt(wcs_proj,
+            #                                  *xy0)
+            new_cl.append(pc.to_image_distance(cl[0]))
+            cl = cl[1:]
+            fl = fl[1:]
+#         elif fl[0] == Angle:
+#             #rot1, rot2 = estimate_angle(wcs_proj, xy0[0], xy0[1], sky_to_sky)
+#             new_cl.append(cl[0])
+#             cl = cl[1:]
+#             fl = fl[1:]
+        else:
+            new_cl.append(cl[0])
+            cl = cl[1:]
+            fl = fl[1:]
+
+    return new_cl
+
+
 
 
 def check_wcs_and_convert(args, all_dms=False):
@@ -129,7 +163,7 @@ def check_wcs_and_convert(args, all_dms=False):
 
 
 def check_wcs(l):
-    default_coord = "image"
+    default_coord = "physical"
 
     for l1, c1 in l:
         if isinstance(l1, CoordCommand):
@@ -142,9 +176,13 @@ def check_wcs(l):
             else:
                 is_wcs, coord_list = check_wcs_and_convert(l1.params)
 
-            if is_wcs and default_coord in image_like_coordformats:
-                # ciao formats
-                coord_format = "unknown wcs"
+            if is_wcs and (default_coord == "physical"): # ciao format
+                coord_format = "fk5"
+#             elif 
+#             if is_wcs and default_coord in image_like_coordformats:
+#                 # ciao formats
+#                 coord_format = "unknown wcs"
+#                 print "UNKNWON WCS"
             else:
                 coord_format = default_coord
 

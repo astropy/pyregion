@@ -28,8 +28,9 @@ def print_region(r):
 if __name__ == "__main__":
     print "** coordinate in FK5 **"
     print
-    #region_name = "test01_print.reg"
-    region_name = "test_text.reg"
+    region_name = "test01_print.reg"
+    #region_name = "test_text.reg"
+    #region_name = "test01.reg"
     r = read_region(open(region_name).read())
     print_region(r)
 
