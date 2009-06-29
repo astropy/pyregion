@@ -44,6 +44,13 @@ def estimate_cdelt(wcs_proj, x0, y0): #, sky_to_sky):
 
 
 def estimate_angle(wcs_proj, x0, y0, sky_to_sky=None):
+    """
+    return a tuple of two angles (in degree) of increasing direction
+    of 1st and 2nd coordinates.
+
+    note that x, y = wcs_proj.topixel(sky_to_sky((l1, l2)))
+
+    """
 
     cdelt = estimate_cdelt(wcs_proj, x0, y0)
 
@@ -85,14 +92,14 @@ def convert_to_imagecoord(cl, fl, wcs_proj, sky_to_sky, xy0):
             cl = cl[2:]
             fl = fl[2:]
         elif fl[0] == Distance:
-            degree_per_pixel = estimate_cdelt(wcs_proj, sky_to_sky,
+            degree_per_pixel = estimate_cdelt(wcs_proj,
                                               *xy0)
             new_cl.append(cl[0]/degree_per_pixel)
             cl = cl[1:]
             fl = fl[1:]
         elif fl[0] == Angle:
-            rot = estimate_angle(wcs_proj, sky_to_sky, *xy0)
-            new_cl.append(cl[0]+rot)
+            rot1, rot2 = estimate_angle(wcs_proj, xy0[0], xy0[1], sky_to_sky)
+            new_cl.append(cl[0]+rot1-180.)
             cl = cl[1:]
             fl = fl[1:]
         else:
