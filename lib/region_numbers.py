@@ -109,6 +109,9 @@ class Sixty(object):
         self.degree = self.v
 
 class HMS(object):
+    def __repr__(self):
+        return "HMS(%s)" % (self.text,)
+
     def __init__(self, kl):
         self.text = "".join(kl)
 
@@ -131,6 +134,9 @@ class HMS(object):
 
 
 class DMS(object):
+    def __repr__(self):
+        return "DMS(%s)" % (self.text,)
+
     def __init__(self, kl):
         self.text = "".join(kl)
 
@@ -154,6 +160,9 @@ class DMS(object):
 
 
 class AngularDistance(object):
+    def __repr__(self):
+        return "Ang(%s)" % (self.text,)
+
     def __init__(self, kl):
         self.text = "".join(kl)
 

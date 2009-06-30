@@ -92,7 +92,9 @@ class RegionParser(RegionPusher):
                                   comment=regionComment
                                   )
 
-        line_w_composite = And([regionAtom, CaselessKeyword("||")]) \
+        line_w_composite = And([regionAtom,
+                                CaselessKeyword("||").setParseAction(self.set_continued)
+                                ]) \
                            + Optional(regionComment)
 
         line = Or([line_simple, line_w_composite])
@@ -102,17 +104,16 @@ class RegionParser(RegionPusher):
 
     def parseLine(self, l):
         self.parser.parseString(l)
-        s, c = self.stack, self.comment
-
+        s, c, continued = self.stack, self.comment, self.continued
         self.flush()
 
-        return s, c
+        return s, c, continued
 
     def parse(self, s):
 
         for l in s.split("\n"):
             try:
-                s, c = self.parseLine(l)
+                s, c, continued = self.parseLine(l)
             except ParseException:
                 print "Failed to parse : " + l
                 self.flush()
@@ -122,8 +123,12 @@ class RegionParser(RegionPusher):
                 for s1 in s[:-1]:
                     yield s1, None
 
+                s[-1].comment = c
+                s[-1].continued = continued
                 yield s[-1], c
             elif len(s) == 1:
+                s[-1].comment = c
+                s[-1].continued = continued
                 yield s[-1], c
             elif c:
                 yield None, c
@@ -214,7 +219,7 @@ class RegionParser(RegionPusher):
                 l1n.coord_format = "image"
                 yield l1n, c1
 
-            if isinstance(l1, Shape) and (l1.coord_format == "physical"):
+            elif isinstance(l1, Shape) and (l1.coord_format == "physical"):
 
                 cl = l1.coord_list
                 fl = ds9_shape_defs[l1.name].args_list

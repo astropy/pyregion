@@ -1,0 +1,19 @@
+{% extends "!layout.html" %}
+
+
+{% block rootrellink %}
+        <li><a href="http://matplotlib.sourceforge.net/index.html">matplotlib&nbsp;home</a>|&nbsp;</li>
+        <li><a href="{{ pathto('index') }}">documentation</a>|&nbsp;</li>
+{% endblock %}
+
+
+{% block relbar1 %}
+
+{{ super() }}
+{% endblock %}
+
+{# put the sidebar before the body #}
+
+{% block sidebar1 %}{{ sidebar() }}{% endblock %}
+{% block sidebar2 %}{% endblock %}
+

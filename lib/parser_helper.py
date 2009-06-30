@@ -173,7 +173,8 @@ class Shape(object):
 
         self.comment = None
         self.exclude = False
-
+        self.continued = False
+        
     def __repr__(self):
         params_string = ",".join(map(repr, self.params))
         if self.exclude:
@@ -183,6 +184,7 @@ class Shape(object):
 
     def set_exclude(self):
         self.exclude = True
+
 
 class Property(object):
     def __init__(self, text):
@@ -211,10 +213,14 @@ class RegionPusher(object):
     def flush(self):
         self.stack = []
         self.comment = None
-
+        self.continued = None
+        
     def pushAtom(self, s, l, tok):
         self.stack.append(tok[-1])
 
     def pushComment(self, s, l, tok):
         self.comment  = tok[-1].strip()
+
+    def set_continued(self, s, l, tok):
+        self.continued = True
 

@@ -93,17 +93,30 @@ def as_mpl_artists(shape_list,
     patch_list = []
     artist_list = []
 
+    # properties for continued(? multiline?) regions
+    saved_properties = None
+    
     for shape in shape_list:
         kwargs = properties_func(shape)
+
+        if saved_properties is not None:
+            kwargs.update(saved_properties)
+
+        if shape.continued:
+            saved_properties = kwargs
+        else:
+            saved_properties = None
 
         if shape.name == "polygon":
             xy = np.array(shape.coord_list)
             xy.shape = -1,2
 
-            patch_list.append(patches.Polygon(xy, closed=True, **kwargs))
+            # -1 for change origin to 0,0
+            patch_list.append(patches.Polygon(xy-1, closed=True, **kwargs))
 
         elif shape.name == "rotbox" or shape.name == "box":
             xc, yc, w, h, rot = shape.coord_list
+            # -1 for change origin to 0,0
             xc, yc = xc-1, yc-1
             _box = np.array([[-w/2., -h/2.],
                              [-w/2., h/2.],
@@ -115,6 +128,7 @@ def as_mpl_artists(shape_list,
 
         elif shape.name == "ellipse":
             xc, yc  = shape.coord_list[:2]
+            # -1 for change origin to 0,0
             xc, yc = xc-1, yc-1
             angle = shape.coord_list[-1]
 
@@ -126,6 +140,7 @@ def as_mpl_artists(shape_list,
 
         elif shape.name == "annulus":
             xc, yc  = shape.coord_list[:2]
+            # -1 for change origin to 0,0
             xc, yc = xc-1, yc-1
             r_list = shape.coord_list[2:]
 
@@ -136,6 +151,7 @@ def as_mpl_artists(shape_list,
 
         elif shape.name == "circle":
             xc, yc, major = shape.coord_list
+            # -1 for change origin to 0,0
             xc, yc = xc-1, yc-1
             ell = patches.Ellipse((xc, yc), 2*major, 2*major, angle=0,
                                   **kwargs)
@@ -143,6 +159,7 @@ def as_mpl_artists(shape_list,
 
         elif shape.name == "panda":
             xc, yc, a1, a2, an, r1, r2, rn = shape.coord_list
+            # -1 for change origin to 0,0
             xc, yc = xc-1, yc-1
             for rr in np.linspace(r1, r2, rn+1):
                 ell = patches.Arc((xc, yc), rr*2, rr*2, angle=0,
@@ -159,6 +176,7 @@ def as_mpl_artists(shape_list,
 
         elif shape.name == "pie":
             xc, yc, r1, r2, a1, a2 = shape.coord_list
+            # -1 for change origin to 0,0
             xc, yc = xc-1, yc-1
             for rr in [r1, r2]:
                 ell = patches.Arc((xc, yc), rr*2, rr*2, angle=0,
@@ -175,6 +193,7 @@ def as_mpl_artists(shape_list,
 
         elif shape.name == "epanda":
             xc, yc, a1, a2, an, r11, r12,r21, r22, rn, angle = shape.coord_list
+            # -1 for change origin to 0,0
             xc, yc = xc-1, yc-1
             for rr1, rr2 in zip(np.linspace(r11, r21, rn+1),
                                 np.linspace(r12, r22, rn+1)):
@@ -194,6 +213,7 @@ def as_mpl_artists(shape_list,
 
         elif shape.name == "text":
             xc, yc  = shape.coord_list[:2]
+            # -1 for change origin to 0,0
             xc, yc = xc-1, yc-1
             txt = shape.attr[1].get("text")
             if txt:
@@ -201,12 +221,14 @@ def as_mpl_artists(shape_list,
                                         **kwargs))
         elif shape.name == "point":
             xc, yc  = shape.coord_list[:2]
+            # -1 for change origin to 0,0
             xc, yc = xc-1, yc-1
             artist_list.append(Line2D([xc], [yc],
                                       **kwargs))
         elif shape.name in ["line", "vector"]:
             if shape.name == "line":
                 x1, y1, x2, y2  = shape.coord_list[:4]
+                # -1 for change origin to 0,0
                 x1, y1, x2, y2 = x1-1, y1-1, x2-1, y2-1
 
                 a1, a2 = shape.attr[1].get("line", "0 0").strip().split()[:2]
@@ -219,6 +241,7 @@ def as_mpl_artists(shape_list,
 
             else: # shape.name == "vecotr"
                 x1, y1, l, a  = shape.coord_list[:4]
+                # -1 for change origin to 0,0
                 x1, y1 = x1-1, y1-1
                 x2, y2 = x1 + l * np.cos(a/180.*np.pi), y1 + l * np.sin(a/180.*np.pi)
                 v1 = int(shape.attr[1].get("vector", "0").strip())
