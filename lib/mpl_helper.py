@@ -1,3 +1,4 @@
+import copy
 import matplotlib.patches as patches
 from matplotlib.text import Text
 from matplotlib.path import Path
@@ -36,17 +37,20 @@ _point_type_dict=dict(circle="o",
                       cross="x",
                       boxcircle="*")
 
-def properties_func_default(shape):
+def properties_func_default(shape, saved_attrs):
 
-    attr_list = shape.attr[0]
-    attr_dict = shape.attr[1]
+    attr_list = copy.copy(shape.attr[0])
+    attr_dict = copy.copy(shape.attr[1])
 
+    attr_list.extend(saved_attrs[0])
+    attr_dict.update(saved_attrs[1])
+    
     if shape.name == "text":
         kwargs = dict(color=attr_dict.get("color", None),
-                      rotation=shape.attr[1].get("textangle", 0),
+                      rotation=attr_dict.get("textangle", 0),
                       ha="center", va="center",
                       )
-        font = shape.attr[1].get("font")
+        font = attr_dict.get("font")
         if font:
             a = font.split()
             if len(a) == 3:
@@ -94,19 +98,27 @@ def as_mpl_artists(shape_list,
     artist_list = []
 
     # properties for continued(? multiline?) regions
-    saved_properties = None
+    saved_attrs = None
     
     for shape in shape_list:
-        kwargs = properties_func(shape)
 
-        if saved_properties is not None:
-            kwargs.update(saved_properties)
-
-        if shape.continued:
-            saved_properties = kwargs
+        if saved_attrs is None:
+            _attrs = [], {}
         else:
-            saved_properties = None
+            _attrs = copy.copy(saved_attrs[0]), copy.copy(saved_attrs[1])
 
+        kwargs = properties_func(shape, _attrs)
+            
+        if shape.name == "composite":
+            saved_attrs = shape.attr
+            continue
+
+        if saved_attrs is None and shape.continued:
+            saved_attrs = shape.attr
+
+        if not shape.continued:
+            saved_attrs = None
+            
         if shape.name == "polygon":
             xy = np.array(shape.coord_list)
             xy.shape = -1,2

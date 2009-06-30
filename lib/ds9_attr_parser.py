@@ -30,12 +30,18 @@ def get_ds9_attr_parser():
 
 
 class Ds9AttrParser(object):
+    def set_continued(self):
+        self.continued = True
+        
     def __init__(self):
+        self.continued = False
+
         ds9_attr_parser = get_ds9_attr_parser()
 
         ds9_shape_in_comment_defs = dict(text=wcs_shape(CoordOdd, CoordEven),
                                          vector=wcs_shape(CoordOdd, CoordEven,
                                                           Distance, Angle),
+                                         composite=wcs_shape(CoordOdd, CoordEven, Angle),
                                          )
         regionShape = define_shape_helper(ds9_shape_in_comment_defs)
         regionShape = regionShape.setParseAction(lambda s, l, tok: Shape(tok[0], tok[1:]))
@@ -43,8 +49,10 @@ class Ds9AttrParser(object):
 
         self.parser_default = ds9_attr_parser
 
-        line = Optional(And([regionShape, Optional(CaselessKeyword("||").suppress())])) + \
-               ds9_attr_parser
+        cont = CaselessKeyword("||").setParseAction(self.set_continued).suppress()
+        line = Optional(And([regionShape,
+                             Optional(cont)])) \
+                             + ds9_attr_parser
 
         self.parser_with_shape = line
 
@@ -55,6 +63,8 @@ class Ds9AttrParser(object):
     def parse_check_shape(self, s):
         l = self.parser_with_shape.parseString(s)
         if l and isinstance(l[0], Shape):
+            if self.continued:
+                l[0].continued = True
             return l[0], l[1:]
         else:
             return None, l
