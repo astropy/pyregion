@@ -1,4 +1,21 @@
-from distutils.core import setup
+#from distutils.core import setup
+#from distutils.extension import Extension
+from setuptools import setup
+from setuptools.extension import Extension
+
+import sys
+
+try:
+    import numpy
+except ImportError:
+    print "numpy must be installed to build."
+    print "ABORTING."
+    sys.exit(1)
+
+try:
+    numpy_include = numpy.get_include()
+except AttributeError:
+    numpy_include = numpy.get_numpy_include()
 
 
 def main():
@@ -9,10 +26,20 @@ def main():
           author_email = "lee.j.joon@gmail.com",
           url="http://leejjoon.github.com/pyregion/",
           #maintainer_email = "lee.j.joon@gmail.com",
-          license = "MID",
+          license = "MIT",
           platforms = ["Linux","Mac OS X"], # "Solaris"?
           packages = ['pyregion'],
           package_dir={'pyregion':'lib'},
+
+          ext_modules=[ Extension("pyregion._region",
+                                  ["src/_region.pyx"],
+                                  include_dirs=['./src',
+                                                numpy_include,
+                                                ],
+                                  libraries=[],
+                                  )
+                        ],
+
           #test_suite = 'nose.collector',
           )
 
