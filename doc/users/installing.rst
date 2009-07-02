@@ -4,6 +4,19 @@
 Installing
 **********
 
+pyregion can be downloaded from the following page.
+
+* `Download <http://github.com/leejjoon/pyregion/downloads>`__
+
+However, pyregion is a personal hobby project and still in development
+(likely to be buggy).  And it is recommended that you fetch the source
+code by cloning my git repository for any recent bug fix. ::
+
+ # git clone git://github.com/leejjoon/pyregion.git
+ # cd pyregion
+ # python setup.py install
+
+
 Dependencies
 ============
 

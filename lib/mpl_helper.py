@@ -273,7 +273,7 @@ def as_mpl_artists(shape_list,
                                             **kwargs)
             patch_list.append(arrow)
         else:
-            print "Conversion of '%s' to mpl patch is not supported" % (shape.name,)
+            print "'as_mpl_artists' does not know how to convert '%s' to mpl artist" % (shape.name,)
 
     return patch_list, artist_list
 
