@@ -84,9 +84,10 @@ The shape object has following attributes,
    color=cyan background
 
 * attr : attributes of the shape. This includes global attributes
-  defined by the global command. The first item is a list of
-  attributes with out associated values (e.g., background..) and the
-  second item is a dictionary of attributes. ::
+  defined by the global command and local attributes defined in the
+  comment. The first item is a list of key-only attributes without
+  associated values (e.g., background..) and the second item is a
+  dictionary of attributes of key-value pairs. ::
 
     >>> print r[0].attr[0]
     ['background']
@@ -106,7 +107,8 @@ The shape object has following attributes,
      'width': '1 '}
 
 
-
+  Some attributes like "tag" allows multiple items and this is not
+  currently supported (the last definition override previous ones).
 
 
 pyregion.read_region_as_imagecoord converts the coordinate into the
@@ -117,8 +119,8 @@ Pyfits.Header instance as the second parameter.::
     f = pyfits.open("t1.fits")
     r2 = read_region_as_imagecoord(region_string, header=f[0].header)
 
-The return value is similar to read_region, but the coordinate is in
-the image coordinate. ::
+The return value is similar to read_region, but the coordinate is
+converted to the image coordinate. ::
 
     >>> print r2[0].coord_format
     image
@@ -148,6 +150,8 @@ artists. The return values need to be added to the axes manually::
     for t in artist_list:
         ax.add_artist(t)
 
+.. plot:: figures/test_region_drawing.py
+
 The (optional) second argument of as_mpl_artists is a function that
 takes the shape object as and argument and returns a dictionary object
 that will be used as a keyword arguments (e.g., colors and line width)
@@ -155,5 +159,6 @@ for creating the mpl artists. By default, it uses
 pyregion.mpl_helper.properties_func_default, which try to respect the
 ds9 attributes.
 
-.. plot:: figures/test_region_drawing.py
 
+.. plot:: figures/test_region_drawing2.py
+   :include-source:
