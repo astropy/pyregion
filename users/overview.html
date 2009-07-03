@@ -108,7 +108,7 @@ by ds9. Ruler, Compass and Projection type is ignored.</p>
 </colgroup>
 <thead valign="bottom">
 <tr><th class="head">ds9</th>
-<th class="head">pyregion</th>
+<th class="head">pyregion + matplotlib</th>
 </tr>
 </thead>
 <tbody valign="top">
@@ -215,7 +215,8 @@ currently supported (the last definition override previous ones).</p>
 <p>pyregion.read_region_as_imagecoord converts the coordinate into the
 image coordinate (&#8220;1&#8221;-based). And the function requires the
 Pyfits.Header instance as the second parameter.:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">pyfits</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">pyregion</span> <span class="kn">import</span> <span class="n">read_region_as_imagecoord</span>
+<span class="kn">import</span> <span class="nn">pyfits</span>
 <span class="n">f</span> <span class="o">=</span> <span class="n">pyfits</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s">&quot;t1.fits&quot;</span><span class="p">)</span>
 <span class="n">r2</span> <span class="o">=</span> <span class="n">read_region_as_imagecoord</span><span class="p">(</span><span class="n">region_string</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="n">f</span><span class="p">[</span><span class="mf">0</span><span class="p">]</span><span class="o">.</span><span class="n">header</span><span class="p">)</span>
 </pre></div>
@@ -240,8 +241,9 @@ converted to the image coordinate.</p>
 <p>The argument for <em>as_mpl_artists</em> needs to be the return list of the
 read_region_as_imagecoord call, i.e., coordinate needs to be in image
 coordinate. <em>as_mpl_artists</em> returns two list of mpl Artist class. The
-first item is a list of mpl&#8217;s Patches, and the second is other kind of
-artists. The return values need to be added to the axes manually:</p>
+first item is a list of mpl&#8217;s Patches, and the second one is other
+kind of artists (e.g., Text). The return values need to be added to
+the axes manually:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="c"># ax is a mpl Axes object</span>
 <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">patch_list</span><span class="p">:</span>
     <span class="n">ax</span><span class="o">.</span><span class="n">add_patch</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
@@ -348,7 +350,7 @@ ds9 attributes.</p>
     </div>
     <div class="footer">
       &copy; Copyright 2009, Jae-Joon Lee.
-      Last updated on Jul 02, 2009.
+      Last updated on Jul 03, 2009.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.6.2.
     </div>
   </body>
