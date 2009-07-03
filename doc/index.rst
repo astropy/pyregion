@@ -7,7 +7,7 @@ ciao region files.
 
 
 +----------------------------------------+----------------------------------------+
-| ds9                                    | pyregion                               |
+| ds9                                    | pyregion + matplotlib                  |
 +========================================+========================================+
 | .. image::    _static/region_ds9.jpg   | .. image::    _static/region_mpl.png   |
 |   :width: 300px                        |   :width: 300px                        |

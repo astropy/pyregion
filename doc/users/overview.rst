@@ -13,7 +13,7 @@ by ds9. Ruler, Compass and Projection type is ignored.
 
 
 +----------------------------------------+----------------------------------------+
-| ds9                                    | pyregion                               |
+| ds9                                    | pyregion + matplotlib                  |
 +========================================+========================================+
 | .. image:: ../_static/region_ds9.jpg   | .. image:: ../_static/region_mpl.png   |
 |   :width: 300px                        |   :width: 300px                        |
@@ -115,6 +115,7 @@ pyregion.read_region_as_imagecoord converts the coordinate into the
 image coordinate ("1"-based). And the function requires the
 Pyfits.Header instance as the second parameter.::
 
+    from pyregion import read_region_as_imagecoord
     import pyfits
     f = pyfits.open("t1.fits")
     r2 = read_region_as_imagecoord(region_string, header=f[0].header)
@@ -141,8 +142,9 @@ pyregion provides a helper function to draw regions with matplotlib. ::
 The argument for *as_mpl_artists* needs to be the return list of the
 read_region_as_imagecoord call, i.e., coordinate needs to be in image
 coordinate. *as_mpl_artists* returns two list of mpl Artist class. The
-first item is a list of mpl's Patches, and the second is other kind of
-artists. The return values need to be added to the axes manually::
+first item is a list of mpl's Patches, and the second one is other
+kind of artists (e.g., Text). The return values need to be added to
+the axes manually::
 
     # ax is a mpl Axes object
     for p in patch_list:
