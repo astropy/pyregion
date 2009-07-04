@@ -1,0 +1,7 @@
+# Region file format: DS9 version 4.1
+# Filename: pspc_skyview.fits
+global color=green dashlist=8 3 width=1 font="helvetica 10 normal" select=1 highlite=1 dash=0 fixed=0 edit=1 move=1 delete=1 include=1 source=1
+physical
+ellipse(82,167,36,75,346.95915)
+epanda(140,166,87.19363,195.80251,1,32.5,39.5,65,79,1,307.90041)
+-polygon(78.265142,201.73486,132,209,125,178,163.73486,116.26514,78.265142,116.26514)
