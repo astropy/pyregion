@@ -31,8 +31,8 @@ def main():
           packages = ['pyregion'],
           package_dir={'pyregion':'lib'},
 
-          ext_modules=[ Extension("pyregion._region",
-                                  ["src/_region.pyx"],
+          ext_modules=[ Extension("pyregion._region_filter",
+                                  ["src/_region_filter.pyx"],
                                   include_dirs=['./src',
                                                 numpy_include,
                                                 ],

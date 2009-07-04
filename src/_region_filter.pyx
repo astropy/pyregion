@@ -173,7 +173,8 @@ cdef class RegionBase:
             for ix from 0 <= ix < nx:
                 #rd[iy*nx + ix] = self._inside(i, j)
                 # altenatively more optimized
-                rd[0] = self._inside(ix+1, iy+1) # +1 for (1,1) based..
+                #rd[0] = self._inside(ix+1, iy+1) # +1 for (1,1) based..
+                rd[0] = self._inside(ix, iy)
                 rd = rd + 1
 
         return ra
@@ -500,6 +501,9 @@ cdef class Transform(RegionBase):
 cdef extern from "math.h":
     double sin(double)
     double cos(double)
+    double atan2(double, double)
+    double fmod(double, double)
+    double M_PI
 
 
 cdef class Rotated(Transform):
@@ -522,7 +526,7 @@ cdef class Rotated(Transform):
 
         Transform.__init__(self, child_region)
 
-        theta = degree / 180. * 3.1415926
+        theta = degree / 180. * M_PI #3.1415926
         self.sin_theta = sin(theta)
         self.cos_theta = cos(theta)
 
@@ -784,3 +788,57 @@ cdef class Polygon(RegionBase):
 
 
         return r
+
+
+cdef class AngleRange(RegionBase):
+    """
+    AngleRange
+
+      >>> shape = Ellipse(xc, yc, degree1, degree2)
+
+    """
+
+    cdef double xc
+    cdef double yc
+    cdef double degree1
+    cdef double degree2
+    cdef double radian1
+    cdef double radian2
+
+
+    def __init__(self, double xc, double yc,
+                 double degree1, double degree2,
+                 RegionContext c=None):
+
+        self.xc = xc
+        self.yc = yc
+        self.degree1 = degree1
+        self.degree2 = degree2
+
+        # theta in [-pi, pi]
+        self.radian1 = (fmod(degree1+180, 360.)-180)/180.*M_PI#3.1415926
+        self.radian2 = (fmod(degree2+180, 360.)-180)/180.*M_PI#3.1415926
+        #self.radian1 = (fmod(degree1, 360))/180.*M_PI#3.1415926
+        #self.radian2 = (fmod(degree2, 360))/180.*M_PI#3.1415926
+        #self.radian2 = (((degree2+180)%360.)-180)/180.*M_PI#3.1415926
+
+        if self.radian2 < self.radian1:
+            self.radian2 += 2.*M_PI #2*3.1415926
+
+        self.metric_set_origin(xc, yc, c)
+
+
+    cdef npy_bool _inside(self, double x, double y):
+        cdef double dx, dy, theta
+
+        dx = x - self.xc
+        dy = y - self.yc
+
+        theta = atan2(dy, dx)
+
+        if theta < self.radian1:
+            theta += 2.*M_PI
+        return (theta < self.radian2)
+
+    def __repr__(self):
+        return "AngleRange(%f, %f, %f, %f)" % (self.xc, self.yc, self.degree1, self.degree2)
