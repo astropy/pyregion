@@ -1,12 +1,4 @@
-import copy
-import matplotlib.patches as patches
-from matplotlib.text import Text
-from matplotlib.path import Path
-from matplotlib.lines import Line2D
-from matplotlib.transforms import Affine2D
-
 import numpy as np
-import math
 import _region_filter as region_filter
 
 def as_region_filter(shape_list):
@@ -94,27 +86,26 @@ def as_region_filter(shape_list):
             f = region_filter.Rotated(f2, angle, xc, yc)
             #f = f2 & region_filter.AngleRange(xc, yc, a1, a2)
 
+        elif shape.name == "bpanda":
+            xc, yc, a1, a2, an, r11, r12, r21, r22, rn, angle = shape.coord_list
+            # -1 for change origin to 0,0
+            xc, yc = xc-1, yc-1
+
+            f1 = region_filter.Box(xc, yc, r21, r22) & ~region_filter.Box(xc, yc, r11, r12)
+            f2 = f1 & region_filter.AngleRange(xc, yc, a1, a2)
+            f = region_filter.Rotated(f2, angle, xc, yc)
+            #f = f2 & region_filter.AngleRange(xc, yc, a1, a2)
+
         else:
             print "'as_region_filter' does not know how to convert '%s' to mpl artist" % (shape.name,)
             continue
 
-        filter_list.append(f)
+        if shape.exclude:
+            filter_list = [region_filter.RegionOrList(*filter_list) & ~f]
+        else:
+            filter_list.append(f)
 
 
     return region_filter.RegionOrList(*filter_list)
 
-
-if 0:
-    import parser_ds9
-    regname = "az_region.reg"
-    shape_list = region_read_as_imagecoord(regname, wcs)
-    p = as_mpl_patches(shape_list)
-
-    clf()
-    ax = gca()
-    [ax.add_patch(p1) for p1 in p]
-    xlim(0,1500)
-    ylim(0,1500)
-
-    draw()
 

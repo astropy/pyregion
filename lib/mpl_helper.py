@@ -6,14 +6,14 @@ from matplotlib.lines import Line2D
 from matplotlib.transforms import Affine2D
 
 import numpy as np
-import math
+from math import cos, sin, pi, atan2
 
 def rotated_polygon(xy, ox, oy, angle):
     # angle in degree
-    theta = angle/180.*math.pi
+    theta = angle/180.*pi
 
-    st = math.sin(theta)
-    ct = math.cos(theta)
+    st = sin(theta)
+    ct = cos(theta)
 
     xy = np.asarray(xy, dtype="d")
     x, y = xy[:,0], xy[:,1]
@@ -44,7 +44,7 @@ def properties_func_default(shape, saved_attrs):
 
     attr_list.extend(saved_attrs[0])
     attr_dict.update(saved_attrs[1])
-    
+
     if shape.name == "text":
         kwargs = dict(color=attr_dict.get("color", None),
                       rotation=attr_dict.get("textangle", 0),
@@ -99,7 +99,7 @@ def as_mpl_artists(shape_list,
 
     # properties for continued(? multiline?) regions
     saved_attrs = None
-    
+
     for shape in shape_list:
 
         if saved_attrs is None:
@@ -108,17 +108,20 @@ def as_mpl_artists(shape_list,
             _attrs = copy.copy(saved_attrs[0]), copy.copy(saved_attrs[1])
 
         kwargs = properties_func(shape, _attrs)
-            
+
         if shape.name == "composite":
             saved_attrs = shape.attr
             continue
 
         if saved_attrs is None and shape.continued:
             saved_attrs = shape.attr
+#         elif (shape.name in shape.attr[1]):
+#             if (shape.attr[1][shape.name] != "ignore"):
+#                 saved_attrs = shape.attr
 
         if not shape.continued:
             saved_attrs = None
-            
+
         if shape.name == "polygon":
             xy = np.array(shape.coord_list)
             xy.shape = -1,2
@@ -207,6 +210,15 @@ def as_mpl_artists(shape_list,
             xc, yc, a1, a2, an, r11, r12,r21, r22, rn, angle = shape.coord_list
             # -1 for change origin to 0,0
             xc, yc = xc-1, yc-1
+
+            # mpl takes angle a1, a2 as angle as in circle before
+            # transformation to ellipse.
+
+            x1, y1 = cos(a1/180.*pi), sin(a1/180.*pi)*r11/r12
+            x2, y2 = cos(a2/180.*pi), sin(a2/180.*pi)*r11/r12
+
+            a1, a2 = atan2(y1, x1)/pi*180., atan2(y2, x2)/pi*180.
+
             for rr1, rr2 in zip(np.linspace(r11, r21, rn+1),
                                 np.linspace(r12, r22, rn+1)):
                 ell = patches.Arc((xc, yc), rr1*2, rr2*2, angle=angle,
