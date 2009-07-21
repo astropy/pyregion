@@ -8,7 +8,7 @@ from pyparsing import Literal, CaselessKeyword, CaselessLiteral, \
 from region_numbers import CoordOdd, CoordEven, Distance, Angle, Integer
 from region_numbers import SimpleNumber, SimpleInteger
 
-from kapteyn_helper import get_kapteyn_projection, sky2sky
+from wcs_helper import get_kapteyn_projection, sky2sky
 
 import warnings
 
@@ -184,7 +184,6 @@ class RegionParser(RegionPusher):
                     src = tgt
                 else:
                     src = select_wcs(l1.coord_format)
-
                 sky_to_sky = sky2sky(src, tgt)
 
                 cl = l1.coord_list
