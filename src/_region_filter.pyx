@@ -139,6 +139,13 @@ cdef class RegionBase:
         return (0)
 
     def mask(self, img):
+        """
+        Create a mask ( a 2-d image whose pixel value is 1 if the
+        pixel is inside the filter, otherwise 0). It takes a single
+        argument which is numpy 2d array (or any python object with
+        *shape* attribute) or a tuple of two integer representing the
+        image shape.
+        """
         cdef int l, nx, ny
 
         if hasattr(img, "shape"):
@@ -180,10 +187,17 @@ cdef class RegionBase:
         return ra
 
     def inside1(self, double x, double y):
+        """
+        inside1(x, y) : returns True if the point (x,y) is inside the filter.
+        """
         return self._inside(x, y)
 
 
     def inside(self, x, y):
+        """
+        inside(x, y) : given the numpy array of x and y, returns an
+        array b of same shape, where b[i] = inside1(x[i], y[i])
+        """
         cdef c_numpy.ndarray xa
         cdef c_numpy.ndarray ya
         cdef c_numpy.ndarray ra
@@ -217,40 +231,40 @@ cdef class RegionBase:
         return ra
 
 
-    def inside2(self, x, y):
-        cdef c_numpy.ndarray xa
-        cdef c_numpy.ndarray ya
-        cdef c_numpy.ndarray ra
-        cdef double *xd
-        cdef double *yd
-        cdef npy_bool *rd
-        cdef int i
-        cdef int ((*_inside_ptr)(RegionBase, double ,double ))
-        cdef int n
+#     def inside2(self, x, y):
+#         cdef c_numpy.ndarray xa
+#         cdef c_numpy.ndarray ya
+#         cdef c_numpy.ndarray ra
+#         cdef double *xd
+#         cdef double *yd
+#         cdef npy_bool *rd
+#         cdef int i
+#         cdef int ((*_inside_ptr)(RegionBase, double ,double ))
+#         cdef int n
 
-        # This approach fails!
+#         # This approach fails!
 
-        cobj = c_python.PyObject_GetAttrString(self, "__pyx_vtable__")
+#         cobj = c_python.PyObject_GetAttrString(self, "__pyx_vtable__")
 
-        _inside_ptr = <int ((*)(RegionBase, double, double))>  c_python.PyCObject_AsVoidPtr(cobj)
+#         _inside_ptr = <int ((*)(RegionBase, double, double))>  c_python.PyCObject_AsVoidPtr(cobj)
 
-        xa = c_numpy.PyArray_ContiguousFromAny(x, c_numpy.NPY_DOUBLE, 1, 0)
-        ya = c_numpy.PyArray_ContiguousFromAny(y, c_numpy.NPY_DOUBLE, 1, 0)
+#         xa = c_numpy.PyArray_ContiguousFromAny(x, c_numpy.NPY_DOUBLE, 1, 0)
+#         ya = c_numpy.PyArray_ContiguousFromAny(y, c_numpy.NPY_DOUBLE, 1, 0)
 
-        ra = c_numpy.PyArray_EMPTY(xa.nd, xa.dimensions,
-                                   c_numpy.NPY_BOOL, 0)
+#         ra = c_numpy.PyArray_EMPTY(xa.nd, xa.dimensions,
+#                                    c_numpy.NPY_BOOL, 0)
 
-        xd = <double *> c_numpy.PyArray_DATA(xa)
-        yd = <double *> c_numpy.PyArray_DATA(ya)
-        rd = <npy_bool *> c_numpy.PyArray_DATA(ra)
+#         xd = <double *> c_numpy.PyArray_DATA(xa)
+#         yd = <double *> c_numpy.PyArray_DATA(ya)
+#         rd = <npy_bool *> c_numpy.PyArray_DATA(ra)
 
-        n = c_numpy.PyArray_SIZE(xa)
-        for i from 0 <= i < n:
-            #self._inside(xd[0], yd[0])
-            #rd[i] = _inside_ptr(self, xd[i], yd[i])
-            rd[i] = self._inside(xd[i], yd[i])
+#         n = c_numpy.PyArray_SIZE(xa)
+#         for i from 0 <= i < n:
+#             #self._inside(xd[0], yd[0])
+#             #rd[i] = _inside_ptr(self, xd[i], yd[i])
+#             rd[i] = self._inside(xd[i], yd[i])
 
-        return ra
+#         return ra
 
 
 cdef class RegionNot(RegionBase):
@@ -386,82 +400,82 @@ def RegionOr(RegionBase region1, RegionBase region2):
     return RegionOrList(*(region1_list + region2_list))
 
 
-cdef class RegionAnd_OLD(RegionBase):
-    cdef RegionBase child_region1
-    cdef RegionBase child_region2
+# cdef class RegionAnd_OLD(RegionBase):
+#     cdef RegionBase child_region1
+#     cdef RegionBase child_region2
 
-    def __init__(self, RegionBase child_region1, RegionBase child_region2):
-        self.child_region1 = child_region1
-        self.child_region2 = child_region2
+#     def __init__(self, RegionBase child_region1, RegionBase child_region2):
+#         self.child_region1 = child_region1
+#         self.child_region2 = child_region2
 
-    cdef npy_bool _inside(self, double x, double y):
-        return (self.child_region1._inside(x, y)) & (self.child_region2._inside(x, y))
-
-
-cdef class RegionOr_OLD(RegionBase):
-    cdef RegionBase child_region1
-    cdef RegionBase child_region2
-
-    def __init__(self, RegionBase child_region1, RegionBase child_region2):
-        self.child_region1 = child_region1
-        self.child_region2 = child_region2
-
-    cdef npy_bool _inside(self, double x, double y):
-        return (self.child_region1._inside(x, y)) | (self.child_region2._inside(x, y))
+#     cdef npy_bool _inside(self, double x, double y):
+#         return (self.child_region1._inside(x, y)) & (self.child_region2._inside(x, y))
 
 
+# cdef class RegionOr_OLD(RegionBase):
+#     cdef RegionBase child_region1
+#     cdef RegionBase child_region2
 
-cdef class Transformed(RegionBase):
-    cdef double T11, T12, T21, T22
-    cdef double TI11, TI12, TI21, TI22
-    cdef double origin_x, origin_y
-    cdef RegionBase child_region
+#     def __init__(self, RegionBase child_region1, RegionBase child_region2):
+#         self.child_region1 = child_region1
+#         self.child_region2 = child_region2
 
-    def __init__(self,
-                 RegionBase child_region,
-                 double T11, double T12, double T21, double T22,
-                 double origin_x, double origin_y):
-
-        self.child_region = child_region
-
-        self.T11 = T11
-        self.T12 = T12
-        self.T21 = T21
-        self.T22 = T22
-
-        # calculate inverse transform!
-        self.TI11 = T11
-        self.TI12 = T12
-        self.TI21 = T21
-        self.TI22 = T22
-
-        self.origin_x = origin_x
-        self.origin_y = origin_y
-
-
-    cdef int _transform(self, double x, double y, double *xp, double *yp):
-        cdef double x1, x2, y1, y2
-
-        x1 = x - self.origin_x
-        y1 = y - self.origin_y
-
-        # FIX IT!
-        x2 = x1
-        y2 = y1
-
-        xp[0] = x2 + self.origin_x
-        yp[0] = y2 + self.origin_y
+#     cdef npy_bool _inside(self, double x, double y):
+#         return (self.child_region1._inside(x, y)) | (self.child_region2._inside(x, y))
 
 
 
-    cdef npy_bool _inside(self, double x, double y):
-        cdef double xp, yp
-        cdef npy_bool r
+# cdef class Transformed(RegionBase):
+#     cdef double T11, T12, T21, T22
+#     cdef double TI11, TI12, TI21, TI22
+#     cdef double origin_x, origin_y
+#     cdef RegionBase child_region
 
-        self._transform(x, y, &xp, &yp)
-        r = self.child_region._inside(xp, yp)
+#     def __init__(self,
+#                  RegionBase child_region,
+#                  double T11, double T12, double T21, double T22,
+#                  double origin_x, double origin_y):
 
-        return r
+#         self.child_region = child_region
+
+#         self.T11 = T11
+#         self.T12 = T12
+#         self.T21 = T21
+#         self.T22 = T22
+
+#         # calculate inverse transform!
+#         self.TI11 = T11
+#         self.TI12 = T12
+#         self.TI21 = T21
+#         self.TI22 = T22
+
+#         self.origin_x = origin_x
+#         self.origin_y = origin_y
+
+
+#     cdef int _transform(self, double x, double y, double *xp, double *yp):
+#         cdef double x1, x2, y1, y2
+
+#         x1 = x - self.origin_x
+#         y1 = y - self.origin_y
+
+#         # FIX IT!
+#         x2 = x1
+#         y2 = y1
+
+#         xp[0] = x2 + self.origin_x
+#         yp[0] = y2 + self.origin_y
+
+
+
+#     cdef npy_bool _inside(self, double x, double y):
+#         cdef double xp, yp
+#         cdef npy_bool r
+
+#         self._transform(x, y, &xp, &yp)
+#         r = self.child_region._inside(xp, yp)
+
+#         return r
 
 
 
@@ -474,9 +488,6 @@ cdef class Transform(RegionBase):
 
 
     property child:
-
-        "A doc string can go here."
-
         def __get__(self):
             return self.child_region
 

@@ -7,7 +7,6 @@ except ImportError:
     sys.exit(0)
 
 import matplotlib.pyplot as plt
-import matplotlib.cm as cm
 
 from pyregion import read_region_as_imagecoord
 from pyregion.mpl_helper import as_mpl_artists
