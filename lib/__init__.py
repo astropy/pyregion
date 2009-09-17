@@ -29,4 +29,22 @@ def read_region_as_imagecoord(s, header):
 
 
 
+def get_mask(region, hdu):
+    """
+    f = pyfits.read("test.fits")
+    reg = read_region_as_imagecoord(s, f[0].header)
+    mask = get_mask(reg, f[0])
+    """
+
+    from pyregion.region_to_filter import as_region_filter
+
+    data = hdu.data
+    header = hdu.header
+    
+    region_filter = as_region_filter(region)
+
+    mask = region_filter.mask(data)
+
+    return mask
+
 
