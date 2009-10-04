@@ -1,5 +1,4 @@
 import numpy as np
-from matplotlib.cbook import is_string_like
 
 from kapteyn_celestial import skymatrix, longlat2xyz, dotrans, xyz2longlat
 import kapteyn_celestial
@@ -46,6 +45,15 @@ coord_system = dict(fk4=FK4,
 
 def is_equal_coord_sys(src, dest):
     return (src.lower() == dest.lower())
+
+
+def is_string_like(obj):
+    'Return True if *obj* looks like a string'
+    if isinstance(obj, (str, unicode)): return True
+    try: obj + ''
+    except: return False
+    return True
+
 
 class sky2sky(object):
     def __init__(self, src, dest):

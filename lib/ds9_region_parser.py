@@ -169,8 +169,8 @@ class RegionParser(RegionPusher):
                 yield l1, c1
 
 
-
-    def sky_to_image(self, l, header):
+    @staticmethod
+    def sky_to_image(l, header):
 
         pc = PhysicalCoordinate(header)
 
@@ -261,6 +261,10 @@ class RegionParser(RegionPusher):
     def filter_shape(self, sss):
         return [s1[0] for s1 in sss if isinstance(s1[0], Shape)]
 
+    @staticmethod
+    def filter_shape2(sss):
+        r = [s1 for s1 in sss if isinstance(s1[0], Shape)]
+        return zip(*r)
 
 
 def test_regionLine():
