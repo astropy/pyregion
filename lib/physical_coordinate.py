@@ -2,17 +2,41 @@
 
 class PhysicalCoordinate(object):
     def __init__(self, header):
-        try:
-            cv1,cr1,cd1 = header["CRVAL1P"], header["CRPIX1P"], header[" CDELT1P"]
-            cv2,cr2,cd2 = header["CRVAL2P"], header["CRPIX2P"], header[" CDELT2P"]
-        except KeyError:
-            self._physical_coord_not_defined = True
-        else:
+        phys_coord = ""
+
+        # check if physical coordinate is defined. FIXME!
+        for C in ["P", "L"]:
+            try:
+                if (header["WCSTY1"+C].strip() == "PHYSICAL") \
+                   and (header["WCSTY2"+C].strip() == "PHYSICAL"):
+                    phys_coord = C
+            except KeyError:
+                pass
+
+            try:
+                if (header["CTYPE1"+C].strip() == "X") \
+                   and (header["CTYPE2"+C].strip() == "Y"):
+                    phys_coord = C
+            except KeyError:
+                pass
+
+
+        if phys_coord:
+            C = phys_coord
+            cv1,cr1,cd1 = header["CRVAL1"+C], header["CRPIX1"+C], header[" CDELT1"+C]
+            cv2,cr2,cd2 = header["CRVAL2"+C], header["CRPIX2"+C], header[" CDELT2"+C]
+
             self._physical_coord_not_defined = False
             
             self.cv1_cr1_cd1 = cv1,cr1,cd1
             self.cv2_cr2_cd2 = cv2,cr2,cd2
             self.cdelt = (cd1*cd2)**.5
+
+        else:
+            self._physical_coord_not_defined = True
+            self.cv1_cr1_cd1 = 0, 0, 1
+            self.cv2_cr2_cd2 = 0, 0, 1
+            self.cdelt = 1
 
     def to_physical(self, imx, imy):
 
