@@ -19,7 +19,7 @@ except ImportError:
 
 def get_test_header():
     cards = pyfits.CardList()
-    for l in open("test.header"):
+    for l in open("sample_fits01.header"):
         card = pyfits.Card()
         card.fromstring(l.strip())
         cards.append(card)

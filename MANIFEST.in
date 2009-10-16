@@ -1,2 +1,3 @@
 recursive-include examples *.py *.reg
-include examples/test.header
+include examples/*.header
+include examples/pspc_skyview.fits

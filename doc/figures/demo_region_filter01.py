@@ -11,12 +11,21 @@ import matplotlib.pyplot as plt
 import pyregion
 
 # read in the image
-xray_name="pspc_skyview.fits"
-f_xray = pyfits.open(xray_name)
+def demo_header():
+    cards = pyfits.CardList()
+    for l in open("sample_fits02.header"):
+        card = pyfits.Card()
+        card.fromstring(l.strip())
+        cards.append(card)
+    h = pyfits.Header(cards)
+    return h
+
+header = demo_header() # sample fits header
+shape = (header["NAXIS1"], header["NAXIS2"])
 
 reg_name = "test.reg"
-r = pyregion.open(reg_name).as_imagecoord(f_xray[0].header)
-m = r.get_mask(shape=f_xray[0].data.shape)
+r = pyregion.open(reg_name).as_imagecoord(header)
+m = r.get_mask(shape=shape)
 
 
 fig = plt.figure(1, figsize=(7,5))
@@ -32,8 +41,8 @@ for t in text_list:
 # another region
 
 reg_name = "test02.reg"
-r = pyregion.open(reg_name).as_imagecoord(f_xray[0].header)
-m = r.get_mask(shape=f_xray[0].data.shape)
+r = pyregion.open(reg_name).as_imagecoord(header)
+m = r.get_mask(shape=shape)
 
 ax = plt.subplot(122)
 plt.imshow(m, origin="lower")
