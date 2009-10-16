@@ -92,10 +92,13 @@ def properties_func_default(shape, saved_attrs):
 
 
 def as_mpl_artists(shape_list,
-                   properties_func=properties_func_default):
+                   properties_func=None):
 
     patch_list = []
     artist_list = []
+
+    if properties_func is None:
+        properties_func = properties_func_default
 
     # properties for continued(? multiline?) regions
     saved_attrs = None

@@ -6,14 +6,20 @@ class ShapeList(list):
     def __init__(self, *ka, **kw):
         self._comment_list = kw.pop("comment_list", None)
         list.__init__(self, *ka, **kw)
-        
+
+    def check_imagecoord(self):
+        if [s for s in self if s.coord_format != "image"]:
+            return False
+        else:
+            return True
+
     def as_imagecoord(self, header):
         """
         Return a new ShapeList where the coordinate of the each shape
         is converted to the image coordinate using the given header
         information
         """
-        
+
         comment_list = self._comment_list
         if comment_list is None:
             comment_list = cycle([None])
@@ -22,44 +28,49 @@ class ShapeList(list):
                                       header)
         shape_list, comment_list = zip(*list(r))
         return ShapeList(shape_list, comment_list=comment_list)
-        
 
-    def get_mpl_patches_texts(self):
+
+    def get_mpl_patches_texts(self, properties_func=None):
         from mpl_helper import as_mpl_artists
-        patches, txts = as_mpl_artists(self)
+        patches, txts = as_mpl_artists(self, properties_func)
 
         return patches, txts
-    
+
     def get_filter(self, header=None):
         from region_to_filter import as_region_filter
 
-        if header is not None:
-            reg_in_imagecoord = self.as_imagecoord(header)
-        else:
+        if header is None:
+            if not self.check_imagecoord():
+                raise RuntimeError("the region has non-image coordinate. header is required.")
             reg_in_imagecoord = self
-            
+        else:
+            reg_in_imagecoord = self.as_imagecoord(header)
+
         region_filter = as_region_filter(reg_in_imagecoord)
 
         return region_filter
 
 
     def get_mask(self, hdu=None, header=None, shape=None):
-            
+        """
+        creates a 2-d mask.
+
+        get_mask(hdu=f[0])
+        get_mask(shape=(10,10))
+        get_mask(header=f[0].header, shape=(10,10))
+        """
 
         if hdu and header is None:
             header = hdu.header
         if hdu and shape is None:
             shape = hdu.data.shape
 
-        if header is None or shape is None:
-            raise ValueError()
-        
         region_filter = self.get_filter(header=header)
         mask = region_filter.mask(shape)
 
         return mask
 
-    
+
 
 def parse(region_string):
     """
@@ -117,7 +128,7 @@ def get_mask(region, hdu):
 
     data = hdu.data
     header = hdu.header
-    
+
     region_filter = as_region_filter(region)
 
     mask = region_filter.mask(data)

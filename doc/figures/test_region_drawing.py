@@ -1,15 +1,8 @@
-import sys
-
-try:
-    import pyfits
-except ImportError:
-    print "This example requires the pyfits module installed"
-    sys.exit(0)
-
 import matplotlib.pyplot as plt
 import matplotlib.cm as cm
 
 import pyregion
+import pyfits
 
 # read in the image
 xray_name="pspc_skyview.fits"
@@ -21,8 +14,8 @@ try:
 except ImportError:
     ax=plt.subplot(111)
 
-ax.imshow(f_xray[0].data, cmap=cm.gray, vmin=0., vmax=0.00038, origin="lower")
-
+ax.imshow(f_xray[0].data,
+          cmap=cm.gray, vmin=0., vmax=0.00038, origin="lower")
 
 reg_name = "test.reg"
 r = pyregion.open(reg_name).as_imagecoord(f_xray[0].header)
