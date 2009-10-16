@@ -30,12 +30,8 @@ class ShapeList(list):
 
         return patches, txts
     
-    def get_filter(self, hdu=None, header=None, shape=None):
+    def get_filter(self, header=None):
         from region_to_filter import as_region_filter
-
-        if hdu:
-            shape = hdu.data.shape
-            header = hdu.header
 
         if header is not None:
             reg_in_imagecoord = self.as_imagecoord(header)
@@ -49,7 +45,16 @@ class ShapeList(list):
 
     def get_mask(self, hdu=None, header=None, shape=None):
             
-        region_filter = self.get_filter(hdu=hdu, header=header, shape=shape)
+
+        if hdu and header is None:
+            header = hdu.header
+        if hdu and shape is None:
+            shape = hdu.data.shape
+
+        if header is None or shape is None:
+            raise ValueError()
+        
+        region_filter = self.get_filter(header=header)
         mask = region_filter.mask(shape)
 
         return mask

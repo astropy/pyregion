@@ -31,6 +31,9 @@ ctypedef int Py_ssize_t
 class NotYetImplemented(Exception):
     pass
 
+class RegionFilterException(Exception):
+    pass
+
 
 
 cdef struct Metric:
@@ -146,6 +149,7 @@ cdef class RegionBase:
         *shape* attribute) or a tuple of two integer representing the
         image shape.
         """
+
         cdef int l, nx, ny
 
         if hasattr(img, "shape"):
@@ -154,7 +158,7 @@ cdef class RegionBase:
             shape = img
 
         if c_python.PySequence_Length(shape) != 2:
-            raise "shape of the inut image must be 2d"
+            raise RegionFilterException("shape of the inut image must be 2d: %s is given" % (str(shape)))
 
         ny = c_python.PySequence_GetItem(shape, 0)
         nx = c_python.PySequence_GetItem(shape, 1)
@@ -188,7 +192,7 @@ cdef class RegionBase:
 
     def inside1(self, double x, double y):
         """
-        inside1(x, y) : returns True if the point (x,y) is inside the filter.
+        inside1(float, float) : returns True if the point (x,y) is inside the filter.
         """
         return self._inside(x, y)
 
