@@ -1,6 +1,5 @@
 import matplotlib.pyplot as plt
-
-from demo_region01 import show_region
+from demo_helper import show_region
 
 if 1:
 
