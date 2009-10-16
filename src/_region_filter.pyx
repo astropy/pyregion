@@ -31,6 +31,9 @@ ctypedef int Py_ssize_t
 class NotYetImplemented(Exception):
     pass
 
+class RegionFilterException(Exception):
+    pass
+
 
 
 cdef struct Metric:
@@ -139,6 +142,13 @@ cdef class RegionBase:
         return (0)
 
     def mask(self, img):
+        """
+        mask(shape) or mask(img)
+        
+        return a mask image (2d numpy.array of boolean type) of a given shape
+        (shape of the image if image is given).
+        """
+        
         cdef int l, nx, ny
 
         if hasattr(img, "shape"):
@@ -147,7 +157,7 @@ cdef class RegionBase:
             shape = img
 
         if c_python.PySequence_Length(shape) != 2:
-            raise "shape of the inut image must be 2d"
+            raise RegionFilterException("shape of the inut image must be 2d: %s is given" % (str(shape)))
 
         ny = c_python.PySequence_GetItem(shape, 0)
         nx = c_python.PySequence_GetItem(shape, 1)
@@ -180,10 +190,20 @@ cdef class RegionBase:
         return ra
 
     def inside1(self, double x, double y):
+        """
+        inside1(float, float)
+        
+        return True if the point is inside the region.
+        """
         return self._inside(x, y)
 
 
     def inside(self, x, y):
+        """
+        inside(x_array, y_array)
+        
+        return an boolean array of same shape as the input
+        """
         cdef c_numpy.ndarray xa
         cdef c_numpy.ndarray ya
         cdef c_numpy.ndarray ra
@@ -217,40 +237,40 @@ cdef class RegionBase:
         return ra
 
 
-    def inside2(self, x, y):
-        cdef c_numpy.ndarray xa
-        cdef c_numpy.ndarray ya
-        cdef c_numpy.ndarray ra
-        cdef double *xd
-        cdef double *yd
-        cdef npy_bool *rd
-        cdef int i
-        cdef int ((*_inside_ptr)(RegionBase, double ,double ))
-        cdef int n
+#     def inside2(self, x, y):
+#         cdef c_numpy.ndarray xa
+#         cdef c_numpy.ndarray ya
+#         cdef c_numpy.ndarray ra
+#         cdef double *xd
+#         cdef double *yd
+#         cdef npy_bool *rd
+#         cdef int i
+#         cdef int ((*_inside_ptr)(RegionBase, double ,double ))
+#         cdef int n
 
-        # This approach fails!
+#         # This approach fails!
 
-        cobj = c_python.PyObject_GetAttrString(self, "__pyx_vtable__")
+#         cobj = c_python.PyObject_GetAttrString(self, "__pyx_vtable__")
 
-        _inside_ptr = <int ((*)(RegionBase, double, double))>  c_python.PyCObject_AsVoidPtr(cobj)
+#         _inside_ptr = <int ((*)(RegionBase, double, double))>  c_python.PyCObject_AsVoidPtr(cobj)
 
-        xa = c_numpy.PyArray_ContiguousFromAny(x, c_numpy.NPY_DOUBLE, 1, 0)
-        ya = c_numpy.PyArray_ContiguousFromAny(y, c_numpy.NPY_DOUBLE, 1, 0)
+#         xa = c_numpy.PyArray_ContiguousFromAny(x, c_numpy.NPY_DOUBLE, 1, 0)
+#         ya = c_numpy.PyArray_ContiguousFromAny(y, c_numpy.NPY_DOUBLE, 1, 0)
 
-        ra = c_numpy.PyArray_EMPTY(xa.nd, xa.dimensions,
-                                   c_numpy.NPY_BOOL, 0)
+#         ra = c_numpy.PyArray_EMPTY(xa.nd, xa.dimensions,
+#                                    c_numpy.NPY_BOOL, 0)
 
-        xd = <double *> c_numpy.PyArray_DATA(xa)
-        yd = <double *> c_numpy.PyArray_DATA(ya)
-        rd = <npy_bool *> c_numpy.PyArray_DATA(ra)
+#         xd = <double *> c_numpy.PyArray_DATA(xa)
+#         yd = <double *> c_numpy.PyArray_DATA(ya)
+#         rd = <npy_bool *> c_numpy.PyArray_DATA(ra)
 
-        n = c_numpy.PyArray_SIZE(xa)
-        for i from 0 <= i < n:
-            #self._inside(xd[0], yd[0])
-            #rd[i] = _inside_ptr(self, xd[i], yd[i])
-            rd[i] = self._inside(xd[i], yd[i])
+#         n = c_numpy.PyArray_SIZE(xa)
+#         for i from 0 <= i < n:
+#             #self._inside(xd[0], yd[0])
+#             #rd[i] = _inside_ptr(self, xd[i], yd[i])
+#             rd[i] = self._inside(xd[i], yd[i])
 
-        return ra
+#         return ra
 
 
 cdef class RegionNot(RegionBase):

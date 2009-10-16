@@ -29,18 +29,22 @@ by ds9. Ruler, Compass and Projection type is ignored.
 Read Region Files
 =================
 
-*pyregion.read_region* takes the region string as an argument and
-returns list of shape objects. ::
+*pyregion.open* takes the region name as an argument and returns a
+ShapeList objects, which is basically a list of Shape objects. ::
 
-    from pyregion import read_region
+    import pyregion
     region_name = "ds9.reg"
-    region_string = open(region_name).read()
-    r = read_region(region_string)
+    r = pyregion.open(region_name)
+
+You may use *pyregion.parse* if you have a string of region deniition. ::
+
+    region = 'fk5;circle(290.96388,14.019167,843.31194")'
+    r = pyregion.parse(region)
 
 The shape object is a python representation of each region
 definition. For example,::
 
-    from pyregion import read_region
+    import pyregion
     
     region_string = """
     # Region file format: DS9 version 4.1
@@ -51,7 +55,7 @@ definition. For example,::
     box(11:24:39.213,-59:16:53.91,42.804",23.616",19.0384) # width=4
     """
 
-    r = read_region(region_string)
+    r = pyregion.parse(region_string)
 
 And you have::
 
@@ -72,8 +76,8 @@ The shape object has following attributes,
    >>> print r[0].coord_format
    fk5
    
-* coord_list : list of coordinates as the specified coordinate
-  format. The coordinate value for sky coordinate is degree.  ::
+* coord_list : list of coordinates in *coord_format*. The coordinate
+  value for sky coordinate is degree.  ::
 
    >>> print r[0].coord_list
    [171.10095833333332, -59.250611111111112, 0.0051418888888888886]
@@ -111,16 +115,16 @@ The shape object has following attributes,
   currently supported (the last definition override previous ones).
 
 
-pyregion.read_region_as_imagecoord converts the coordinate into the
-image coordinate ("1"-based). And the function requires the
-Pyfits.Header instance as the second parameter.::
+The ShapeList class have a few method that could be
+useful. *ShapeList.as_imagecoord* returns a new ShapeList instance
+with the coordinates converted to the image coordinate ("1"-based). It
+requires the Pyfits.Header instance.::
 
-    from pyregion import read_region_as_imagecoord
     import pyfits
     f = pyfits.open("t1.fits")
-    r2 = read_region_as_imagecoord(region_string, header=f[0].header)
+    r2 = pyregion.open(region_string).as_imagecoord(f[0].header)
 
-The return value is similar to read_region, but the coordinate is
+The return value is a new ShapeList instance, but the coordinate is
 converted to the image coordinate. ::
 
     >>> print r2[0].coord_format
@@ -134,17 +138,16 @@ converted to the image coordinate. ::
 Draw Regions with Matplotlib
 ============================
 
-pyregion provides a helper function to draw regions with matplotlib. ::
+pyregion can help you draw the ds9 region with
+matplotlib. *ShapeList.get_mpl_patches_texts* returns a list of
+matplotlib.Artist ::
 
-    from pyregion.mpl_helper import as_mpl_artists
-    patch_list, artist_list = as_mpl_artists(r2)
+    r2 = pyregion.open(region_string).as_imagecoord(f[0].header)
+    patch_list, artist_list = r2.get_mpl_patches_texts()
 
-The argument for *as_mpl_artists* needs to be the return list of the
-read_region_as_imagecoord call, i.e., coordinate needs to be in image
-coordinate. *as_mpl_artists* returns two list of mpl Artist class. The
-first item is a list of mpl's Patches, and the second one is other
-kind of artists (e.g., Text). The return values need to be added to
-the axes manually::
+The first item is a list of matplotlib.Patche, and the second one is
+other kind of artists (e.g., Text). It is your responsibility to add
+these to the axes. ::
 
     # ax is a mpl Axes object
     for p in patch_list:
@@ -164,3 +167,9 @@ ds9 attributes.
 
 .. plot:: figures/test_region_drawing2.py
    :include-source:
+
+
+
+Use Regions for Spatial Filtering
+=================================
+
