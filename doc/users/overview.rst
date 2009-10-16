@@ -157,15 +157,14 @@ these to the axes. ::
 
 .. plot:: figures/test_region_drawing.py
 
-The (optional) second argument of as_mpl_artists is a function that
-takes the shape object as an argument and returns a dictionary object
-that will be used as a keyword arguments (e.g., colors and line width)
-for creating the mpl artists. By default, it uses
-pyregion.mpl_helper.properties_func_default, which try to respect the
-ds9 attributes. However, the colors (and other attributes) of complex
-shapes may not be correctly handled as shown in above example. It is
-recommended that you manually adjust the associated attributes of
-patches.
+The (optional) argument of the *get_mpl_patches_texts* method is a
+callable object that takes the shape object as an argument and returns
+a dictionary object that will be used as a keyword arguments (e.g.,
+colors and line width) for creating the mpl artists. By default, it
+uses pyregion.mpl_helper.properties_func_default, which try to respect
+the ds9 attributes. However, the colors (and other attributes) of some
+complex shapes are not correctly handled as shown in above example,
+and you need to manually adjust the associated attributes of patches.
 
 
 .. plot:: figures/test_region_drawing2.py
@@ -190,7 +189,7 @@ Use Regions for Spatial Filtering
 
 ShapeList.get_filter method returns the filter from the parsed
 region. The filter is meant to be used in the image coordinate, thus
-convert the coodinate to the image coordinate before calling
+you need to convert the region to the image coordinate before calling
 get_filter. ::
 
     r2 = pyregion.parse(region_string).as_imagecoord(f[0].header)
@@ -203,9 +202,9 @@ can create the mask directly from the ShapeList object. ::
     r2 = pyregion.parse(region_string)
     mymask = r2.get_mask(hdu=f[0])
 
-It will creates an mask of the shape of the image of the given fits
-hdu (the mask will be made after transforming the region to the image
-coordinate).
+It will creates an mask in the shape of the given hdu image (the mask
+will be created after transforming the region to the image coordinate if
+necessary).
 
 .. plot:: figures/demo_filter_mask.py
    :include-source:

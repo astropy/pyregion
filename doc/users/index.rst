@@ -1,8 +1,8 @@
 .. _users-guide-index:
 
-########
-pyregion
-########
+#####################
+Pyregion User's Guide
+#####################
 
 :Release: |version|
 :Date: |today|

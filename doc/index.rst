@@ -2,8 +2,8 @@
 pyregion
 ========
 
-pyregion is a python module to parse ds9 region files. It also support
-ciao region files. 
+pyregion is a python module to parse ds9 region files. It also supports
+ciao region files.
 
 
 +----------------------------------------+----------------------------------------+
@@ -19,9 +19,16 @@ Documentation
 =============
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    users/index.rst
+   examples.rst
+
+
+.. note::
+  *pyregion* is rather slow, likely due to a inefficient
+  parser. Any contribution will be welcomed.
+
 
 Indices and tables
 ==================

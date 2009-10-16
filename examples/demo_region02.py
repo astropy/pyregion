@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 
 from demo_region01 import show_region
 
-if __name__ == "__main__":
+if 1:
 
     region_list = ["test_annuli.reg", "test_annuli_wcs.reg",
                    "test_annuli_ciao.reg"]

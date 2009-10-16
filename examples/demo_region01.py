@@ -1,6 +1,5 @@
 import matplotlib.pyplot as plt
-from pyregion import read_region_as_imagecoord
-from pyregion.mpl_helper import as_mpl_artists
+import pyregion
 
 import math
 
@@ -31,22 +30,24 @@ def show_region(fig, region_list):
     for ax, reg_name in zip(grid, region_list):
         ax.set_aspect(1)
 
-        r = read_region_as_imagecoord(open(reg_name).read(), header=h)
+        r = pyregion.open(reg_name).as_imagecoord(h)
 
-        patch_list, text_list = as_mpl_artists(r)
+        patch_list, text_list = r.get_mpl_patches_texts()
         for p in patch_list:
             ax.add_patch(p)
         for t in text_list:
             ax.add_artist(t)
 
-        ax.set_title(reg_name.replace("_", r"\_"), size=10)
+        if plt.rcParams["text.usetex"]:
+            reg_name = reg_name.replace("_", r"\_")
+        ax.set_title(reg_name, size=10)
         for t in ax.get_xticklabels() + ax.get_yticklabels():
             t.set_visible(False)
 
     return grid
 
 
-if __name__ == "__main__":
+if 1:
 
     region_list = ["test01_fk5_sexagecimal.reg",
                    "test01_gal.reg",

@@ -1,19 +1,23 @@
 import pyfits
 import matplotlib.pyplot as plt
-from pyregion import read_region_as_imagecoord
-from pyregion.mpl_helper import as_mpl_artists
+import pyregion
 
 import math
+import sys
 
 try:
     import pywcsgrid2
-    from mpl_toolkits.axes_grid.axes_grid import AxesGrid
-except ImportError:
-    import sys
-    print "You require svn version of matplotlib and pywcsgrid2 installed."
+except:
+    print "You require matplotlib 0.99 and later that include axes_grid toolkit"
     sys.exit(0)
 
-def test_header():
+try:
+    from mpl_toolkits.axes_grid.axes_grid import AxesGrid
+except ImportError:
+    print "You require pywcsgrid2."
+    sys.exit(0)
+
+def get_test_header():
     cards = pyfits.CardList()
     for l in open("test.header"):
         card = pyfits.Card()
@@ -26,7 +30,7 @@ if 1:
 
     region_list = ["test_text.reg", "test_context.reg"]
 
-    h = test_header()
+    h = get_test_header()
 
     n = len(region_list)
     nx = int(math.ceil(n**.5))
@@ -50,9 +54,9 @@ if 1:
     from mpl_toolkits.axes_grid.anchored_artists import AnchoredText
 
     for ax, reg_name in zip(grid, region_list):
-        r = read_region_as_imagecoord(open(reg_name).read(), header=h)
+        r = pyregion.open(reg_name).as_imagecoord(h)
 
-        patch_list, text_list = as_mpl_artists(r)
+        patch_list, text_list = r.get_mpl_patches_texts()
         for p in patch_list:
             ax.add_patch(p)
         for t in text_list:

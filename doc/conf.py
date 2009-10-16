@@ -1,15 +1,5 @@
 # -*- coding: utf-8 -*-
 #
-# Basemap documentation build configuration file, created by
-# sphinx-quickstart on Fri May  2 12:33:25 2008.
-#
-# This file is execfile()d with the current directory set to its containing dir.
-#
-# The contents of this file are pickled, so don't put values in the namespace
-# that aren't pickleable (module imports are okay, they're removed automatically).
-#
-# All configuration values have a default value; values that are commented out
-# serve to show the default value.
 
 import sys, os
 
@@ -135,7 +125,7 @@ html_sidebars = {'index': 'indexsidebar.html',
 html_use_opensearch = 'False'
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'PywcsgridDoc'
+htmlhelp_basename = 'PyregionDoc'
 
 
 # Options for LaTeX output
@@ -151,7 +141,7 @@ latex_font_size = '11pt'
 # (source start file, target name, title, author, document class [howto/manual]).
 
 latex_documents = [
-  ('index', 'wcsgrid.tex', 'WcsGrid', 'Jae-Joon Lee', 'manual'),
+  ('index', 'pyregion.tex', 'PyRegion', 'Jae-Joon Lee', 'manual'),
 ]
 
 
