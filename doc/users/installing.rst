@@ -23,8 +23,9 @@ Dependencies
 **Requirements**
 
 pyregion is based on pyparsing module. You also requires Kapteyn
-package or pywcs module for coordinate conversion. Displaying regions
-is supported for matplotlib.  Some example uses pywcsgrid2.
+package or pywcs module (you need only one of them) for coordinate
+conversion. Displaying regions is supported for matplotlib.  Some
+example uses pywcsgrid2.
 
 pyparsing
 ---------
@@ -34,6 +35,11 @@ Kapteyn Package
 ---------------
 * used for coordinate conversions
 * `Homepage <http://www.astro.rug.nl/software/kapteyn/>`__
+
+pywcs
+-----
+* used for coordinate conversions
+* `Homepage <https://www.stsci.edu/trac/ssb/astrolib/>`__
 
 pyfits
 ------
