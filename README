@@ -1,10 +1,18 @@
 pyregion
 ========
 
-pyregion is a python module to parse ds9 region files. 
+pyregion is a python module to parse ds9 region files.
 It also supports ciao region files.
 
 Homepage : http://leejjoon.github.com/pyregion/
+
+FEATURES
+--------
+
+* ds9 and ciao region files.
+* (physical, wcs) coordinate conversion to the image coordinate.
+* convert regions to matplotlib patches.
+* convert regions to spatial filter (i.e., generate mask images)
 
 LICENSE
 -------
