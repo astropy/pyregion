@@ -22,34 +22,47 @@ Dependencies
 
 **Requirements**
 
-pyregion is based on pyparsing module. You also requires Kapteyn
-package or pywcs module (you need only one of them) for coordinate
+Being based on pyparsing module, pyparsing need to be installed to use
+pyregion. Optionally, you also requires Kapteyn package or pywcs
+module installed (you need only one of them) for coordinate
 conversion. Displaying regions is supported for matplotlib.  Some
 example uses pywcsgrid2.
 
+By default, pyregion build a filtering module, which requires a C compiler.
+If you don't want, edit "setup.py" ::
+
+  WITH_FILTER = False
+
+
 pyparsing
 ---------
+* REQUIRED
 * `Homepage <http://pyparsing.wikispaces.com/>`__
 
 Kapteyn Package
 ---------------
+* OPTIONAL
 * used for coordinate conversions
 * `Homepage <http://www.astro.rug.nl/software/kapteyn/>`__
 
 pywcs
 -----
+* OPTIONAL
 * used for coordinate conversions
 * `Homepage <https://www.stsci.edu/trac/ssb/astrolib/>`__
 
 pyfits
 ------
+* OPTIONAL
 * `Homepage <http://www.stsci.edu/resources/software_hardware/pyfits>`__
 
 
 matplotlib
 ----------
+* OPTIONAL
 * `Homepage <http://matplotlib.sourceforge.net/>`__
 
 pywcsgrid2
 ----------
+* OPTIONAL
 * `Homepage <http://leejjoon.github.com/pywcsgrid2/>`__
