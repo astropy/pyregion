@@ -5,13 +5,13 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Overview &mdash; pyregion v0.1a documentation</title>
+    <title>Overview &mdash; pyregion v0.1b documentation</title>
     <link rel="stylesheet" href="../static/mpl.css" type="text/css" />
     <link rel="stylesheet" href="../static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0.1a',
+        VERSION:     '0.1b',
         COLLAPSE_MODINDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -20,12 +20,12 @@
     <script type="text/javascript" src="../static/jquery.js"></script>
     <script type="text/javascript" src="../static/doctools.js"></script>
     <link rel="search" type="application/opensearchdescription+xml"
-          title="Search within pyregion v0.1a documentation"
+          title="Search within pyregion v0.1b documentation"
           href="../static/opensearch.xml"/>
-    <link rel="top" title="pyregion v0.1a documentation" href="../index.html" />
-    <link rel="up" title="pyregion" href="index.html" />
+    <link rel="top" title="pyregion v0.1b documentation" href="../index.html" />
+    <link rel="up" title="Pyregion User’s Guide" href="index.html" />
     <link rel="next" title="Installing" href="installing.html" />
-    <link rel="prev" title="pyregion" href="index.html" /> 
+    <link rel="prev" title="Pyregion User’s Guide" href="index.html" /> 
   </head>
   <body>
 
@@ -40,12 +40,11 @@
           <a href="installing.html" title="Installing"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="index.html" title="pyregion"
+          <a href="index.html" title="Pyregion User’s Guide"
              accesskey="P">previous</a> |</li>
-        <li><a href="http://matplotlib.sourceforge.net/index.html">matplotlib&nbsp;home</a>|&nbsp;</li>
-        <li><a href="../index.html">documentation</a>|&nbsp;</li>
+        <li><a href="../index.html">pyregion documentation</a>|&nbsp;</li>
 
-          <li><a href="index.html" accesskey="U">pyregion</a> &raquo;</li> 
+          <li><a href="index.html" accesskey="U">Pyregion User&#8217;s Guide</a> &raquo;</li> 
       </ul>
     </div>
 
@@ -56,13 +55,14 @@
 <li><a class="reference external" href="">Overview</a><ul>
 <li><a class="reference external" href="#read-region-files">Read Region Files</a></li>
 <li><a class="reference external" href="#draw-regions-with-matplotlib">Draw Regions with Matplotlib</a></li>
+<li><a class="reference external" href="#use-regions-for-spatial-filtering">Use Regions for Spatial Filtering</a></li>
 </ul>
 </li>
 </ul>
 
             <h4>Previous topic</h4>
             <p class="topless"><a href="index.html"
-                                  title="previous chapter">pyregion</a></p>
+                                  title="previous chapter">Pyregion User&#8217;s Guide</a></p>
             <h4>Next topic</h4>
             <p class="topless"><a href="installing.html"
                                   title="next chapter">Installing</a></p>
@@ -123,21 +123,26 @@ by ds9. Ruler, Compass and Projection type is ignored.</p>
 <ul class="simple">
 <li><a class="reference internal" href="#read-region-files" id="id1">Read Region Files</a></li>
 <li><a class="reference internal" href="#draw-regions-with-matplotlib" id="id2">Draw Regions with Matplotlib</a></li>
+<li><a class="reference internal" href="#use-regions-for-spatial-filtering" id="id3">Use Regions for Spatial Filtering</a></li>
 </ul>
 </div>
 <div class="section" id="read-region-files">
 <h2><a class="toc-backref" href="#id1">Read Region Files</a><a class="headerlink" href="#read-region-files" title="Permalink to this headline">¶</a></h2>
-<p><em>pyregion.read_region</em> takes the region string as an argument and
-returns list of shape objects.</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">pyregion</span> <span class="kn">import</span> <span class="n">read_region</span>
+<p><em>pyregion.open</em> takes the region name as an argument and returns a
+ShapeList objects, which is basically a list of Shape objects.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">pyregion</span>
 <span class="n">region_name</span> <span class="o">=</span> <span class="s">&quot;ds9.reg&quot;</span>
-<span class="n">region_string</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">region_name</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
-<span class="n">r</span> <span class="o">=</span> <span class="n">read_region</span><span class="p">(</span><span class="n">region_string</span><span class="p">)</span>
+<span class="n">r</span> <span class="o">=</span> <span class="n">pyregion</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">region_name</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>You may use <em>pyregion.parse</em> if you have a string of region deniition.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">region</span> <span class="o">=</span> <span class="s">&#39;fk5;circle(290.96388,14.019167,843.31194&quot;)&#39;</span>
+<span class="n">r</span> <span class="o">=</span> <span class="n">pyregion</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">region</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>The shape object is a python representation of each region
 definition. For example,:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">pyregion</span> <span class="kn">import</span> <span class="n">read_region</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">pyregion</span>
 
 <span class="n">region_string</span> <span class="o">=</span> <span class="s">&quot;&quot;&quot;</span>
 <span class="s"># Region file format: DS9 version 4.1</span>
@@ -148,7 +153,7 @@ definition. For example,:</p>
 <span class="s">box(11:24:39.213,-59:16:53.91,42.804&quot;,23.616&quot;,19.0384) # width=4</span>
 <span class="s">&quot;&quot;&quot;</span>
 
-<span class="n">r</span> <span class="o">=</span> <span class="n">read_region</span><span class="p">(</span><span class="n">region_string</span><span class="p">)</span>
+<span class="n">r</span> <span class="o">=</span> <span class="n">pyregion</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">region_string</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>And you have:</p>
@@ -172,8 +177,8 @@ definition. For example,:</p>
 </pre></div>
 </div>
 </li>
-<li><p class="first">coord_list : list of coordinates as the specified coordinate
-format. The coordinate value for sky coordinate is degree.</p>
+<li><p class="first">coord_list : list of coordinates in <em>coord_format</em>. The coordinate
+value for sky coordinate is degree.</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">r</span><span class="p">[</span><span class="mf">0</span><span class="p">]</span><span class="o">.</span><span class="n">coord_list</span>
 <span class="go">[171.10095833333332, -59.250611111111112, 0.0051418888888888886]</span>
 </pre></div>
@@ -212,16 +217,16 @@ dictionary of attributes of key-value pairs.</p>
 currently supported (the last definition override previous ones).</p>
 </li>
 </ul>
-<p>pyregion.read_region_as_imagecoord converts the coordinate into the
-image coordinate (&#8220;1&#8221;-based). And the function requires the
-Pyfits.Header instance as the second parameter.:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">pyregion</span> <span class="kn">import</span> <span class="n">read_region_as_imagecoord</span>
-<span class="kn">import</span> <span class="nn">pyfits</span>
+<p>The ShapeList class have a few method that could be
+useful. <em>ShapeList.as_imagecoord</em> returns a new ShapeList instance
+with the coordinates converted to the image coordinate. It
+requires the Pyfits.Header instance.:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">pyfits</span>
 <span class="n">f</span> <span class="o">=</span> <span class="n">pyfits</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s">&quot;t1.fits&quot;</span><span class="p">)</span>
-<span class="n">r2</span> <span class="o">=</span> <span class="n">read_region_as_imagecoord</span><span class="p">(</span><span class="n">region_string</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="n">f</span><span class="p">[</span><span class="mf">0</span><span class="p">]</span><span class="o">.</span><span class="n">header</span><span class="p">)</span>
+<span class="n">r2</span> <span class="o">=</span> <span class="n">pyregion</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">region_string</span><span class="p">)</span><span class="o">.</span><span class="n">as_imagecoord</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="mf">0</span><span class="p">]</span><span class="o">.</span><span class="n">header</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>The return value is similar to read_region, but the coordinate is
+<p>The return value is a new ShapeList instance, but the coordinate is
 converted to the image coordinate.</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">r2</span><span class="p">[</span><span class="mf">0</span><span class="p">]</span><span class="o">.</span><span class="n">coord_format</span>
 <span class="go">image</span>
@@ -233,17 +238,16 @@ converted to the image coordinate.</p>
 </div>
 <div class="section" id="draw-regions-with-matplotlib">
 <h2><a class="toc-backref" href="#id2">Draw Regions with Matplotlib</a><a class="headerlink" href="#draw-regions-with-matplotlib" title="Permalink to this headline">¶</a></h2>
-<p>pyregion provides a helper function to draw regions with matplotlib.</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">pyregion.mpl_helper</span> <span class="kn">import</span> <span class="n">as_mpl_artists</span>
-<span class="n">patch_list</span><span class="p">,</span> <span class="n">artist_list</span> <span class="o">=</span> <span class="n">as_mpl_artists</span><span class="p">(</span><span class="n">r2</span><span class="p">)</span>
+<p>pyregion can help you draw the ds9 region with
+matplotlib. <em>ShapeList.get_mpl_patches_texts</em> returns a list of
+matplotlib.Artist</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">r2</span> <span class="o">=</span> <span class="n">pyregion</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">region_string</span><span class="p">)</span><span class="o">.</span><span class="n">as_imagecoord</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="mf">0</span><span class="p">]</span><span class="o">.</span><span class="n">header</span><span class="p">)</span>
+<span class="n">patch_list</span><span class="p">,</span> <span class="n">artist_list</span> <span class="o">=</span> <span class="n">r2</span><span class="o">.</span><span class="n">get_mpl_patches_texts</span><span class="p">()</span>
 </pre></div>
 </div>
-<p>The argument for <em>as_mpl_artists</em> needs to be the return list of the
-read_region_as_imagecoord call, i.e., coordinate needs to be in image
-coordinate. <em>as_mpl_artists</em> returns two list of mpl Artist class. The
-first item is a list of mpl&#8217;s Patches, and the second one is other
-kind of artists (e.g., Text). The return values need to be added to
-the axes manually:</p>
+<p>The first item is a list of matplotlib.Patch, and the second one is
+other kind of artists (usually Text). It is your responsibility to add
+these to the axes.</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="c"># ax is a mpl Axes object</span>
 <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">patch_list</span><span class="p">:</span>
     <span class="n">ax</span><span class="o">.</span><span class="n">add_patch</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
@@ -252,26 +256,22 @@ the axes manually:</p>
 </pre></div>
 </div>
 <p>[<a class="reference external" href="../plot_directive/figures/test_region_drawing.py">source code</a>, <a class="reference external" href="../plot_directive/figures/test_region_drawing.hires.png">hires.png</a>, <a class="reference external" href="../plot_directive/figures/test_region_drawing.pdf">pdf</a>]</p>
+<div class="figure">
 <img alt="../images/test_region_drawing.png" src="../images/test_region_drawing.png" />
-<p>The (optional) second argument of as_mpl_artists is a function that
-takes the shape object as and argument and returns a dictionary object
-that will be used as a keyword arguments (e.g., colors and line width)
-for creating the mpl artists. By default, it uses
-pyregion.mpl_helper.properties_func_default, which try to respect the
-ds9 attributes.</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">sys</span>
-
-<span class="k">try</span><span class="p">:</span>
-    <span class="kn">import</span> <span class="nn">pyfits</span>
-<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
-    <span class="k">print</span> <span class="s">&quot;This example requires the pyfits module installed&quot;</span>
-    <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mf">0</span><span class="p">)</span>
-
-<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="kn">as</span> <span class="nn">plt</span>
+</div>
+<p>The (optional) argument of the <em>get_mpl_patches_texts</em> method is a
+callable object that takes the shape object as an argument and returns
+a dictionary object that will be used as a keyword arguments (e.g.,
+colors and line width) for creating the mpl artists. By default, it
+uses pyregion.mpl_helper.properties_func_default, which try to respect
+the ds9 attributes. However, the colors (and other attributes) of some
+complex shapes are not correctly handled as shown in above example,
+and you need to manually adjust the associated attributes of patches.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="kn">as</span> <span class="nn">plt</span>
 <span class="kn">import</span> <span class="nn">matplotlib.cm</span> <span class="kn">as</span> <span class="nn">cm</span>
 
-<span class="kn">from</span> <span class="nn">pyregion</span> <span class="kn">import</span> <span class="n">read_region_as_imagecoord</span>
-<span class="kn">from</span> <span class="nn">pyregion.mpl_helper</span> <span class="kn">import</span> <span class="n">as_mpl_artists</span>
+<span class="kn">import</span> <span class="nn">pyregion</span>
+<span class="kn">import</span> <span class="nn">pyfits</span>
 
 <span class="c"># read in the image</span>
 <span class="n">xray_name</span><span class="o">=</span><span class="s">&quot;pspc_skyview.fits&quot;</span>
@@ -285,9 +285,8 @@ ds9 attributes.</p>
 
 <span class="n">ax</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">f_xray</span><span class="p">[</span><span class="mf">0</span><span class="p">]</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="n">cm</span><span class="o">.</span><span class="n">gray</span><span class="p">,</span> <span class="n">vmin</span><span class="o">=</span><span class="mf">0.</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="mf">0.00038</span><span class="p">,</span> <span class="n">origin</span><span class="o">=</span><span class="s">&quot;lower&quot;</span><span class="p">)</span>
 
-
 <span class="n">reg_name</span> <span class="o">=</span> <span class="s">&quot;test.reg&quot;</span>
-<span class="n">r</span> <span class="o">=</span> <span class="n">read_region_as_imagecoord</span><span class="p">(</span><span class="nb">open</span><span class="p">(</span><span class="n">reg_name</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">(),</span> <span class="n">header</span><span class="o">=</span><span class="n">f_xray</span><span class="p">[</span><span class="mf">0</span><span class="p">]</span><span class="o">.</span><span class="n">header</span><span class="p">)</span>
+<span class="n">r</span> <span class="o">=</span> <span class="n">pyregion</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">reg_name</span><span class="p">)</span><span class="o">.</span><span class="n">as_imagecoord</span><span class="p">(</span><span class="n">header</span><span class="o">=</span><span class="n">f_xray</span><span class="p">[</span><span class="mf">0</span><span class="p">]</span><span class="o">.</span><span class="n">header</span><span class="p">)</span>
 
 <span class="kn">from</span> <span class="nn">pyregion.mpl_helper</span> <span class="kn">import</span> <span class="n">properties_func_default</span>
 
@@ -298,18 +297,14 @@ ds9 attributes.</p>
     <span class="n">attr_dict</span><span class="p">[</span><span class="s">&quot;color&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s">&quot;red&quot;</span>
     <span class="n">kwargs</span> <span class="o">=</span> <span class="n">properties_func_default</span><span class="p">(</span><span class="n">shape</span><span class="p">,</span> <span class="p">(</span><span class="n">attr_list</span><span class="p">,</span> <span class="n">attr_dict</span><span class="p">))</span>
 
-    <span class="c"># This is just for a demonstration.  Setting alpha value does not</span>
-    <span class="c"># affect the alpha of the edge color, which I think a mpl bug.</span>
-    <span class="n">kwargs</span><span class="p">[</span><span class="s">&quot;alpha&quot;</span><span class="p">]</span><span class="o">=</span><span class="mf">0.5</span>
-
     <span class="k">return</span> <span class="n">kwargs</span>
 
 <span class="c"># select region shape with tag==&quot;Group 1&quot;</span>
-<span class="n">r1</span> <span class="o">=</span> <span class="p">[</span><span class="n">rr</span> <span class="k">for</span> <span class="n">rr</span> <span class="ow">in</span> <span class="n">r</span> <span class="k">if</span> <span class="n">rr</span><span class="o">.</span><span class="n">attr</span><span class="p">[</span><span class="mf">1</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;tag&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="s">&quot;Group 1&quot;</span><span class="p">]</span>
-<span class="n">patch_list1</span><span class="p">,</span> <span class="n">artist_list1</span> <span class="o">=</span> <span class="n">as_mpl_artists</span><span class="p">(</span><span class="n">r1</span><span class="p">,</span> <span class="n">fixed_color</span><span class="p">)</span>
+<span class="n">r1</span> <span class="o">=</span> <span class="n">pyregion</span><span class="o">.</span><span class="n">ShapeList</span><span class="p">([</span><span class="n">rr</span> <span class="k">for</span> <span class="n">rr</span> <span class="ow">in</span> <span class="n">r</span> <span class="k">if</span> <span class="n">rr</span><span class="o">.</span><span class="n">attr</span><span class="p">[</span><span class="mf">1</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;tag&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="s">&quot;Group 1&quot;</span><span class="p">])</span>
+<span class="n">patch_list1</span><span class="p">,</span> <span class="n">artist_list1</span> <span class="o">=</span> <span class="n">r1</span><span class="o">.</span><span class="n">get_mpl_patches_texts</span><span class="p">(</span><span class="n">fixed_color</span><span class="p">)</span>
 
-<span class="n">r2</span> <span class="o">=</span> <span class="p">[</span><span class="n">rr</span> <span class="k">for</span> <span class="n">rr</span> <span class="ow">in</span> <span class="n">r</span> <span class="k">if</span> <span class="n">rr</span><span class="o">.</span><span class="n">attr</span><span class="p">[</span><span class="mf">1</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;tag&quot;</span><span class="p">)</span> <span class="o">!=</span> <span class="s">&quot;Group 1&quot;</span><span class="p">]</span>
-<span class="n">patch_list2</span><span class="p">,</span> <span class="n">artist_list2</span> <span class="o">=</span> <span class="n">as_mpl_artists</span><span class="p">(</span><span class="n">r2</span><span class="p">)</span>
+<span class="n">r2</span> <span class="o">=</span> <span class="n">pyregion</span><span class="o">.</span><span class="n">ShapeList</span><span class="p">([</span><span class="n">rr</span> <span class="k">for</span> <span class="n">rr</span> <span class="ow">in</span> <span class="n">r</span> <span class="k">if</span> <span class="n">rr</span><span class="o">.</span><span class="n">attr</span><span class="p">[</span><span class="mf">1</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;tag&quot;</span><span class="p">)</span> <span class="o">!=</span> <span class="s">&quot;Group 1&quot;</span><span class="p">])</span>
+<span class="n">patch_list2</span><span class="p">,</span> <span class="n">artist_list2</span> <span class="o">=</span> <span class="n">r2</span><span class="o">.</span><span class="n">get_mpl_patches_texts</span><span class="p">()</span>
 
 <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">patch_list1</span> <span class="o">+</span> <span class="n">patch_list2</span><span class="p">:</span>
     <span class="n">ax</span><span class="o">.</span><span class="n">add_patch</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
@@ -319,8 +314,66 @@ ds9 attributes.</p>
 <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 </div>
-<p>[<a class="reference external" href="../plot_directive/figures/test_region_drawing2.py">source code</a>, <a class="reference external" href="../plot_directive/figures/test_region_drawing2.hires.png">hires.png</a>, <a class="reference external" href="../plot_directive/figures/test_region_drawing2.pdf">pdf</a>]</p>
+<p>[<a class="reference external" href="../plot_directive/figures/test_region_drawing2.hires.png">hires.png</a>, <a class="reference external" href="../plot_directive/figures/test_region_drawing2.pdf">pdf</a>]</p>
+<div class="figure">
 <img alt="../images/test_region_drawing2.png" src="../images/test_region_drawing2.png" />
+</div>
+</div>
+<div class="section" id="use-regions-for-spatial-filtering">
+<h2><a class="toc-backref" href="#id3">Use Regions for Spatial Filtering</a><a class="headerlink" href="#use-regions-for-spatial-filtering" title="Permalink to this headline">¶</a></h2>
+<p><em>pyregion</em> includes some basic spatial filter support.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">pyregion._region_filter</span> <span class="kn">as</span> <span class="nn">filter</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">myfilter</span> <span class="o">=</span> <span class="nb">filter</span><span class="o">.</span><span class="n">Circle</span><span class="p">(</span><span class="mf">0</span><span class="p">,</span> <span class="mf">0</span><span class="p">,</span> <span class="mf">10</span><span class="p">)</span> <span class="o">&amp;</span> <span class="nb">filter</span><span class="o">.</span><span class="n">Box</span><span class="p">(</span><span class="mf">15</span><span class="p">,</span> <span class="mf">0</span><span class="p">,</span> <span class="mf">10</span><span class="p">,</span> <span class="mf">10</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">myfilter</span><span class="o">.</span><span class="n">inside1</span><span class="p">(</span><span class="mf">0</span><span class="p">,</span> <span class="mf">0</span><span class="p">)</span>
+<span class="go">0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">myfilter</span><span class="o">.</span><span class="n">inside1</span><span class="p">(</span><span class="mf">10</span><span class="p">,</span> <span class="mf">0</span><span class="p">)</span>
+<span class="go">1</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">myfilter</span><span class="o">.</span><span class="n">inside</span><span class="p">([</span><span class="mf">0</span><span class="p">,</span> <span class="mf">10</span><span class="p">],</span> <span class="p">[</span><span class="mf">0</span><span class="p">,</span> <span class="mf">0</span><span class="p">])</span>
+<span class="go">array([False,  True], dtype=bool)</span>
+</pre></div>
+</div>
+<p>ShapeList.get_filter method returns the filter from the parsed
+region. The filter is meant to be used in the image coordinate, thus
+you need to convert the region to the image coordinate before calling
+get_filter.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">r2</span> <span class="o">=</span> <span class="n">pyregion</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">region_string</span><span class="p">)</span><span class="o">.</span><span class="n">as_imagecoord</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="mf">0</span><span class="p">]</span><span class="o">.</span><span class="n">header</span><span class="p">)</span>
+<span class="n">myfilter</span> <span class="o">=</span> <span class="n">r2</span><span class="o">.</span><span class="n">get_filter</span><span class="p">()</span>
+<span class="n">myfilter</span><span class="o">.</span><span class="n">inside1</span><span class="p">(</span><span class="mf">50</span><span class="p">,</span> <span class="mf">30</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The returned filter has a <em>mask</em> method that creates an 2d mask. You
+can create the mask directly from the ShapeList object.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">r2</span> <span class="o">=</span> <span class="n">pyregion</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">region_string</span><span class="p">)</span>
+<span class="n">mymask</span> <span class="o">=</span> <span class="n">r2</span><span class="o">.</span><span class="n">get_mask</span><span class="p">(</span><span class="n">hdu</span><span class="o">=</span><span class="n">f</span><span class="p">[</span><span class="mf">0</span><span class="p">])</span>
+</pre></div>
+</div>
+<p>It will creates an mask in the shape of the given hdu image (the mask
+will be created after transforming the region to the image coordinate if
+necessary).</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="kn">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">pyregion</span>
+
+<span class="n">region</span> <span class="o">=</span> <span class="s">&quot;&quot;&quot;</span>
+<span class="s">image</span>
+<span class="s">circle(100, 100, 80)</span>
+<span class="s">box(200, 150, 150, 120, 0)</span>
+<span class="s">&quot;&quot;&quot;</span>
+
+<span class="n">r</span> <span class="o">=</span> <span class="n">pyregion</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">region</span><span class="p">)</span>
+<span class="n">mask_1or2</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">get_mask</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mf">300</span><span class="p">,</span><span class="mf">300</span><span class="p">))</span>
+
+<span class="n">myfilter</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">get_filter</span><span class="p">()</span>
+<span class="n">mask_1and2</span> <span class="o">=</span> <span class="p">(</span><span class="n">myfilter</span><span class="p">[</span><span class="mf">0</span><span class="p">]</span> <span class="o">&amp;</span> <span class="n">myfilter</span><span class="p">[</span><span class="mf">1</span><span class="p">])</span><span class="o">.</span><span class="n">mask</span><span class="p">((</span><span class="mf">300</span><span class="p">,</span><span class="mf">300</span><span class="p">))</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mf">121</span><span class="p">)</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">mask_1or2</span><span class="p">,</span> <span class="n">origin</span><span class="o">=</span><span class="s">&quot;lower&quot;</span><span class="p">,</span> <span class="n">interpolation</span><span class="o">=</span><span class="s">&quot;nearest&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mf">122</span><span class="p">)</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">mask_1and2</span><span class="p">,</span> <span class="n">origin</span><span class="o">=</span><span class="s">&quot;lower&quot;</span><span class="p">,</span> <span class="n">interpolation</span><span class="o">=</span><span class="s">&quot;nearest&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>[<a class="reference external" href="../plot_directive/figures/demo_filter_mask.hires.png">hires.png</a>, <a class="reference external" href="../plot_directive/figures/demo_filter_mask.pdf">pdf</a>]</p>
+<div class="figure">
+<img alt="../images/demo_filter_mask.png" src="../images/demo_filter_mask.png" />
+</div>
 </div>
 </div>
 
@@ -340,18 +393,17 @@ ds9 attributes.</p>
           <a href="installing.html" title="Installing"
              >next</a> |</li>
         <li class="right" >
-          <a href="index.html" title="pyregion"
+          <a href="index.html" title="Pyregion User’s Guide"
              >previous</a> |</li>
-        <li><a href="http://matplotlib.sourceforge.net/index.html">matplotlib&nbsp;home</a>|&nbsp;</li>
-        <li><a href="../index.html">documentation</a>|&nbsp;</li>
+        <li><a href="../index.html">pyregion documentation</a>|&nbsp;</li>
 
-          <li><a href="index.html" >pyregion</a> &raquo;</li> 
+          <li><a href="index.html" >Pyregion User&#8217;s Guide</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
       &copy; Copyright 2009, Jae-Joon Lee.
-      Last updated on Jul 03, 2009.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.6.2.
+      Last updated on Oct 19, 2009.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.6.3.
     </div>
   </body>
 </html>
