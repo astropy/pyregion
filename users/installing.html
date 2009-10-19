@@ -115,19 +115,27 @@ code by cloning my git repository for any recent bug fix.</p>
 <div class="section" id="dependencies">
 <h2>Dependencies<a class="headerlink" href="#dependencies" title="Permalink to this headline">¶</a></h2>
 <p><strong>Requirements</strong></p>
-<p>pyregion is based on pyparsing module. You also requires Kapteyn
-package or pywcs module (you need only one of them) for coordinate
+<p>Being based on pyparsing module, pyparsing need to be installed to use
+pyregion. Optionally, you also requires Kapteyn package or pywcs
+module installed (you need only one of them) for coordinate
 conversion. Displaying regions is supported for matplotlib.  Some
 example uses pywcsgrid2.</p>
+<p>By default, pyregion build a filtering module, which requires a C compiler.
+If you don&#8217;t want, edit &#8220;setup.py&#8221;</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">WITH_FILTER</span> <span class="o">=</span> <span class="bp">False</span>
+</pre></div>
+</div>
 <div class="section" id="pyparsing">
 <h3>pyparsing<a class="headerlink" href="#pyparsing" title="Permalink to this headline">¶</a></h3>
 <ul class="simple">
+<li>REQUIRED</li>
 <li><a class="reference external" href="http://pyparsing.wikispaces.com/">Homepage</a></li>
 </ul>
 </div>
 <div class="section" id="kapteyn-package">
 <h3>Kapteyn Package<a class="headerlink" href="#kapteyn-package" title="Permalink to this headline">¶</a></h3>
 <ul class="simple">
+<li>OPTIONAL</li>
 <li>used for coordinate conversions</li>
 <li><a class="reference external" href="http://www.astro.rug.nl/software/kapteyn/">Homepage</a></li>
 </ul>
@@ -135,6 +143,7 @@ example uses pywcsgrid2.</p>
 <div class="section" id="pywcs">
 <h3>pywcs<a class="headerlink" href="#pywcs" title="Permalink to this headline">¶</a></h3>
 <ul class="simple">
+<li>OPTIONAL</li>
 <li>used for coordinate conversions</li>
 <li><a class="reference external" href="https://www.stsci.edu/trac/ssb/astrolib/">Homepage</a></li>
 </ul>
@@ -142,18 +151,21 @@ example uses pywcsgrid2.</p>
 <div class="section" id="pyfits">
 <h3>pyfits<a class="headerlink" href="#pyfits" title="Permalink to this headline">¶</a></h3>
 <ul class="simple">
+<li>OPTIONAL</li>
 <li><a class="reference external" href="http://www.stsci.edu/resources/software_hardware/pyfits">Homepage</a></li>
 </ul>
 </div>
 <div class="section" id="matplotlib">
 <h3>matplotlib<a class="headerlink" href="#matplotlib" title="Permalink to this headline">¶</a></h3>
 <ul class="simple">
+<li>OPTIONAL</li>
 <li><a class="reference external" href="http://matplotlib.sourceforge.net/">Homepage</a></li>
 </ul>
 </div>
 <div class="section" id="pywcsgrid2">
 <h3>pywcsgrid2<a class="headerlink" href="#pywcsgrid2" title="Permalink to this headline">¶</a></h3>
 <ul class="simple">
+<li>OPTIONAL</li>
 <li><a class="reference external" href="http://leejjoon.github.com/pywcsgrid2/">Homepage</a></li>
 </ul>
 </div>
