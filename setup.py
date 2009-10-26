@@ -1,5 +1,5 @@
 try:
-    from setuptoolsas import setup
+    from setuptools import setup
     from setuptools.extension import Extension
     PYREX_SOURCE = "src/_region_filter.pyx"
 except ImportError:
@@ -13,19 +13,28 @@ import sys
 WITH_FILTER = True
 
 
-
 def main():
     ka = dict(name = "pyregion",
-              version = "0.1b",
+              version = "0.1c",
               description = "python parser for ds9 region files",
               author = "Jae-Joon Lee",
               author_email = "lee.j.joon@gmail.com",
               url="http://leejjoon.github.com/pyregion/",
+              download_url="http://github.com/leejjoon/pyregion/downloads",
               license = "MIT",
-              platforms = ["Linux","Mac OS X"],
+              platforms = ["Linux","MacOS X"],
               packages = ['pyregion'],
               package_dir={'pyregion':'lib'},
+              install_requires = ["pyparsing"]
               )
+    ka["classifiers"]=['Development Status :: 4 - Beta',
+                       'Intended Audience :: Science/Research',
+                       'License :: OSI Approved :: MIT License',
+                       'Operating System :: MacOS :: MacOS X',
+                       'Operating System :: POSIX :: Linux',
+                       'Programming Language :: Python',
+                       'Topic :: Scientific/Engineering :: Astronomy',
+                       ]
 
     if WITH_FILTER:
         try:

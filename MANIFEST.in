@@ -1,3 +1,5 @@
 recursive-include examples *.py *.reg
 include examples/*.header
-include examples/pspc_skyview.fits
+include src/_region_filter.c
+include src/_region_filter.pyx
+

@@ -26,11 +26,6 @@ except ImportError:
 else:
     _kapteyn_installed = True
 
-if not _kapteyn_installed and not _pywcs_installed:
-    err = ["Either pywcs or Kapteyn python packages are required."]
-    err.extend(_wcs_module_import_log)
-
-    raise ImportError("\n".join(err))
 
 FK4 = (kapteyn_celestial.equatorial, kapteyn_celestial.fk4, 'B1950.0')
 FK5 = (kapteyn_celestial.equatorial, kapteyn_celestial.fk5, 'J2000.0')
@@ -132,11 +127,11 @@ class ProjectionBase(object):
 
     radesys = property(_get_radesys)
 
-    
+
 
 class ProjectionKapteyn(ProjectionBase):
     """
-    A wrapper for kapteyn.projection 
+    A wrapper for kapteyn.projection
     """
     def __init__(self, header):
         if isinstance(header, pyfits.Header):
@@ -204,21 +199,31 @@ class ProjectionPywcs(ProjectionBase):
 
 if _kapteyn_installed:
     ProjectionDefault = ProjectionKapteyn
-else:
+elif _pywcs_installed:
     ProjectionDefault = ProjectionPywcs
+else:
+    ProjectionDefault = None
 
-def get_kapteyn_projection(header):
-    if _kapteyn_installed and isinstance(header, kapteyn.wcs.Projection):
-        projection = ProjectionKapteyn(header)
-    elif _pywcs_installed and isinstance(header, pywcs.WCS):
-        projection = ProjectionPywcs(header)
-    elif isinstance(header, ProjectionBase):
-        projection = header
-    else:
-        projection = ProjectionDefault(header)
+if not _kapteyn_installed and not _pywcs_installed:
+    def get_kapteyn_projection(header):
+        err = ["Either pywcs or Kapteyn python packages are required."]
+        err.extend(_wcs_module_import_log)
 
-    projection = projection.sub(axes=[1,2])
-    return projection
+        raise ImportError("\n".join(err))
+else:
+    def get_kapteyn_projection(header):
+        if _kapteyn_installed and isinstance(header, kapteyn.wcs.Projection):
+            projection = ProjectionKapteyn(header)
+        elif _pywcs_installed and isinstance(header, pywcs.WCS):
+            projection = ProjectionPywcs(header)
+        elif isinstance(header, ProjectionBase):
+            projection = header
+        else:
+            projection = ProjectionDefault(header)
+
+        projection = projection.sub(axes=[1,2])
+        return projection
+
 
 
 def estimate_cdelt_trans(transSky2Pix, x0, y0):
