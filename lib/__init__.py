@@ -30,9 +30,9 @@ class ShapeList(list):
         return ShapeList(shape_list, comment_list=comment_list)
 
 
-    def get_mpl_patches_texts(self, properties_func=None):
+    def get_mpl_patches_texts(self, properties_func=None, text_offset=5.0):
         from mpl_helper import as_mpl_artists
-        patches, txts = as_mpl_artists(self, properties_func)
+        patches, txts = as_mpl_artists(self, properties_func, text_offset)
 
         return patches, txts
 
