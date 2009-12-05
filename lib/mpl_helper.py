@@ -102,6 +102,10 @@ def properties_func_default(shape, saved_attrs):
 
 
 def _get_text(txt, x, y, dx, dy, ha="center", va="center", **kwargs):
+    if "color" in kwargs:
+        textcolor = kwargs["color"]
+    elif "markeredgecolor" in kwargs:
+        textcolor = kwargs["markeredgecolor"]
     ann = Annotation(txt, (x, y), xytext=(dx, dy),
                      xycoords='data',
                      textcoords="offset points",
@@ -288,9 +292,12 @@ def as_mpl_artists(shape_list,
                                       **kwargs))
 
             if txt:
+                textshape = copy.copy(shape)
+                textshape.name = "text"
+                textkwargs = properties_func(textshape, _attrs)
                 _t = _get_text(txt, xc, yc, 0, text_offset,
                                va="bottom",
-                               **kwargs)
+                               **textkwargs)
                 artist_list.append(_t)
 
         elif shape.name in ["line", "vector"]:
