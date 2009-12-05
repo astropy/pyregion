@@ -88,7 +88,7 @@ def coord_system_guess(ctype1_name, ctype2_name, equinox):
             return "fk5"
         elif equinox == 1950.0:
             return "fk4"
-        elif equinox is None:
+        elif equinox is None or np.isnan(equinox):
             return "fk5"
         else:
             return None
