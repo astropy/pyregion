@@ -2,6 +2,8 @@ from .ds9_region_parser import RegionParser
 from .wcs_converter import check_wcs as _check_wcs
 from itertools import cycle
 
+_open_builtin = open
+
 class ShapeList(list):
     def __init__(self, *ka, **kw):
         self._comment_list = kw.pop("comment_list", None)
@@ -100,6 +102,26 @@ class ShapeList(list):
 
         return mask
 
+    def write(self,outfile):
+        """ Writes the current shape list out as a region file """
+        
+        myopen = _open_builtin
+        outf = myopen(outfile,'w')
+
+        attr0 = self[0].attr[1]
+        defaultline = " ".join(["%s=%s" % (a,attr0[a]) for a in attr0 if a!='text'])
+
+        # first line is globals
+        print >>outf,"global",defaultline
+        # second line must be a coordinate format
+        print >>outf,self[0].coord_format
+
+        for shape in self:
+            text_coordlist = ["%f" % f for f in shape.coord_list]
+            print >>outf, \
+                shape.name + "(" + ",".join(text_coordlist) + ") # " + shape.comment
+
+        outf.close()
 
 
 def parse(region_string):
@@ -115,10 +137,8 @@ def parse(region_string):
     shape_list, comment_list = rp.filter_shape2(sss2)
     return ShapeList(shape_list, comment_list=comment_list)
 
-__open_builtin = open
-
 def open(fname):
-    region_string = __open_builtin(fname).read()
+    region_string = _open_builtin(fname).read()
     return parse(region_string)
 
 
