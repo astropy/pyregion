@@ -118,9 +118,12 @@ class ShapeList(list):
 
         for shape in self:
             text_coordlist = ["%f" % f for f in shape.coord_list]
-            print >>outf, \
-                shape.name + "(" + ",".join(text_coordlist) + ") # " + shape.comment
+            outline = shape.name + "(" + ",".join(text_coordlist) + ") " 
+            if shape.comment:
+                outline += " # " + shape.comment
 
+            print >>outf, outline
+                
         outf.close()
 
 
