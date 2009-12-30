@@ -2,11 +2,22 @@ from ds9_region_parser import RegionParser
 from wcs_helper import check_wcs as _check_wcs
 from itertools import cycle, izip
 
+import sys
+
 class ShapeList(list):
     def __init__(self, *ka, **kw):
         self._comment_list = kw.pop("comment_list", None)
         list.__init__(self, *ka, **kw)
 
+    def __getitem__(self, key):
+        if isinstance(key, slice):
+            return ShapeList(list.__getitem__(self, key))
+        else:
+            return list.__getitem__(self, key)
+
+    def __getslice__(self, i, j):
+        return self[max(0, i):max(0, j):]
+           
     def check_imagecoord(self):
         if [s for s in self if s.coord_format != "image"]:
             return False
