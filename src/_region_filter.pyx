@@ -28,12 +28,12 @@ c_numpy.import_array()
 
 ctypedef int Py_ssize_t
 
+
 class NotYetImplemented(Exception):
     pass
 
 class RegionFilterException(Exception):
     pass
-
 
 
 cdef struct Metric:
@@ -90,7 +90,6 @@ metric_wcs.set_update_func(_update_metric_wcs)
 class BaseClassInitException(Exception):
     pass
 
-
 cdef class RegionBase:
     #cdef double sin_theta
     #cdef double cos_theta
@@ -141,7 +140,7 @@ cdef class RegionBase:
     cdef npy_bool _inside(self, double x, double y):
         return (0)
 
-    def mask(self, img):
+    def mask(self, img_or_shape):
         """
         Create a mask ( a 2-d image whose pixel value is 1 if the
         pixel is inside the filter, otherwise 0). It takes a single
@@ -152,13 +151,15 @@ cdef class RegionBase:
 
         cdef int l, nx, ny
 
-        if hasattr(img, "shape"):
-            shape = img.shape
-        elif isinstance(img, tuple):
-            shape = img
+        if hasattr(img_or_shape, "shape"):
+            shape = img_or_shape.shape
+        elif c_python.PySequence_Check(img_or_shape):
+            shape = img_or_shape
+        else:
+            raise RegionFilterException("the inut needs to be a numpy 2-d array or a tuple of two integers")
 
         if c_python.PySequence_Length(shape) != 2:
-            raise RegionFilterException("shape of the inut image must be 2d: %s is given" % (str(shape)))
+            raise RegionFilterException("shape of the input image must be 2d: %s is given" % (str(shape)))
 
         ny = c_python.PySequence_GetItem(shape, 0)
         nx = c_python.PySequence_GetItem(shape, 1)
