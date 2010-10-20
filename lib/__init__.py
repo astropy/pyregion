@@ -41,13 +41,34 @@ class ShapeList(list):
         return ShapeList(shape_list, comment_list=comment_list)
 
 
-    def get_mpl_patches_texts(self, properties_func=None, text_offset=5.0):
+    def get_mpl_patches_texts(self, properties_func=None,
+                              text_offset=5.0,
+                              origin=1):
+        """
+        Often, the regions files implicitly assume the lower-left
+        corner of the image as a coordinate (1,1). However, the python
+        convetion is that the array index starts from 0. By default
+        (origin = 1), coordinates of the returned mpl artists have
+        coordinate shifted by (1, 1). If you do not want this shift,
+        use origin=0.
+        """
         from mpl_helper import as_mpl_artists
-        patches, txts = as_mpl_artists(self, properties_func, text_offset)
+        patches, txts = as_mpl_artists(self, properties_func,
+                                       text_offset,
+                                       origin=origin)
 
         return patches, txts
 
-    def get_filter(self, header=None):
+    def get_filter(self, header=None, origin=1):
+        """
+        Often, the regions files implicitly assume the lower-left
+        corner of the image as a coordinate (1,1). However, the python
+        convetion is that the array index starts from 0. By default
+        (origin = 1), coordinates of the returned mpl artists have
+        coordinate shifted by (1, 1). If you do not want this shift,
+        use origin=0.
+        """
+
         from region_to_filter import as_region_filter
 
         if header is None:
@@ -57,7 +78,7 @@ class ShapeList(list):
         else:
             reg_in_imagecoord = self.as_imagecoord(header)
 
-        region_filter = as_region_filter(reg_in_imagecoord)
+        region_filter = as_region_filter(reg_in_imagecoord, origin=1)
 
         return region_filter
 

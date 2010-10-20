@@ -118,7 +118,7 @@ def _get_text(txt, x, y, dx, dy, ha="center", va="center", **kwargs):
 
 def as_mpl_artists(shape_list,
                    properties_func=None,
-                   text_offset=5.0):
+                   text_offset=5.0, origin=1):
     """
     Converts a region list to a list of patches and a list of artists.
 
@@ -127,6 +127,12 @@ def as_mpl_artists(shape_list,
     [ text_offset ] - If there is text associated with the regions, add
     some vertical offset (in pixels) to the text so that it doesn't overlap
     with the regions.
+
+    Often, the regions files implicitly assume the lower-left corner
+    of the image as a coordinate (1,1). However, the python convetion
+    is that the array index starts from 0. By default (origin = 1),
+    coordinates of the returned mpl artists have coordinate shifted by
+    (1, 1). If you do not want this shift, set origin=0.
     """
 
     patch_list = []
@@ -171,12 +177,12 @@ def as_mpl_artists(shape_list,
             xy.shape = -1,2
 
             # -1 for change origin to 0,0
-            patches=[mpatches.Polygon(xy-1, closed=True, **kwargs)]
+            patches=[mpatches.Polygon(xy-origin, closed=True, **kwargs)]
 
         elif shape.name == "rotbox" or shape.name == "box":
             xc, yc, w, h, rot = shape.coord_list
             # -1 for change origin to 0,0
-            xc, yc = xc-1, yc-1
+            xc, yc = xc-origin, yc-origin
             _box = np.array([[-w/2., -h/2.],
                              [-w/2., h/2.],
                              [w/2., h/2.],
@@ -189,7 +195,7 @@ def as_mpl_artists(shape_list,
         elif shape.name == "ellipse":
             xc, yc  = shape.coord_list[:2]
             # -1 for change origin to 0,0
-            xc, yc = xc-1, yc-1
+            xc, yc = xc-origin, yc-origin
             angle = shape.coord_list[-1]
 
             maj_list, min_list = shape.coord_list[2:-1:2], shape.coord_list[3:-1:2]
@@ -202,7 +208,7 @@ def as_mpl_artists(shape_list,
         elif shape.name == "annulus":
             xc, yc  = shape.coord_list[:2]
             # -1 for change origin to 0,0
-            xc, yc = xc-1, yc-1
+            xc, yc = xc-origin, yc-origin
             r_list = shape.coord_list[2:]
 
             patches = [mpatches.Ellipse((xc, yc), 2*r, 2*r,
@@ -213,14 +219,14 @@ def as_mpl_artists(shape_list,
         elif shape.name == "circle":
             xc, yc, major = shape.coord_list
             # -1 for change origin to 0,0
-            xc, yc = xc-1, yc-1
+            xc, yc = xc-origin, yc-origin
             patches = [mpatches.Ellipse((xc, yc), 2*major, 2*major,
                                         angle=0, **kwargs)]
 
         elif shape.name == "panda":
             xc, yc, a1, a2, an, r1, r2, rn = shape.coord_list
             # -1 for change origin to 0,0
-            xc, yc = xc-1, yc-1
+            xc, yc = xc-origin, yc-origin
             patches = [mpatches.Arc((xc, yc), rr*2, rr*2, angle=0,
                                     theta1=a1, theta2=a2, **kwargs) \
                        for rr in np.linspace(r1, r2, rn+1)]
@@ -235,7 +241,7 @@ def as_mpl_artists(shape_list,
         elif shape.name == "pie":
             xc, yc, r1, r2, a1, a2 = shape.coord_list
             # -1 for change origin to 0,0
-            xc, yc = xc-1, yc-1
+            xc, yc = xc-origin, yc-origin
 
             patches = [mpatches.Arc((xc, yc), rr*2, rr*2, angle=0,
                                    theta1=a1, theta2=a2, **kwargs) \
@@ -251,7 +257,7 @@ def as_mpl_artists(shape_list,
         elif shape.name == "epanda":
             xc, yc, a1, a2, an, r11, r12,r21, r22, rn, angle = shape.coord_list
             # -1 for change origin to 0,0
-            xc, yc = xc-1, yc-1
+            xc, yc = xc-origin, yc-origin
 
             # mpl takes angle a1, a2 as angle as in circle before
             # transformation to ellipse.
@@ -278,7 +284,7 @@ def as_mpl_artists(shape_list,
         elif shape.name == "text":
             xc, yc  = shape.coord_list[:2]
             # -1 for change origin to 0,0
-            xc, yc = xc-1, yc-1
+            xc, yc = xc-origin, yc-origin
 
             if txt:
                 _t = _get_text(txt, xc, yc, 0, 0, **kwargs)
@@ -287,7 +293,7 @@ def as_mpl_artists(shape_list,
         elif shape.name == "point":
             xc, yc  = shape.coord_list[:2]
             # -1 for change origin to 0,0
-            xc, yc = xc-1, yc-1
+            xc, yc = xc-origin, yc-origin
             artist_list.append(Line2D([xc], [yc],
                                       **kwargs))
 
@@ -304,7 +310,7 @@ def as_mpl_artists(shape_list,
             if shape.name == "line":
                 x1, y1, x2, y2  = shape.coord_list[:4]
                 # -1 for change origin to 0,0
-                x1, y1, x2, y2 = x1-1, y1-1, x2-1, y2-1
+                x1, y1, x2, y2 = x1-origin, y1-origin, x2-origin, y2-origin
 
                 a1, a2 = shape.attr[1].get("line", "0 0").strip().split()[:2]
 
@@ -317,7 +323,7 @@ def as_mpl_artists(shape_list,
             else: # shape.name == "vector"
                 x1, y1, l, a  = shape.coord_list[:4]
                 # -1 for change origin to 0,0
-                x1, y1 = x1-1, y1-1
+                x1, y1 = x1-origin, y1-origin
                 x2, y2 = x1 + l * np.cos(a/180.*np.pi), y1 + l * np.sin(a/180.*np.pi)
                 v1 = int(shape.attr[1].get("vector", "0").strip())
 
