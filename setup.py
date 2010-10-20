@@ -15,7 +15,7 @@ WITH_FILTER = True
 
 def main():
     ka = dict(name = "pyregion",
-              version = "1.0",
+              version = "1.0.1",
               description = "python parser for ds9 region files",
               author = "Jae-Joon Lee",
               author_email = "lee.j.joon@gmail.com",
