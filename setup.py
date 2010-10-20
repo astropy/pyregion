@@ -15,7 +15,7 @@ WITH_FILTER = True
 
 def main():
     ka = dict(name = "pyregion",
-              version = "0.1c",
+              version = "1.0",
               description = "python parser for ds9 region files",
               author = "Jae-Joon Lee",
               author_email = "lee.j.joon@gmail.com",
@@ -27,7 +27,7 @@ def main():
               package_dir={'pyregion':'lib'},
               install_requires = ["pyparsing"]
               )
-    ka["classifiers"]=['Development Status :: 4 - Beta',
+    ka["classifiers"]=['Development Status :: 5 - Production/Stable',
                        'Intended Audience :: Science/Research',
                        'License :: OSI Approved :: MIT License',
                        'Operating System :: MacOS :: MacOS X',
