@@ -88,12 +88,8 @@ class ShapeList(list):
 
         for shape in self:
             text_coordlist = ["%f" % f for f in shape.coord_list]
-            # include all non-default attributes (this also removes attributes that
-            # cannot be non-global like 'delete')
-            text_attr = ["%s=%s" % (k,v) for k,v in shape.attr[1].iteritems() 
-                    if v != attr0[k] and k!='text'] + ['text={%s}' % shape.attr[1].get('text')]
             print >>outf, \
-                shape.name + "(" + ",".join(text_coordlist) + ") # " + " ".join(text_attr)
+                shape.name + "(" + ",".join(text_coordlist) + ") # " + shape.comment
 
         outf.close()
 
