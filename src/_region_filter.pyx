@@ -5,7 +5,6 @@ cdef extern from "stdio.h":
 cdef extern from "stdlib.h":
     pass
 
-
 # cdef extern from "geom2.h":
 #     ctypedef struct Metric:
 #         double g_x
@@ -831,18 +830,19 @@ cdef class AngleRange(RegionBase):
         self.degree1 = degree1
         self.degree2 = degree2
 
-        # theta in [-pi, pi]
-        self.radian1 = (fmod(degree1+180, 360.)-180)/180.*M_PI#3.1415926
-        self.radian2 = (fmod(degree2+180, 360.)-180)/180.*M_PI#3.1415926
-        #self.radian1 = (fmod(degree1, 360))/180.*M_PI#3.1415926
-        #self.radian2 = (fmod(degree2, 360))/180.*M_PI#3.1415926
-        #self.radian2 = (((degree2+180)%360.)-180)/180.*M_PI#3.1415926
-
-        if self.radian2 < self.radian1:
-            self.radian2 += 2.*M_PI #2*3.1415926
+        # theta in radian
+        self.radian1 = degree1/180.*M_PI#3.1415926
+        self.radian2 = self._fix_angle(degree2/180.*M_PI)
 
         self.metric_set_origin(xc, yc, c)
 
+
+    cdef double _fix_angle(self, double a):
+        if a > self.radian1:
+            return self.radian1 + fmod((a-self.radian1), 2*M_PI)
+        else:
+            return self.radian1 + 2.*M_PI - fmod((self.radian1-a), 2*M_PI)
+        
 
     cdef npy_bool _inside(self, double x, double y):
         cdef double dx, dy, theta
@@ -852,8 +852,9 @@ cdef class AngleRange(RegionBase):
 
         theta = atan2(dy, dx)
 
-        if theta < self.radian1:
-            theta += 2.*M_PI
+        #if theta < self.radian1:
+        #    theta += 2.*M_PI
+        theta = self._fix_angle(theta)
         return (theta < self.radian2)
 
     def __repr__(self):
