@@ -72,11 +72,12 @@ def properties_func_default(shape, saved_attrs):
         elif len(point_attrs) > 1:
             point_type = point_attrs[0]
             point_size = int(point_attrs[1])
-        
+
         marker = _point_type_dict.get(point_type, "o")
         kwargs = dict(markeredgecolor=color,
                       markerfacecolor="none",
                       marker=marker,
+                      markeredgewidth=int(attr_dict.get("width", 1)),
                       markersize=point_size
                       )
     elif shape.name in ["line", "vector"]:
