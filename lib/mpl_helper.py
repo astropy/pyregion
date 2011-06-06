@@ -61,9 +61,9 @@ def properties_func_default(shape, saved_attrs):
         font = attr_dict.get("font")
         if font:
             a = font.split()
-            if len(a) == 3:
+            if len(a) >= 3:
                 fontsize=float(a[1])
-            kwargs["fontsize"]=fontsize
+                kwargs["fontsize"]=fontsize
     elif shape.name == "point":
         marker = _point_type_dict.get(attr_dict.get("point"), "o")
         kwargs = dict(markeredgecolor=color,
@@ -71,11 +71,13 @@ def properties_func_default(shape, saved_attrs):
                       marker=marker,
                       )
     elif shape.name in ["line", "vector"]:
+        fontsize = 10 # default font size
+
         font = attr_dict.get("font")
         if font:
-            fontsize = int(font.split()[1])
-        else:
-            fontsize = 10
+            a = font.split()
+            if len(a) >= 3:
+                fontsize=float(a[1])
 
         kwargs = dict(color=color,
                       linewidth=int(attr_dict.get("width", 1)),
