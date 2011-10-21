@@ -197,7 +197,43 @@ cdef class RegionBase:
         return self._inside(x, y)
 
 
-    def inside(self, x, y):
+    def inside(self, x, y=None):
+        if y is None:
+            if len(x.shape) == 2 and x.shape[-1] == 2:
+                return self.inside_xy(x)
+            else:
+                raise ValueError("input array has a wrong shape")
+        else:
+            return self.inside_x_y(x, y)
+
+    def inside_xy(self, xy):
+        """
+        inside(x, y) : given the numpy array of x and y, returns an
+        array b of same shape, where b[i] = inside1(x[i], y[i])
+        """
+        cdef c_numpy.ndarray xya
+        cdef c_numpy.ndarray ra
+        cdef double *xyd
+        cdef npy_bool *rd
+        cdef int i
+        cdef int n
+
+        xya = c_numpy.PyArray_ContiguousFromAny(xy, c_numpy.NPY_DOUBLE, 1, 0)
+
+        ra = c_numpy.PyArray_EMPTY(1, xya.dimensions,
+                                   c_numpy.NPY_BOOL, 0)
+
+        xyd = <double *> c_numpy.PyArray_DATA(xya)
+        rd = <npy_bool *> c_numpy.PyArray_DATA(ra)
+
+        n = xya.dimensions[0] # c_numpy.PyArray_SIZE(xya) / 2
+        #_inside_ptr = self._inside
+        for i from 0 <= i < n:
+            rd[i] = self._inside(xyd[2*i], xyd[2*i+1])
+        return ra
+
+
+    def inside_x_y(self, x, y):
         """
         inside(x, y) : given the numpy array of x and y, returns an
         array b of same shape, where b[i] = inside1(x[i], y[i])
