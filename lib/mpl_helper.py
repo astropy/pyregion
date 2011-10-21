@@ -65,7 +65,7 @@ def properties_func_default(shape, saved_attrs):
                 fontsize=float(a[1])
                 kwargs["fontsize"]=fontsize
     elif shape.name == "point":
-        point_attrs = attr_dict.get("point").split()
+        point_attrs = attr_dict.get("point", "boxcircle").split()
         if len(point_attrs) == 1:
             point_type = point_attrs[0]
             point_size = 11
