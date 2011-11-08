@@ -27,10 +27,10 @@ else:
     _kapteyn_installed = True
 
 
-FK4 = (kapteyn_celestial.equatorial, kapteyn_celestial.fk4, 'B1950.0')
-FK5 = (kapteyn_celestial.equatorial, kapteyn_celestial.fk5, 'J2000.0')
+FK4 = (kapteyn_celestial.equatorial, kapteyn_celestial.fk4)
+FK5 = (kapteyn_celestial.equatorial, kapteyn_celestial.fk5)
 GAL = kapteyn_celestial.galactic
-ICRS = (kapteyn_celestial.equatorial, kapteyn_celestial.fk5, 'J2000.0') # FIXME
+ICRS = (kapteyn_celestial.equatorial, kapteyn_celestial.fk5) # FIXME
 
 coord_system = dict(fk4=FK4,
                     fk5=FK5,
@@ -175,7 +175,8 @@ class ProjectionPywcs(ProjectionBase):
             self._pywcs = header
 
     def _get_ctypes(self):
-        return tuple(self._pywcs.wcs.ctype)
+        return tuple(s.decode() for s in self._pywcs.wcs.ctype)
+        #return tuple(self._pywcs.wcs.ctype)
 
     ctypes = property(_get_ctypes)
 

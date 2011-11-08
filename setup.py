@@ -1,12 +1,12 @@
-try:
-    from setuptools import setup
-    from setuptools.extension import Extension
-    PYREX_SOURCE = "src/_region_filter.pyx"
-except ImportError:
-    from distutils.core import setup, Extension
-    PYREX_SOURCE = "src/_region_filter.c"
+from distribute_setup import use_setuptools
+use_setuptools()
+
+from setuptools import setup, Extension
+
+PYREX_SOURCE = "src/_region_filter.pyx"
 
 import sys
+import warnings
 
 # If you don't want to build filtering module (which requires a C
 # compiler), set it to False
@@ -25,7 +25,8 @@ def main():
               platforms = ["Linux","MacOS X"],
               packages = ['pyregion'],
               package_dir={'pyregion':'lib'},
-              install_requires = ["pyparsing"]
+              install_requires = ["pyparsing"],
+              use_2to3 = True,
               )
     ka["classifiers"]=['Development Status :: 5 - Production/Stable',
                        'Intended Audience :: Science/Research',
@@ -40,8 +41,7 @@ def main():
         try:
             import numpy
         except ImportError:
-            print "numpy must be installed to build the filtering module."
-            print "ABORTING."
+            warnings.warn("numpy must be installed to build the filtering module.")
             sys.exit(1)
 
         try:

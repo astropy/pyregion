@@ -344,15 +344,15 @@ cdef class RegionList(RegionBase):
     def __delitem__(self, Py_ssize_t x):
         del self.child_regions[x]
 
-    def __getslice__(self, Py_ssize_t i, Py_ssize_t j):
-        return self.__class__(*self.child_regions[i:j])
+    # def __getslice__(self, Py_ssize_t i, Py_ssize_t j):
+    #     return self.__class__(*self.child_regions[i:j])
 
-    def __setslice__(self, Py_ssize_t i, Py_ssize_t j, x):
-        self._check_type_of_list(y)
-        self.child_regions[i:j] = x
+    # def __setslice__(self, Py_ssize_t i, Py_ssize_t j, x):
+    #     self._check_type_of_list(x)
+    #     self.child_regions[i:j] = x
 
-    def __delslice__(self, Py_ssize_t i, Py_ssize_t j):
-        del self.child_regions[i:j]
+    # def __delslice__(self, Py_ssize_t i, Py_ssize_t j):
+    #     del self.child_regions[i:j]
 
     def __contains__(self, RegionBase x):
         return x in self.child_regions
