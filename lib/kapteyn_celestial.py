@@ -21,7 +21,6 @@
 
 import numpy as n
 import types
-from string import upper
 import re
 
 # Some globals:

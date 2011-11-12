@@ -3,7 +3,7 @@ import copy
 from pyparsing import Literal, CaselessKeyword, CaselessLiteral, \
      Word, Optional, OneOrMore, Group, Combine, ZeroOrMore, nums, \
      Forward, StringEnd, restOfLine, alphas, alphanums, CharsNotIn, \
-     MatchFirst, And, Or, quotedString, QuotedString
+     MatchFirst, And, Or, quotedString, QuotedString, White
 
 from region_numbers import CoordOdd, CoordEven, Distance, Angle
 
@@ -16,6 +16,7 @@ def get_ds9_attr_parser():
     lhs = Word(alphas)
     paren = QuotedString("(",endQuoteChar=")")
     rhs = Or([Word(alphas+nums),
+              Combine(Word(alphas) + White() + Word(nums)), # for point
               quotedString,
               QuotedString("{",endQuoteChar="}"),
               paren + ZeroOrMore(paren),
@@ -107,7 +108,7 @@ def test_attr():
 
 if __name__ == "__main__":
     p = get_ds9_attr_parser()
-    s = 'color=green dashlist= 8 4 font="helvetica 10 normal" tag={group 1} select=1 source panda=(1 3 2)(2 3 4)'
+    s = 'point=cross 40 color=green dashlist= 8 4 font="helvetica 10 normal" tag={group 1} select=1 source panda=(1 3 2)(2 3 4)'
     #s = 'dashlist= 8 4 font=1'
     ss = p.parseString(s)
     print ss

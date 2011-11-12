@@ -5,7 +5,6 @@ cdef extern from "stdio.h":
 cdef extern from "stdlib.h":
     pass
 
-
 # cdef extern from "geom2.h":
 #     ctypedef struct Metric:
 #         double g_x
@@ -28,12 +27,12 @@ c_numpy.import_array()
 
 ctypedef int Py_ssize_t
 
+
 class NotYetImplemented(Exception):
     pass
 
 class RegionFilterException(Exception):
     pass
-
 
 
 cdef struct Metric:
@@ -90,7 +89,6 @@ metric_wcs.set_update_func(_update_metric_wcs)
 class BaseClassInitException(Exception):
     pass
 
-
 cdef class RegionBase:
     #cdef double sin_theta
     #cdef double cos_theta
@@ -141,7 +139,7 @@ cdef class RegionBase:
     cdef npy_bool _inside(self, double x, double y):
         return (0)
 
-    def mask(self, img):
+    def mask(self, img_or_shape):
         """
         Create a mask ( a 2-d image whose pixel value is 1 if the
         pixel is inside the filter, otherwise 0). It takes a single
@@ -152,13 +150,15 @@ cdef class RegionBase:
 
         cdef int l, nx, ny
 
-        if hasattr(img, "shape"):
-            shape = img.shape
-        elif isinstance(img, tuple):
-            shape = img
+        if hasattr(img_or_shape, "shape"):
+            shape = img_or_shape.shape
+        elif c_python.PySequence_Check(img_or_shape):
+            shape = img_or_shape
+        else:
+            raise RegionFilterException("the inut needs to be a numpy 2-d array or a tuple of two integers")
 
         if c_python.PySequence_Length(shape) != 2:
-            raise RegionFilterException("shape of the inut image must be 2d: %s is given" % (str(shape)))
+            raise RegionFilterException("shape of the input image must be 2d: %s is given" % (str(shape)))
 
         ny = c_python.PySequence_GetItem(shape, 0)
         nx = c_python.PySequence_GetItem(shape, 1)
@@ -197,7 +197,43 @@ cdef class RegionBase:
         return self._inside(x, y)
 
 
-    def inside(self, x, y):
+    def inside(self, x, y=None):
+        if y is None:
+            if len(x.shape) == 2 and x.shape[-1] == 2:
+                return self.inside_xy(x)
+            else:
+                raise ValueError("input array has a wrong shape")
+        else:
+            return self.inside_x_y(x, y)
+
+    def inside_xy(self, xy):
+        """
+        inside(x, y) : given the numpy array of x and y, returns an
+        array b of same shape, where b[i] = inside1(x[i], y[i])
+        """
+        cdef c_numpy.ndarray xya
+        cdef c_numpy.ndarray ra
+        cdef double *xyd
+        cdef npy_bool *rd
+        cdef int i
+        cdef int n
+
+        xya = c_numpy.PyArray_ContiguousFromAny(xy, c_numpy.NPY_DOUBLE, 1, 0)
+
+        ra = c_numpy.PyArray_EMPTY(1, xya.dimensions,
+                                   c_numpy.NPY_BOOL, 0)
+
+        xyd = <double *> c_numpy.PyArray_DATA(xya)
+        rd = <npy_bool *> c_numpy.PyArray_DATA(ra)
+
+        n = xya.dimensions[0] # c_numpy.PyArray_SIZE(xya) / 2
+        #_inside_ptr = self._inside
+        for i from 0 <= i < n:
+            rd[i] = self._inside(xyd[2*i], xyd[2*i+1])
+        return ra
+
+
+    def inside_x_y(self, x, y):
         """
         inside(x, y) : given the numpy array of x and y, returns an
         array b of same shape, where b[i] = inside1(x[i], y[i])
@@ -308,15 +344,15 @@ cdef class RegionList(RegionBase):
     def __delitem__(self, Py_ssize_t x):
         del self.child_regions[x]
 
-    def __getslice__(self, Py_ssize_t i, Py_ssize_t j):
-        return self.__class__(*self.child_regions[i:j])
+    # def __getslice__(self, Py_ssize_t i, Py_ssize_t j):
+    #     return self.__class__(*self.child_regions[i:j])
 
-    def __setslice__(self, Py_ssize_t i, Py_ssize_t j, x):
-        self._check_type_of_list(y)
-        self.child_regions[i:j] = x
+    # def __setslice__(self, Py_ssize_t i, Py_ssize_t j, x):
+    #     self._check_type_of_list(x)
+    #     self.child_regions[i:j] = x
 
-    def __delslice__(self, Py_ssize_t i, Py_ssize_t j):
-        del self.child_regions[i:j]
+    # def __delslice__(self, Py_ssize_t i, Py_ssize_t j):
+    #     del self.child_regions[i:j]
 
     def __contains__(self, RegionBase x):
         return x in self.child_regions
@@ -830,18 +866,19 @@ cdef class AngleRange(RegionBase):
         self.degree1 = degree1
         self.degree2 = degree2
 
-        # theta in [-pi, pi]
-        self.radian1 = (fmod(degree1+180, 360.)-180)/180.*M_PI#3.1415926
-        self.radian2 = (fmod(degree2+180, 360.)-180)/180.*M_PI#3.1415926
-        #self.radian1 = (fmod(degree1, 360))/180.*M_PI#3.1415926
-        #self.radian2 = (fmod(degree2, 360))/180.*M_PI#3.1415926
-        #self.radian2 = (((degree2+180)%360.)-180)/180.*M_PI#3.1415926
-
-        if self.radian2 < self.radian1:
-            self.radian2 += 2.*M_PI #2*3.1415926
+        # theta in radian
+        self.radian1 = degree1/180.*M_PI#3.1415926
+        self.radian2 = self._fix_angle(degree2/180.*M_PI)
 
         self.metric_set_origin(xc, yc, c)
 
+
+    cdef double _fix_angle(self, double a):
+        if a > self.radian1:
+            return self.radian1 + fmod((a-self.radian1), 2*M_PI)
+        else:
+            return self.radian1 + 2.*M_PI - fmod((self.radian1-a), 2*M_PI)
+        
 
     cdef npy_bool _inside(self, double x, double y):
         cdef double dx, dy, theta
@@ -851,8 +888,9 @@ cdef class AngleRange(RegionBase):
 
         theta = atan2(dy, dx)
 
-        if theta < self.radian1:
-            theta += 2.*M_PI
+        #if theta < self.radian1:
+        #    theta += 2.*M_PI
+        theta = self._fix_angle(theta)
         return (theta < self.radian2)
 
     def __repr__(self):

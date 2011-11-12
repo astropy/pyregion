@@ -27,5 +27,6 @@ cdef extern from "Python.h":
     void * PyList_GET_ITEM(PyListObject *o, int i)
     int    PyList_GET_SIZE(PyListObject *o)
 
+    int    PySequence_Check(object o)
     object PySequence_GetItem(object o, int i)
     int    PySequence_Length(object o)
