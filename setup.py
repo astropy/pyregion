@@ -3,7 +3,23 @@ use_setuptools()
 
 from setuptools import setup, Extension
 
-PYREX_SOURCE = "src/_region_filter.pyx"
+# check if cython or pyrex is available.
+pyrex_impls = 'Cython.Distutils.build_ext', 'Pyrex.Distutils.build_ext'
+for pyrex_impl in pyrex_impls:
+    try:
+        # from (pyrex_impl) import build_ext
+        build_ext = __import__(pyrex_impl, fromlist=['build_ext']).build_ext
+        break
+    except:
+        pass
+have_pyrex = 'build_ext' in globals()
+
+if have_pyrex:
+    cmdclass = {'build_ext': build_ext}
+    PYREX_SOURCE = "src/_region_filter.pyx"
+else:
+    cmdclass = {}
+    PYREX_SOURCE = "src/_region_filter.c"
 
 import sys
 import warnings
@@ -48,6 +64,9 @@ def main():
             numpy_include = numpy.get_include()
         except AttributeError:
             numpy_include = numpy.get_numpy_include()
+
+        if cmdclass:
+            ka["cmdclass"] = cmdclass
 
         ka["ext_modules"] = [ Extension("pyregion._region_filter",
                                         [PYREX_SOURCE],
