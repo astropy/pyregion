@@ -5,11 +5,21 @@ import math
 
 import pyfits
 
+# At some point, pyfits.Card.fromstring has changed from unbound
+# method to bounded method.
+
+if pyfits.Card.fromstring.__self__: # 
+    def pyfits_card_fromstring(l):
+        return pyfits.Card.fromstring(l)
+else:
+    def pyfits_card_fromstring(l):
+        c = pyfits.Card()
+        return c.fromstring(l)
+
 def demo_header():
     cards = pyfits.CardList()
     for l in open("sample_fits01.header"):
-        card = pyfits.Card()
-        card.fromstring(l.strip())
+        card = pyfits_card_fromstring(l.strip())
         cards.append(card)
     h = pyfits.Header(cards)
     return h

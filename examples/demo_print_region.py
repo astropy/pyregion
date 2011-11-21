@@ -4,11 +4,12 @@ import math
 
 import pyfits
 
+from demo_helper import pyfits_card_fromstring
+
 def test_header():
     cards = pyfits.CardList()
     for l in open("test.header"):
-        card = pyfits.Card()
-        card.fromstring(l.strip())
+        card = pyfits_card_fromstring(l.strip())
         cards.append(card)
     h = pyfits.Header(cards)
     return h

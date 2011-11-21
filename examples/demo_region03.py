@@ -3,25 +3,18 @@ import matplotlib.pyplot as plt
 import pyregion
 
 import math
-import sys
 
-try:
-    import pywcsgrid2
-except:
-    print "You require matplotlib 0.99 and later that include axes_grid toolkit"
-    sys.exit(0)
+from mpl_toolkits.axes_grid1 import ImageGrid
+import pywcsgrid2
 
-try:
-    from mpl_toolkits.axes_grid.axes_grid import AxesGrid
-except ImportError:
-    print "You require pywcsgrid2."
-    sys.exit(0)
+
+from demo_helper import pyfits_card_fromstring
+
 
 def get_test_header():
     cards = pyfits.CardList()
     for l in open("sample_fits01.header"):
-        card = pyfits.Card()
-        card.fromstring(l.strip())
+        card = pyfits_card_fromstring(l.strip())
         cards.append(card)
     h = pyfits.Header(cards)
     return h
@@ -40,9 +33,9 @@ if 1:
     fig = plt.figure(1, figsize=(7,5))
     fig.clf()
     nrows_ncols = (ny, nx)
-    grid= AxesGrid(fig, 111, nrows_ncols,
-                   ngrids=n,  add_all=True, share_all=True,
-                   axes_class=(pywcsgrid2.Axes, dict(header=h)))
+    grid= ImageGrid(fig, 111, nrows_ncols,
+                    ngrids=n,  add_all=True, share_all=True,
+                    axes_class=(pywcsgrid2.Axes, dict(header=h)))
 
     ax = grid[0]
     ax.set_xlim(300, 1300)

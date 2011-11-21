@@ -1,10 +1,6 @@
-import sys
+import pyfits
 
-try:
-    import pyfits
-except ImportError:
-    print "This example requires the pyfits module installed"
-    sys.exit(0)
+from demo_helper import pyfits_card_fromstring
 
 import matplotlib.pyplot as plt
 
@@ -14,8 +10,7 @@ import pyregion
 def demo_header():
     cards = pyfits.CardList()
     for l in open("sample_fits02.header"):
-        card = pyfits.Card()
-        card.fromstring(l.strip())
+        card = pyfits_card_fromstring(l.strip())
         cards.append(card)
     h = pyfits.Header(cards)
     return h

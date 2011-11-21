@@ -31,7 +31,7 @@ def get_ds9_attr_parser():
 
 
 class Ds9AttrParser(object):
-    def set_continued(self):
+    def set_continued(self, s, l, tok):
         self.continued = True
         
     def __init__(self):
