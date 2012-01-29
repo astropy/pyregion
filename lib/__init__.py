@@ -1,6 +1,6 @@
-from ds9_region_parser import RegionParser
-from wcs_converter import check_wcs as _check_wcs
-from itertools import cycle, izip
+from .ds9_region_parser import RegionParser
+from .wcs_converter import check_wcs as _check_wcs
+from itertools import cycle
 
 class ShapeList(list):
     def __init__(self, *ka, **kw):
@@ -33,7 +33,7 @@ class ShapeList(list):
         if comment_list is None:
             comment_list = cycle([None])
 
-        r = RegionParser.sky_to_image(izip(self, comment_list),
+        r = RegionParser.sky_to_image(zip(self, comment_list),
                                       header)
         shape_list, comment_list = zip(*list(r))
         return ShapeList(shape_list, comment_list=comment_list)

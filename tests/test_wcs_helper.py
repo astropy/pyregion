@@ -17,7 +17,7 @@ def test_estimate_cdelt():
     wcs.wcs.crpix = [5.5, 5.5]
     wcs.wcs.cdelt = [0.1, -0.1]
     wcs.wcs.crval = [l, b]
-    wcs.wcs.ctype = ["GLON-ZEA", "GLAT-ZEA"]
+    wcs.wcs.ctype = ["GLON-ZEA".encode("ascii"), "GLAT-ZEA".encode("ascii")]
 
     import pyregion.wcs_helper as wcs_helper
     proj = wcs_helper.get_kapteyn_projection(wcs)

@@ -5,24 +5,24 @@ from pyparsing import Literal, CaselessKeyword, CaselessLiteral, \
      Forward, StringEnd, restOfLine, alphas, alphanums, CharsNotIn, \
      MatchFirst, And, Or, ParseException
 
-from region_numbers import CoordOdd, CoordEven, Distance, Angle, Integer
-from region_numbers import SimpleNumber, SimpleInteger
+from .region_numbers import CoordOdd, CoordEven, Distance, Angle, Integer
+from .region_numbers import SimpleNumber, SimpleInteger
 
-from wcs_helper import get_kapteyn_projection, sky2sky
+from .wcs_helper import get_kapteyn_projection, sky2sky
 
 import warnings
 
-from ds9_attr_parser import Ds9AttrParser, get_attr
+from .ds9_attr_parser import Ds9AttrParser, get_attr
 
-from wcs_helper import UnknownWcs, image_like_coordformats, select_wcs
-from wcs_converter import convert_to_imagecoord, convert_physical_to_imagecoord
+from .wcs_helper import UnknownWcs, image_like_coordformats, select_wcs
+from .wcs_converter import convert_to_imagecoord, convert_physical_to_imagecoord
 
-from parser_helper import as_comma_separated_list, wcs_shape, \
+from .parser_helper import as_comma_separated_list, wcs_shape, \
      define_shape, define_shape_helper, define_expr, define_line, \
      comment_shell_like, define_simple_literals, \
      Shape, Property, CoordCommand, Global, Comment, RegionPusher
 
-from physical_coordinate import PhysicalCoordinate
+from .physical_coordinate import PhysicalCoordinate
 
 
 ds9_shape_defs = dict(circle=wcs_shape(CoordOdd, CoordEven, Distance),

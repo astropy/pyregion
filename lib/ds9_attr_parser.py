@@ -5,9 +5,9 @@ from pyparsing import Literal, CaselessKeyword, CaselessLiteral, \
      Forward, StringEnd, restOfLine, alphas, alphanums, CharsNotIn, \
      MatchFirst, And, Or, quotedString, QuotedString, White
 
-from region_numbers import CoordOdd, CoordEven, Distance, Angle
+from .region_numbers import CoordOdd, CoordEven, Distance, Angle
 
-from parser_helper import as_comma_separated_list, wcs_shape, \
+from .parser_helper import as_comma_separated_list, wcs_shape, \
      define_shape, define_shape_helper, define_expr, define_line, \
      comment_shell_like, define_simple_literals, \
      Shape

@@ -1,7 +1,7 @@
 import numpy as np
 
-from kapteyn_celestial import skymatrix, longlat2xyz, dotrans, xyz2longlat
-import kapteyn_celestial
+from .kapteyn_celestial import skymatrix, longlat2xyz, dotrans, xyz2longlat
+from . import kapteyn_celestial
 
 import pyfits
 

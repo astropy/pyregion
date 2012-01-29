@@ -24,7 +24,7 @@ import types
 import re
 
 # Some globals:
-eq, ecl, gal, sgal, fk4, fk4_no_e, fk5, icrs, j2000 = range(9)
+eq, ecl, gal, sgal, fk4, fk4_no_e, fk5, icrs, j2000 = list(range(9))
 # aliases
 equatorial = eq; ecliptic = ecl; galactic = gal; supergalactic = sgal 
 
@@ -777,7 +777,7 @@ Examples:        >>> epochs('F2008-03-31T8:09') should return:
    """
    if not spec:
       mes = "No epoch in string"
-      raise Exception, mes
+      raise Exception(mes)
 
    b = j = jd = None
    
@@ -820,10 +820,10 @@ Examples:        >>> epochs('F2008-03-31T8:09') should return:
          b  = JD2epochBessel(jd)
          j  = JD2epochJulian(jd)
       else:
-         raise Exception, "Unknown prefix for epoch"
+         raise Exception("Unknown prefix for epoch")
    except:
       mes = "No prefix or cannot convert epoch to a number"
-      raise Exception, mes
+      raise Exception(mes)
 
    return (b, j, jd)
 
@@ -1707,7 +1707,7 @@ Notes:     Return matrix to transform equatorial coordinates from
       return M5*M4*M3*M2*M1
    else:
       mes = "Unknown celestial reference system: %s or %s" % (S1, S2) 
-      raise Exception, mes
+      raise Exception(mes)
 
 
 
@@ -1743,7 +1743,7 @@ Reference:  -
          return M3*M2*M1
       else:
          mes = "Unknown output sky system: %s" % (S2,)
-         raise Exception, mes
+         raise Exception(mes)
 
    elif skyin == ecliptic:
       if skyout == equatorial:
@@ -1769,7 +1769,7 @@ Reference:  -
          return M4*M3*M2*M1
       else:
          mes = "Unknown output sky system: %s" % (S2,)
-         raise Exception, mes
+         raise Exception(mes)
 
    elif skyin == galactic:
       if skyout == equatorial:                              # gal -> eq, epoch2
@@ -1788,7 +1788,7 @@ Reference:  -
          return M1
       else:
          mes = "Unknown output sky system: %s" % (S2,)
-         raise Exception, mes
+         raise Exception(mes)
 
    elif skyin == supergalactic:
       if skyout == equatorial:                              # sgal -> eq(epoch2)
@@ -1809,10 +1809,10 @@ Reference:  -
          return I()
       else:
          mes = "Unknown output sky system: %s" % (S2,)
-         raise Exception, mes
+         raise Exception(mes)
    else:
       mes = "Unknown input sky system: %s" % (S1,)
-      raise Exception, mes
+      raise Exception(mes)
 
 
 
@@ -1839,11 +1839,11 @@ Examples: See skymatrix()
    refin   = None
    epobs   = None 
    first   = True
-   if type(skyin) == types.TupleType:
+   if type(skyin) == tuple:
       try:                                # Try to parse this tuple
          sysin = skyin[0]
          for element in skyin[1:]:
-            if type(element)==types.StringType:     # If it is a string it must be an epoch
+            if type(element)==bytes:     # If it is a string it must be an epoch
                if first:
                   epochinset = epochs(element)
                   first = False

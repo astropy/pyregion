@@ -1,7 +1,7 @@
-from wcs_helper import estimate_cdelt, estimate_angle
-from region_numbers import CoordOdd, CoordEven, Distance, Angle
-from parser_helper import Shape, CoordCommand
-from region_numbers import SimpleNumber, SimpleInteger
+from .wcs_helper import estimate_cdelt, estimate_angle
+from .region_numbers import CoordOdd, CoordEven, Distance, Angle
+from .parser_helper import Shape, CoordCommand
+from .region_numbers import SimpleNumber, SimpleInteger
 
 import copy
 

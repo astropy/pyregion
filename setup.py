@@ -42,7 +42,7 @@ def main():
               packages = ['pyregion'],
               package_dir={'pyregion':'lib'},
               install_requires = ["pyparsing"],
-              use_2to3 = True,
+              use_2to3 = False,
               )
     ka["classifiers"]=['Development Status :: 5 - Production/Stable',
                        'Intended Audience :: Science/Research',
