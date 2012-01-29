@@ -498,9 +498,7 @@ if pywcs is None:
 else:
 
     def get_kapteyn_projection(header):
-        if isinstance(header, pywcs.WCS):
-            projection = ProjectionPywcs(header)
-        elif isinstance(header, ProjectionBase):
+        if isinstance(header, ProjectionBase):
             projection = header
         else:
             projection = ProjectionDefault(header)
