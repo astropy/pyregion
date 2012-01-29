@@ -115,7 +115,7 @@ class RegionParser(RegionPusher):
             try:
                 s, c, continued = self.parseLine(l)
             except ParseException:
-                print "Failed to parse : " + l
+                warnings.warn("Failed to parse : " + l)
                 self.flush()
                 continue
 

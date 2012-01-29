@@ -111,4 +111,3 @@ if __name__ == "__main__":
     s = 'point=cross 40 color=green dashlist= 8 4 font="helvetica 10 normal" tag={group 1} select=1 source panda=(1 3 2)(2 3 4)'
     #s = 'dashlist= 8 4 font=1'
     ss = p.parseString(s)
-    print ss
