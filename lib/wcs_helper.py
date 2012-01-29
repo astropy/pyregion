@@ -5,26 +5,15 @@ import kapteyn_celestial
 
 import pyfits
 
-_wcs_module_import_log = []
+pywcs = None
 
-_pywcs_installed = False
-try:
-    import pywcs
-except ImportError:
-    _wcs_module_import_log.append("Failed to import the pywcs")
-else:
-    if hasattr(pywcs.WCS, "sub"):
-        _pywcs_installed = True
-    else:
-        _wcs_module_import_log.append("pywcs imported but does not have 'sub' attribute. More recent version of pywcs is required.")
-
-_kapteyn_installed = False
-try:
-    import kapteyn.wcs
-except ImportError:
-    _wcs_module_import_log.append("Failed to import the kpateyn.wcs")
-else:
-    _kapteyn_installed = True
+pywcs_impls = 'astropy.pywcs', 'pywcs'
+for pywcs_impl in pywcs_impls:
+    try:
+        pywcs = __import__(pywcs_impl)
+        break
+    except:
+        pass
 
 
 FK4 = (kapteyn_celestial.equatorial, kapteyn_celestial.fk4)
@@ -385,39 +374,6 @@ class ProjectionPywcsSub(_ProjectionSubInterface, ProjectionBase):
         return xyz2r
 
 
-class ProjectionKapteyn(ProjectionBase):
-    """
-    A wrapper for kapteyn.projection
-    """
-    def __init__(self, header):
-        if isinstance(header, pyfits.Header):
-            self._proj = kapteyn.wcs.Projection(header)
-        else:
-            self._proj = header
-
-    def _get_ctypes(self):
-        return self._proj.ctype
-
-    ctypes = property(_get_ctypes)
-
-    def _get_equinox(self):
-        return self._proj.equinox
-
-    equinox = property(_get_equinox)
-
-    def topixel(self, xy):
-        """ 1, 1 base """
-        return self._proj.topixel(xy)
-
-    def toworld(self, xy):
-        """ 1, 1 base """
-        return self._proj.toworld(xy)
-
-    def sub(self, axes):
-        proj = self._proj.sub(axes=axes)
-        return ProjectionKapteyn(proj)
-
-
 class ProjectionPywcs(ProjectionBase):
     """
     A wrapper for pywcs
@@ -532,24 +488,17 @@ class ProjectionSimple(ProjectionBase):
     #     return ProjectionPywcs(wcs)
 
 
-if _kapteyn_installed:
-    ProjectionDefault = ProjectionKapteyn
-elif _pywcs_installed:
-    ProjectionDefault = ProjectionPywcsNd
-else:
-    ProjectionDefault = None
+ProjectionDefault = ProjectionPywcsNd
 
-if not _kapteyn_installed and not _pywcs_installed:
+if pywcs is None:
     def get_kapteyn_projection(header):
-        err = ["Either pywcs or Kapteyn python packages are required."]
-        err.extend(_wcs_module_import_log)
+        err = "pywcs packages are required."
 
-        raise ImportError("\n".join(err))
+        raise RuntimeError(err)
 else:
+
     def get_kapteyn_projection(header):
-        if _kapteyn_installed and isinstance(header, kapteyn.wcs.Projection):
-            projection = ProjectionKapteyn(header)
-        elif _pywcs_installed and isinstance(header, pywcs.WCS):
+        if isinstance(header, pywcs.WCS):
             projection = ProjectionPywcs(header)
         elif isinstance(header, ProjectionBase):
             projection = header
