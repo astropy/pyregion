@@ -14,8 +14,8 @@ import warnings
 
 from ds9_attr_parser import Ds9AttrParser, get_attr
 
-from wcs_helper import UnknownWcs, image_like_coordformats, select_wcs, \
-     convert_to_imagecoord, convert_physical_to_imagecoord
+from wcs_helper import UnknownWcs, image_like_coordformats, select_wcs
+from wcs_converter import convert_to_imagecoord, convert_physical_to_imagecoord
 
 from parser_helper import as_comma_separated_list, wcs_shape, \
      define_shape, define_shape_helper, define_expr, define_line, \

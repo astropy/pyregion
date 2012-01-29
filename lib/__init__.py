@@ -1,8 +1,6 @@
 from ds9_region_parser import RegionParser
-from wcs_helper import check_wcs as _check_wcs
+from wcs_converter import check_wcs as _check_wcs
 from itertools import cycle, izip
-
-import sys
 
 class ShapeList(list):
     def __init__(self, *ka, **kw):
@@ -161,7 +159,7 @@ def get_mask(region, hdu):
     data = hdu.data
     header = hdu.header
 
-    region_filter = as_region_filter(region)
+    region_filter = as_region_filter(region, header=header)
 
     mask = region_filter.mask(data)
 
