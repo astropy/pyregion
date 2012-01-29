@@ -4,7 +4,13 @@
 Installing
 **********
 
-pyregion can be downloaded from the following page.
+*pyregion* is registered in pypi, thus you can install it by ::
+
+ pip install pyregion
+
+This will also install pyparsing if not installed.
+
+Also, pyregion source can be downloaded from the following page.
 
 * `Download <http://github.com/leejjoon/pyregion/downloads>`__
 
@@ -23,8 +29,8 @@ Dependencies
 **Requirements**
 
 Being based on pyparsing module, pyparsing need to be installed to use
-pyregion. Optionally, you also requires Kapteyn package or pywcs
-module installed (you need only one of them) for coordinate
+pyregion. Optionally, you also requires pywcs
+module installed for coordinate
 conversion. Displaying regions is supported for matplotlib.  Some
 example uses pywcsgrid2.
 
@@ -39,17 +45,12 @@ pyparsing
 * REQUIRED
 * `Homepage <http://pyparsing.wikispaces.com/>`__
 
-Kapteyn Package
----------------
-* OPTIONAL
-* used for coordinate conversions
-* `Homepage <http://www.astro.rug.nl/software/kapteyn/>`__
-
 pywcs
 -----
 * OPTIONAL
 * used for coordinate conversions
-* `Homepage <https://www.stsci.edu/trac/ssb/astrolib/>`__
+* `Homepage <https://trac.assembla.com/astrolib/>`__
+* or `Astropy <https://github.com/astropy/astropy/>`__
 
 pyfits
 ------
