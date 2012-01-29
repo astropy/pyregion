@@ -93,10 +93,7 @@ simple_integer = _unsigned_integer()
 
 def test_integer():
     for f in ["32", "+3"]:
-        print simple_integer.parseString(f)
-
-        assert usn.parseString(f)[0] == f
-        #assert usn.parseString(f)[0][0] == float(f)
+        assert simple_integer.parseString(f)[0].text == f
 
 
 def get_degree(s, l, tok):
@@ -252,7 +249,6 @@ def test_hms():
 
     assert s("32h24m32.2s")[0].v == Sixty(1, 32, 24, 32.2).v
     assert s("0h24m32.2s")[0].v == Sixty(1, 0, 24, 32.2).v
-    #assert s("32m")[0].v == HMS(1, 0, 32, 0).v
     assert s("32h")[0].v == Sixty(1, 32, 0, 0).v
 
 
@@ -280,8 +276,6 @@ def test_dms():
 
     assert s("32d24m32.2s")[0].v == Sixty(1, 32, 24, 32.2).v
     assert s("-32d24m32.2s")[0].v == Sixty(-1, 32, 24, 32.2).v
-    #assert s("-24m32.2s")[0].v == DMS(-1, 0, 24, 32.2).v
-    #assert s("32m")[0].v == DMS(1, 0, 32, 0).v
     assert s("32d")[0].v == Sixty(1, 32, 0, 0).v
 
 
@@ -359,9 +353,20 @@ class Integer:
 def test_coord_odd():
     s = CoordOdd.parser.parseString
 
-    assert s("32h24m32.2s")[0].v == HMS(1, 32, 24, 32.2).v
-    assert s("32:24:32.2s")[0].v == HMS(1, 32, 24, 32.2).v
-    assert s("32.24")[0] == 32.24
+    assert s("32h24m32.2s")[0].v == Sixty(1, 32, 24, 32.2).v
+    assert s("32:24:32.2s")[0].v == Sixty(1, 32, 24, 32.2).v
+    assert s("32.24")[0].v == 32.24
+
+    s1 = s("32:24:32.2s")[0]
+    assert isinstance(s1, HMS)
+
+
+def test_coord_odd():
+    s = CoordOdd.parser.parseString
+
+    assert s("32h24m32.2s")[0].v == Sixty(1, 32, 24, 32.2).v
+    assert s("32:24:32.2s")[0].v == Sixty(1, 32, 24, 32.2).v
+    assert s("32.24")[0].v == 32.24
 
     s1 = s("32:24:32.2s")[0]
     assert isinstance(s1, HMS)

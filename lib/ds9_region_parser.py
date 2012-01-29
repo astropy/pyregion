@@ -172,7 +172,12 @@ class RegionParser(RegionPusher):
     @staticmethod
     def sky_to_image(l, header):
 
-        pc = PhysicalCoordinate(header)
+        try:
+            header["NAXIS"]
+        except (KeyError, TypeError):
+            pc = None
+        else:
+            pc = PhysicalCoordinate(header)
 
         wcs_proj = get_kapteyn_projection(header)
 
@@ -220,6 +225,9 @@ class RegionParser(RegionPusher):
 
             elif isinstance(l1, Shape) and (l1.coord_format == "physical"):
 
+                if pc is None:
+                    raise RuntimeError("Physical coordinate is not known.")
+                
                 cl = l1.coord_list
                 fl = ds9_shape_defs[l1.name].args_list
 
@@ -285,7 +293,7 @@ def test_regionLine():
     rp = RegionParser()
 
     for s, n in zip(test_string_1, test_names):
-        s, c = rp.parseLine(s)
+        s = rp.parseLine(s)[0]
         assert len(s) == 1
         assert s[0].name == n
 
@@ -293,12 +301,12 @@ def test_comment():
     s = "circle(3323, 423, 423) # comment"
 
     rp = RegionParser()
-    s, c = rp.parseLine(s)
+    c = rp.parseLine(s)[1]
 
     assert c == "comment"
 
     s = " # comment2"
-    s, c = rp.parseLine(s)
+    c = rp.parseLine(s)[1]
 
     assert c == "comment2"
 
@@ -307,9 +315,9 @@ def test_global():
     s = 'global color=green font="helvetica 10 normal" select=1 highlite=1 edit=1 move=1 delete=1 include=1 fixed=0 source'
 
     rp = RegionParser()
-    s, c = rp.parseLine(s)
+    ss = rp.parseLine(s)[0]
 
-    print s
+    assert isinstance(ss[0], Global)
 
 
 
