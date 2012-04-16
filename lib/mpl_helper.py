@@ -10,6 +10,8 @@ from matplotlib.text import Annotation
 import numpy as np
 from math import cos, sin, pi, atan2
 
+import warnings
+
 def rotated_polygon(xy, ox, oy, angle):
     # angle in degree
     theta = angle/180.*pi
@@ -355,7 +357,7 @@ def as_mpl_artists(shape_list,
                                                 **kwargs)]
 
         else:
-            print "'as_mpl_artists' does not know how to convert '%s' to mpl artist" % (shape.name,)
+            warnings.warn("'as_mpl_artists' does not know how to convert '%s' to mpl artist" % (shape.name,))
 
 
         patch_list.extend(patches)

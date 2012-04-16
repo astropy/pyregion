@@ -3,8 +3,6 @@ import numpy as np
 from .kapteyn_celestial import skymatrix, longlat2xyz, dotrans, xyz2longlat
 from . import kapteyn_celestial
 
-import pyfits
-
 pywcs = None
 
 pywcs_impls = 'astropy.pywcs', 'pywcs'
@@ -42,7 +40,11 @@ def is_equal_coord_sys(src, dest):
 
 def is_string_like(obj):
     'Return True if *obj* looks like a string'
-    if isinstance(obj, (str, unicode)): return True
+    import sys
+    if sys.version_info >= (3,0):
+        if isinstance(obj, str): return True
+    else:
+        if isinstance(obj, (str, unicode)): return True
     try: obj + ''
     except: return False
     return True
@@ -111,21 +113,23 @@ def coord_system_guess(ctype1_name, ctype2_name, equinox):
 def fix_header(header):
     "return a new fixed header"
 
-    cards = pyfits.CardList()
+    old_cards = header.ascardlist()
+    new_cards = type(old_cards)()
 
-    for c in header.ascardlist():
+    for c in old_cards:
         # ignore comments and history
         if c.key in ["COMMENT", "HISTORY"]:
             continue
 
         # use "deg"
         if c.key.startswith("CUNIT") and c.value.lower().startswith("deg"):
-            c = pyfits.Card(c.key, "deg")
+            c = type(c)(c.key, "deg")
 
-        cards.append(c)
-        
-    h = pyfits.Header(cards)
+        new_cards.append(c)
+
+    h = type(header)(new_cards)
     return h
+
 
 def fix_lon(lon, lon_ref):
     lon_ = lon - lon_ref
@@ -133,7 +137,7 @@ def fix_lon(lon, lon_ref):
     if lon_ == 360:
         lon2 = 360
     return lon2 + lon_ref
-    
+
 
 class ProjectionBase(object):
     """
@@ -150,14 +154,14 @@ class ProjectionBase(object):
                 break
         else:
             self._lon_axis = None
-            
+
     def get_lon(self):
         pass
 
-    
+
     def set_lon_ref(self, ref):
         self._lon_ref = ref
-        
+
     def _fix_lon(self, lon, lon_ref=None):
         """
         transform lon into values in range [self._lon_ref, self._lon_ref+360]
@@ -233,8 +237,13 @@ class ProjectionPywcsNd(_ProjectionSubInterface, ProjectionBase):
     A wrapper for pywcs
     """
     def __init__(self, header):
-        if isinstance(header, pyfits.Header):
+        if hasattr(header, "ascard"):
             header = fix_header(header)
+            # pywcs.WCS internally uses `repr(header.ascard)` which
+            # returns str, but expecte byte in py3.
+            import sys
+            if sys.version_info >= (3,0):
+                header = repr(header.ascard).encode("ascii")
             self._pywcs = pywcs.WCS(header=header)
         else:
             self._pywcs = header
@@ -334,7 +343,7 @@ class ProjectionPywcsSub(_ProjectionSubInterface, ProjectionBase):
 
         xyz = [None]*self.proj.naxis
         for i in self._axis_nums_to_keep:
-            xyz[i] = iter_xy.next()
+            xyz[i] = next(iter_xy)
         for i in range(self.proj.naxis):
             if i not in self._axis_nums_to_keep:
                 s = np.empty_like(template)
@@ -358,7 +367,7 @@ class ProjectionPywcsSub(_ProjectionSubInterface, ProjectionBase):
 
         xyz = [None]*self.proj.naxis
         for i in self._axis_nums_to_keep:
-            xyz[i] = iter_xy.next()
+            xyz[i] = next(iter_xy)
         for i in range(self.proj.naxis):
             if i not in self._axis_nums_to_keep:
                 s = np.empty_like(template)
@@ -379,7 +388,7 @@ class ProjectionPywcs(ProjectionBase):
     A wrapper for pywcs
     """
     def __init__(self, header):
-        if isinstance(header, pyfits.Header):
+        if hasattr(header, "ascard"):
             self._pywcs = pywcs.WCS(header=header)
         else:
             self._pywcs = header
@@ -418,7 +427,7 @@ class ProjectionSimple(ProjectionBase):
         ProjectionBase.__init__(self)
         self._pywcs = pywcs.WCS(header=header)
         self._simple_init(header)
-        
+
     def _get_ctypes(self):
         return tuple(self._pywcs.wcs.ctype)
 
@@ -454,7 +463,7 @@ class ProjectionSimple(ProjectionBase):
         y = (lat - self.crval2)/self.cdelt2 + self.crpix2
 
         return x, y
-    
+
     def _simple_to_world(self, x, y):
         x, y = np.asarray(x), np.asarray(y)
         lon = (x - self.crpix1)*self.cdelt1/self.cos_phi + self.crval1
@@ -482,7 +491,7 @@ class ProjectionSimple(ProjectionBase):
 
     def sub(self, axis_nums):
         return self
-    
+
     # def sub(self, axes):
     #     wcs = self._pywcs.sub(axes=axes)
     #     return ProjectionPywcs(wcs)
@@ -564,7 +573,7 @@ def estimate_cdelt(wcs_proj, x0, y0): #, sky_to_sky):
         raise ValueError("estimate_cdelt does not work at poles.")
 
     lon_ref = lon0 - 180.
-    
+
     lon1, lat1 = wcs_proj.toworld(([x0+1], [y0]))
     lon1 = fix_lon(lon1, lon_ref)
     dlon = (lon1[0]-lon0[0])*np.cos(lat0[0]/180.*np.pi)

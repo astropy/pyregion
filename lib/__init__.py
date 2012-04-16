@@ -15,7 +15,7 @@ class ShapeList(list):
 
     def __getslice__(self, i, j):
         return self[max(0, i):max(0, j):]
-           
+
     def check_imagecoord(self):
         if [s for s in self if s.coord_format != "image"]:
             return False
@@ -50,7 +50,7 @@ class ShapeList(list):
         coordinate shifted by (1, 1). If you do not want this shift,
         use origin=0.
         """
-        from mpl_helper import as_mpl_artists
+        from .mpl_helper import as_mpl_artists
         patches, txts = as_mpl_artists(self, properties_func,
                                        text_offset,
                                        origin=origin)
