@@ -5,7 +5,7 @@ from . import kapteyn_celestial
 
 pywcs = None
 
-pywcs_impls = 'astropy.pywcs', 'pywcs'
+pywcs_impls = 'astropy.wcs', 'pywcs'
 for pywcs_impl in pywcs_impls:
     try:
         pywcs = __import__(pywcs_impl)
