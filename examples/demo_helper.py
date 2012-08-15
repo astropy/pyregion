@@ -3,7 +3,10 @@ import pyregion
 
 import math
 
-import pyfits
+try:
+    from astropy.io import fits as pyfits
+except ImportError:
+    import pyfits
 
 # At some point, pyfits.Card.fromstring has changed from unbound
 # method to bounded method.

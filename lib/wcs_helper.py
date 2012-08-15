@@ -5,14 +5,13 @@ from . import kapteyn_celestial
 
 pywcs = None
 
-pywcs_impls = 'astropy.wcs', 'pywcs'
-for pywcs_impl in pywcs_impls:
+try:
+    import astropy.wcs as pywcs
+except ImportError:
     try:
-        pywcs = __import__(pywcs_impl)
-        break
-    except:
+        import pywcs
+    except ImportError:
         pass
-
 
 FK4 = (kapteyn_celestial.equatorial, kapteyn_celestial.fk4)
 FK5 = (kapteyn_celestial.equatorial, kapteyn_celestial.fk5)
