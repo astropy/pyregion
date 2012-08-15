@@ -1,7 +1,11 @@
 import pyregion
 from os.path import join
 
-import pyfits
+try:
+    from astropy.io import fits as pyfits
+except ImportError:
+    import pyfits
+
 import numpy as np
 
 from pyregion.wcs_helper import fix_lon
