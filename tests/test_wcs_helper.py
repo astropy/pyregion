@@ -1,7 +1,11 @@
 import numpy as np
 #from pylab import savefig
 import pyregion
-import pywcs
+
+try:
+    from astropy import wcs as pywcs
+except ImportError:
+    import pywcs
 
 def test_estimate_cdelt():
     l,b=0,0
