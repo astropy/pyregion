@@ -1,4 +1,8 @@
-import pyfits
+try:
+    from astropy.io import fits as pyfits
+except ImportError:
+    import pyfits
+
 import matplotlib.pyplot as plt
 import pyregion
 
