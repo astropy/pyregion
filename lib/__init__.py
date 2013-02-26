@@ -104,6 +104,13 @@ class ShapeList(list):
 
     def write(self,outfile):
         """ Writes the current shape list out as a region file """
+<<<<<<< HEAD
+=======
+
+        # check for consistent coordinate system
+        if len(set([shape.coord_format for shape in self])) > 1:
+            raise ValueError("Inconsistent coordinate formats")
+>>>>>>> e67e32eb2afb0f700b7d323f456a7cc24eec1301
         
         myopen = _open_builtin
         outf = myopen(outfile,'w')
