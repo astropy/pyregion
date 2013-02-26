@@ -372,6 +372,10 @@ def as_mpl_artists(shape_list,
 
             # calculate the text position
             _bb = [p.get_window_extent() for p in patches]
+
+            for p in patches:
+                p._transformSet = False
+
             _bbox = Bbox.union(_bb)
             x0, y0, x1, y1 = _bbox.extents
             xc = .5*(x0+x1)
@@ -397,4 +401,3 @@ if 0:
     ylim(0,1500)
 
     draw()
-
