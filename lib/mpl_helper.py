@@ -372,6 +372,16 @@ def as_mpl_artists(shape_list,
 
             # calculate the text position
             _bb = [p.get_window_extent() for p in patches]
+
+            # this is to work around backward-incompatible change made
+            # in matplotlib 1.2. This change is later reverted so only
+            # some versions are affected. With affected version of
+            # matplotlib, get_window_extent method calls get_transform
+            # method which sets the _transformSet to True, which is
+            # not desired.
+            for p in patches:
+                p._transformSet = False
+
             _bbox = Bbox.union(_bb)
             x0, y0, x1, y1 = _bbox.extents
             xc = .5*(x0+x1)
@@ -397,4 +407,3 @@ if 0:
     ylim(0,1500)
 
     draw()
-
