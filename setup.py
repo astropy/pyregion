@@ -28,10 +28,11 @@ import warnings
 # compiler), set it to False
 WITH_FILTER = True
 
+execfile('lib/version.py')
 
 def main():
     ka = dict(name = "pyregion",
-              version = "1.1_git",
+              version = __version__,
               description = "python parser for ds9 region files",
               author = "Jae-Joon Lee",
               author_email = "lee.j.joon@gmail.com",
