@@ -50,7 +50,9 @@ def main():
                        'License :: OSI Approved :: MIT License',
                        'Operating System :: MacOS :: MacOS X',
                        'Operating System :: POSIX :: Linux',
+                       'Programming Language :: Cython',
                        'Programming Language :: Python',
+                       'Programming Language :: Python :: 3',
                        'Topic :: Scientific/Engineering :: Astronomy',
                        ]
 
