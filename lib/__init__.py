@@ -141,7 +141,8 @@ def parse(region_string):
     return ShapeList(shape_list, comment_list=comment_list)
 
 def open(fname):
-    region_string = _open_builtin(fname).read()
+    import __builtin__
+    region_string = __builtin__.open(fname).read()
     return parse(region_string)
 
 
