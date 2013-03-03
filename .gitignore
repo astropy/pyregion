@@ -3,3 +3,6 @@
 build
 dist
 MANIFEST.in
+.project
+.pydevproject
+pyregion.egg-info
