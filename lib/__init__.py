@@ -2,8 +2,6 @@ from .ds9_region_parser import RegionParser
 from .wcs_converter import check_wcs as _check_wcs
 from itertools import cycle
 
-_open_builtin = open
-
 class ShapeList(list):
     def __init__(self, *ka, **kw):
         self._comment_list = kw.pop("comment_list", None)
@@ -108,9 +106,9 @@ class ShapeList(list):
         # check for consistent coordinate system
         if len(set([shape.coord_format for shape in self])) > 1:
             raise ValueError("Inconsistent coordinate formats")
-        
-        myopen = _open_builtin
-        outf = myopen(outfile,'w')
+
+        import __builtin__
+        outf = __builtin__.open(outfile,'w')
 
         attr0 = self[0].attr[1]
         defaultline = " ".join(["%s=%s" % (a,attr0[a]) for a in attr0 if a!='text'])
@@ -198,4 +196,3 @@ if __name__ == '__main__':
     reg_imagecoord = reg.as_imagecoord(header)
     patches, txts = reg.get_mpl_patches_texts()
     m = reg.get_mask(hdu=f[0])
-
