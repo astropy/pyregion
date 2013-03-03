@@ -2,7 +2,10 @@ import matplotlib.pyplot as plt
 import matplotlib.cm as cm
 
 import pyregion
-import pyfits
+try:
+    from astropy.io import fits as pyfits
+except ImportError:
+    import pyfits
 
 # read in the image
 xray_name="pspc_skyview.fits"
