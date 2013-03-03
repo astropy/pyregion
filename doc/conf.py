@@ -43,9 +43,11 @@ copyright = '2009, Jae-Joon Lee'
 # other places throughout the built documents.
 #
 # The short X.Y version.
-version = '0.1'
+#version = '0.1'
 # The full version, including alpha/beta/rc tags.
-release = '0.1b'
+#release = '0.1b'
+import pyregion
+version = pyregion.__version__
 
 # There are two options for replacing |today|: either, you set today to some
 # non-false value, then it is used:
