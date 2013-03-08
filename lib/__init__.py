@@ -3,6 +3,8 @@ from .ds9_region_parser import RegionParser
 from .wcs_converter import check_wcs as _check_wcs
 from itertools import cycle
 
+_builtin_open = open
+
 class ShapeList(list):
     def __init__(self, *ka, **kw):
         self._comment_list = kw.pop("comment_list", None)
@@ -108,8 +110,7 @@ class ShapeList(list):
         if len(set([shape.coord_format for shape in self])) > 1:
             raise ValueError("Inconsistent coordinate formats")
 
-        import __builtin__
-        outf = __builtin__.open(outfile,'w')
+        outf = _builtin_open(outfile,'w')
 
         attr0 = self[0].attr[1]
         defaultline = " ".join(["%s=%s" % (a,attr0[a]) for a in attr0 if a!='text'])
@@ -141,8 +142,7 @@ def parse(region_string):
     return ShapeList(shape_list, comment_list=comment_list)
 
 def open(fname):
-    import __builtin__
-    region_string = __builtin__.open(fname).read()
+    region_string = _builtin_open(fname).read()
     return parse(region_string)
 
 
