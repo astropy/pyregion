@@ -28,7 +28,9 @@ import warnings
 # compiler), set it to False
 WITH_FILTER = True
 
-execfile('lib/version.py')
+for line in open('lib/version.py').readlines():
+    if (line.startswith('__version__')):
+        exec(line.strip())
 
 def main():
     ka = dict(name = "pyregion",
