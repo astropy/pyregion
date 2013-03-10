@@ -20,10 +20,14 @@ sys.path.append(os.path.abspath('./sphinxext'))
 #extensions = ['mathmpl', 'math_symbol_table', 'sphinx.ext.autodoc']
 extensions = ['matplotlib.sphinxext.mathmpl',# 'math_symbol_table',
               'sphinx.ext.autodoc', 'matplotlib.sphinxext.only_directives',
-              'matplotlib.sphinxext.plot_directive',
               'github_sphinx'
               #'gen_rst',
               ]
+
+if sys.version_info >= (3,0):
+    extensions.append('plot_directive_v3')
+else:
+    extensions.append('matplotlib.sphinxext.plot_directive')
 
 
 # Add any paths that contain templates here, relative to this directory.

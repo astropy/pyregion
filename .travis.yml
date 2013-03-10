@@ -38,7 +38,7 @@ script:
   # This is really part of the install phase.
   # We put it here to avoid the 15 min travis-ci timeout for the install phase
   - time pip install --use-mirrors astropy
-  - time pip install --use-mirrors pywcsgrid2
+  - time pip install --use-mirrors git+git://github.com/leejjoon/pywcsgrid2.git@master #pywcsgrid2
 
   # Install and test pyregion
   - python setup.py install

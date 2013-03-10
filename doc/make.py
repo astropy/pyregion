@@ -16,7 +16,7 @@ def check_build():
 
 def html():
     check_build()
-    os.system('sphinx-build -b html -d build/doctrees . build/html')
+    os.system('python `which sphinx-build` -b html -d build/doctrees . build/html')
 
 
 def clean():
