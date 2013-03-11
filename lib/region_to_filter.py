@@ -1,5 +1,5 @@
 import numpy as np
-import _region_filter as region_filter
+import pyregion._region_filter as region_filter
 import warnings
 
 def as_region_filter(shape_list, origin=1):
@@ -106,7 +106,7 @@ def as_region_filter(shape_list, origin=1):
             #f = f2 & region_filter.AngleRange(xc, yc, a1, a2)
 
         else:
-            warnings.warn("'as_region_filter' does not know how to convert '%s' to mpl artist" % (shape.name,))
+            warnings.warn("'as_region_filter' does not know how to convert '%s' to a region filter." % (shape.name,))
             continue
 
         if shape.exclude:
@@ -116,5 +116,3 @@ def as_region_filter(shape_list, origin=1):
 
 
     return region_filter.RegionOrList(*filter_list)
-
-

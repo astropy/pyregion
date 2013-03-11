@@ -70,7 +70,7 @@ class ShapeList(list):
         use origin=0.
         """
 
-        from region_to_filter import as_region_filter
+        from .region_to_filter import as_region_filter
 
         if header is None:
             if not self.check_imagecoord():
