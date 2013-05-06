@@ -1,28 +1,34 @@
+
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Installing &mdash; pyregion v0.1b documentation</title>
+    <title>Installing &mdash; pyregion  documentation</title>
+    
     <link rel="stylesheet" href="../static/mpl.css" type="text/css" />
     <link rel="stylesheet" href="../static/pygments.css" type="text/css" />
+    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0.1b',
-        COLLAPSE_MODINDEX: false,
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
       };
     </script>
     <script type="text/javascript" src="../static/jquery.js"></script>
+    <script type="text/javascript" src="../static/underscore.js"></script>
     <script type="text/javascript" src="../static/doctools.js"></script>
     <link rel="search" type="application/opensearchdescription+xml"
-          title="Search within pyregion v0.1b documentation"
+          title="Search within pyregion  documentation"
           href="../static/opensearch.xml"/>
-    <link rel="top" title="pyregion v0.1b documentation" href="../index.html" />
+    <link rel="top" title="pyregion  documentation" href="../index.html" />
     <link rel="up" title="Pyregion User’s Guide" href="index.html" />
     <link rel="next" title="pyregion examples" href="../examples.html" />
     <link rel="prev" title="Overview" href="overview.html" /> 
@@ -50,46 +56,46 @@
 
       <div class="sphinxsidebar">
         <div class="sphinxsidebarwrapper">
-            <h3><a href="../index.html">Table Of Contents</a></h3>
-            <ul>
-<li><a class="reference external" href="">Installing</a><ul>
-<li><a class="reference external" href="#dependencies">Dependencies</a><ul>
-<li><a class="reference external" href="#pyparsing">pyparsing</a></li>
-<li><a class="reference external" href="#kapteyn-package">Kapteyn Package</a></li>
-<li><a class="reference external" href="#pywcs">pywcs</a></li>
-<li><a class="reference external" href="#pyfits">pyfits</a></li>
-<li><a class="reference external" href="#matplotlib">matplotlib</a></li>
-<li><a class="reference external" href="#pywcsgrid2">pywcsgrid2</a></li>
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Installing</a><ul>
+<li><a class="reference internal" href="#dependencies">Dependencies</a><ul>
+<li><a class="reference internal" href="#pyparsing">pyparsing</a></li>
+<li><a class="reference internal" href="#astropy">astropy</a></li>
+<li><a class="reference internal" href="#pywcs">pywcs</a></li>
+<li><a class="reference internal" href="#pyfits">pyfits</a></li>
+<li><a class="reference internal" href="#matplotlib">matplotlib</a></li>
+<li><a class="reference internal" href="#pywcsgrid2">pywcsgrid2</a></li>
 </ul>
 </li>
 </ul>
 </li>
 </ul>
 
-            <h4>Previous topic</h4>
-            <p class="topless"><a href="overview.html"
-                                  title="previous chapter">Overview</a></p>
-            <h4>Next topic</h4>
-            <p class="topless"><a href="../examples.html"
-                                  title="next chapter">pyregion examples</a></p>
-            <h3>This Page</h3>
-            <ul class="this-page-menu">
-              <li><a href="../sources/users/installing.txt"
-                     rel="nofollow">Show Source</a></li>
-            </ul>
-          <div id="searchbox" style="display: none">
-            <h3>Quick search</h3>
-              <form class="search" action="../search.html" method="get">
-                <input type="text" name="q" size="18" />
-                <input type="submit" value="Go" />
-                <input type="hidden" name="check_keywords" value="yes" />
-                <input type="hidden" name="area" value="default" />
-              </form>
-              <p class="searchtip" style="font-size: 90%">
-              Enter search terms or a module, class or function name.
-              </p>
-          </div>
-          <script type="text/javascript">$('#searchbox').show(0);</script>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="overview.html"
+                        title="previous chapter">Overview</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="../examples.html"
+                        title="next chapter">pyregion examples</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../sources/users/installing.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
       </div>
 
@@ -100,24 +106,46 @@
             
   <div class="section" id="installing">
 <span id="id1"></span><h1>Installing<a class="headerlink" href="#installing" title="Permalink to this headline">¶</a></h1>
-<p>pyregion can be downloaded from the following page.</p>
+<p><em>pyregion</em> is registered in pypi, thus you can install it by</p>
+<div class="highlight-python"><pre>pip install pyregion</pre>
+</div>
+<p>This will also install pyparsing if not installed.</p>
+<p>The source file can be downloaded directly from the following page.</p>
 <ul class="simple">
-<li><a class="reference external" href="http://github.com/leejjoon/pyregion/downloads">Download</a></li>
+<li><a class="reference external" href="https://pypi.python.org/pypi/pyregion">PyPI page</a></li>
 </ul>
-<p>However, pyregion is a personal hobby project and still in development
-(likely to be buggy).  And it is recommended that you fetch the source
+<p>To install with necessary dependency (pyparsing, see below), you may do</p>
+<ul>
+<li><p class="first">in Python 2</p>
+<div class="highlight-python"><pre>pip install "pyparsing&lt;2"
+pip install pyregion</pre>
+</div>
+</li>
+<li><p class="first">in Python 3</p>
+<div class="highlight-python"><pre>pip install "pyparsing&gt;=2"
+pip install pyregion</pre>
+</div>
+</li>
+</ul>
+<p>The developement version of pyregion can be fount on the github page.</p>
+<ul class="simple">
+<li><a class="reference external" href="http://github.com/leejjoon/pyregion">Download</a></li>
+</ul>
+<p>To fetch the source
 code by cloning my git repository for any recent bug fix.</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="c"># git clone git://github.com/leejjoon/pyregion.git</span>
 <span class="c"># cd pyregion</span>
 <span class="c"># python setup.py install</span>
 </pre></div>
 </div>
+<p>For any bug reporting or any suggestion, please use the github issue
+tracker.</p>
 <div class="section" id="dependencies">
 <h2>Dependencies<a class="headerlink" href="#dependencies" title="Permalink to this headline">¶</a></h2>
 <p><strong>Requirements</strong></p>
 <p>Being based on pyparsing module, pyparsing need to be installed to use
-pyregion. Optionally, you also requires Kapteyn package or pywcs
-module installed (you need only one of them) for coordinate
+pyregion. Optionally, you also requires pywcs
+module installed for coordinate
 conversion. Displaying regions is supported for matplotlib.  Some
 example uses pywcsgrid2.</p>
 <p>By default, pyregion build a filtering module, which requires a C compiler.
@@ -130,14 +158,18 @@ If you don&#8217;t want, edit &#8220;setup.py&#8221;</p>
 <ul class="simple">
 <li>REQUIRED</li>
 <li><a class="reference external" href="http://pyparsing.wikispaces.com/">Homepage</a></li>
+<li><a class="reference external" href="https://pypi.python.org/pypi/pyparsing">PyPI page</a></li>
+<li>pyparsing version &gt;= 2.0 suports Python 3. But it seems that it does
+not support Python 2.</li>
+<li>For Python 2, install older version (v1.5.7).</li>
 </ul>
 </div>
-<div class="section" id="kapteyn-package">
-<h3>Kapteyn Package<a class="headerlink" href="#kapteyn-package" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="astropy">
+<h3>astropy<a class="headerlink" href="#astropy" title="Permalink to this headline">¶</a></h3>
 <ul class="simple">
 <li>OPTIONAL</li>
-<li>used for coordinate conversions</li>
-<li><a class="reference external" href="http://www.astro.rug.nl/software/kapteyn/">Homepage</a></li>
+<li><a class="reference external" href="https://github.com/astropy/astropy/">Astropy</a></li>
+<li>With astropy installed, pywcs and pyfits are not needed.</li>
 </ul>
 </div>
 <div class="section" id="pywcs">
@@ -145,7 +177,7 @@ If you don&#8217;t want, edit &#8220;setup.py&#8221;</p>
 <ul class="simple">
 <li>OPTIONAL</li>
 <li>used for coordinate conversions</li>
-<li><a class="reference external" href="https://www.stsci.edu/trac/ssb/astrolib/">Homepage</a></li>
+<li><a class="reference external" href="https://trac.assembla.com/astrolib/">Homepage</a></li>
 </ul>
 </div>
 <div class="section" id="pyfits">
@@ -196,9 +228,9 @@ If you don&#8217;t want, edit &#8220;setup.py&#8221;</p>
       </ul>
     </div>
     <div class="footer">
-      &copy; Copyright 2009, Jae-Joon Lee.
-      Last updated on Oct 19, 2009.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.6.3.
+        &copy; Copyright 2009, Jae-Joon Lee.
+      Last updated on May 06, 2013.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
     </div>
   </body>
 </html>
