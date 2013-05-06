@@ -33,6 +33,12 @@ for line in open('lib/version.py').readlines():
         exec(line.strip())
 
 def main():
+    if sys.version_info[0] >= 3:
+        install_requires = ['pyparsing>=2.0.0']
+    else:
+        # pyparsing >= 2.0.0 is not compatible with Python 2
+        install_requires = ['pyparsing<2.0.0']
+
     ka = dict(name = "pyregion",
               version = __version__,
               description = "python parser for ds9 region files",
@@ -44,7 +50,7 @@ def main():
               platforms = ["Linux","MacOS X"],
               packages = ['pyregion'],
               package_dir={'pyregion':'lib'},
-              install_requires = ["pyparsing"],
+              install_requires = install_requires,
               use_2to3 = False,
               )
     ka["classifiers"]=['Development Status :: 5 - Production/Stable',

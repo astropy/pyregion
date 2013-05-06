@@ -24,8 +24,8 @@ install:
 #  - time sudo apt-get install -qq python-matplotlib
   - time pip install --use-mirrors pytest
   # For Python 2 it is required to install pyparsing 1.5.7 (see http://pyparsing.wikispaces.com)
-  - if [[ ${TRAVIS_PYTHON_VERSION%%.*} == '2' ]]; then export PYPARSING_PIP="==1.5.7"; fi
-  - time pip install --use-mirrors pyparsing$PYPARSING_PIP
+  # - if [[ ${TRAVIS_PYTHON_VERSION%%.*} == '2' ]]; then export PYPARSING_PIP="==1.5.7"; fi
+  # - time pip install --use-mirrors pyparsing$PYPARSING_PIP
   - time pip install --use-mirrors sphinx
   # Install matplotlib
   - if [[ ${TRAVIS_PYTHON_VERSION:0:1} == '2' ]]; then time pip install --use-mirrors matplotlib==$MPL_VERSION; fi
