@@ -112,8 +112,12 @@ def coord_system_guess(ctype1_name, ctype2_name, equinox):
 def fix_header(header):
     "return a new fixed header"
 
-    old_cards = header.ascardlist()
-    new_cards = type(old_cards)()
+    if hasattr(header, "ascardlist"):
+        old_cards = header.ascardlist()
+    else:
+        old_cards = header.cards
+
+    new_cards = []
 
     for c in old_cards:
         # ignore comments and history
@@ -620,7 +624,3 @@ if __name__ == "__main__":
     #print fk5_to_fk4([47.37], [6.32])
     #print fk5_to_fk4([47.37, 47.37], [6.32, 6.32])
     #print sky2sky("fk5", "FK4")([47.37, 47.37], [6.32, 6.32])
-
-
-
-
