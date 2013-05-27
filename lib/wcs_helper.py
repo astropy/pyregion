@@ -13,6 +13,17 @@ except ImportError:
     except ImportError:
         pass
 
+import sys
+if sys.version < '3':
+    def as_str(x):
+        return x
+else:
+    def as_str(x):
+        if hasattr(x, "decode"):
+            return x.decode()
+        else:
+            return x
+
 FK4 = (kapteyn_celestial.equatorial, kapteyn_celestial.fk4)
 FK5 = (kapteyn_celestial.equatorial, kapteyn_celestial.fk5)
 GAL = kapteyn_celestial.galactic
@@ -240,21 +251,38 @@ class ProjectionPywcsNd(_ProjectionSubInterface, ProjectionBase):
     A wrapper for pywcs
     """
     def __init__(self, header):
-        if hasattr(header, "ascard"):
+        """
+        header could be pyfits.Header instance of pywcs.WCS instance.
+        """
+
+        # We can't check the header type using isinstance since we don't know
+        # if it comes from PyFITS or Astropy, so instead we check if it has
+        # the 'ascard' attribute that both header classes define.
+
+        if hasattr(header, 'ascard'):
+
             header = fix_header(header)
-            # pywcs.WCS internally uses `repr(header.ascard)` which
-            # returns str, but expecte byte in py3.
-            import sys
-            if sys.version_info >= (3,0):
-                header = repr(header.ascard).encode("ascii")
+
+            # Since we don't know if PyFITS or PyWCS are from Astropy, and the
+            # WCS object in PyWCS and Astropy both accept a string
+            # representation of the header, we use this instead (both
+            # internally use `repr(header.ascard)` which returns str,
+            # and is compatible with Python 3
+
+            header = repr(header.ascard).encode('latin1')
+
             self._pywcs = pywcs.WCS(header=header)
-        else:
+
+        elif hasattr(header, "wcs"):
             self._pywcs = header
+        else:
+
+            raise ValueError("header must be an instance of pyfits.Header or astropy.io.fits.Header")
 
         ProjectionBase.__init__(self)
 
     def _get_ctypes(self):
-        return tuple(s.decode() for s in self._pywcs.wcs.ctype)
+        return tuple(as_str(s) for s in self._pywcs.wcs.ctype)
 
     ctypes = property(_get_ctypes)
 
@@ -398,7 +426,7 @@ class ProjectionPywcs(ProjectionBase):
         ProjectionBase.__init__(self)
 
     def _get_ctypes(self):
-        return tuple(self._pywcs.wcs.ctype)
+        return tuple(as_str(s) for s in self._pywcs.wcs.ctype)
 
     ctypes = property(_get_ctypes)
 
@@ -432,7 +460,7 @@ class ProjectionSimple(ProjectionBase):
         self._simple_init(header)
 
     def _get_ctypes(self):
-        return tuple(self._pywcs.wcs.ctype)
+        return tuple(as_str(s) for s in self._pywcs.wcs.ctype)
 
     ctypes = property(_get_ctypes)
 
@@ -502,22 +530,14 @@ class ProjectionSimple(ProjectionBase):
 
 ProjectionDefault = ProjectionPywcsNd
 
-if pywcs is None:
-    def get_kapteyn_projection(header):
-        err = "pywcs packages are required."
+def get_kapteyn_projection(header):
+    if isinstance(header, ProjectionBase):
+        projection = header
+    else:
+        projection = ProjectionPywcsNd(header)
 
-        raise RuntimeError(err)
-else:
-
-    def get_kapteyn_projection(header):
-        if isinstance(header, ProjectionBase):
-            projection = header
-        else:
-            projection = ProjectionDefault(header)
-
-        projection = projection.sub(axes=[1,2])
-        return projection
-
+    #projection = projection.sub(axes=[1,2])
+    return projection
 
 
 def estimate_cdelt_trans(transSky2Pix, x0, y0):
@@ -552,7 +572,7 @@ def estimate_angle_trans(transSky2Pix, x0, y0):
 
     """
 
-    cdelt = estimate_cdelt(transSky2Pix, x0, y0)
+    cdelt = estimate_cdelt_trans(transSky2Pix, x0, y0)
 
     transPix2Sky = transSky2Pix.inverted()
 
