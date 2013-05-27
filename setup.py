@@ -18,7 +18,7 @@ except:  # There are several types of exceptions that can occur here
 
 import glob
 import os
-from setuptools import setup, find_packages, Extension
+from setuptools import setup, find_packages
 
 #A dirty hack to get around some early import/configurations ambiguities
 if sys.version_info[0] >= 3:
@@ -44,12 +44,10 @@ URL = "http://leejjoon.github.com/pyregion/"
 
 
 # VERSION should be PEP386 compatible (http://www.python.org/dev/peps/pep-0386)
-try:
-    for line in open('lib/version.py').readlines():
-        if (line.startswith('__version__')):
-            exec(line.strip())
-except:
-    VERSION = '1.1.1'
+for line in open('pyregion/_version.py').readlines():
+    if (line.startswith('__version__')):
+        exec(line.strip())
+VERSION = __version__
 
 # Indicates if this version is a release version
 RELEASE = 'dev' not in VERSION
@@ -95,47 +93,9 @@ update_package_files(PACKAGENAME, extensions, package_data, packagenames,
 
 ## jjlee's modification
 
-# check if cython or pyrex is available.
-pyrex_impls = 'Cython.Distutils.build_ext', 'Pyrex.Distutils.build_ext'
-for pyrex_impl in pyrex_impls:
-    try:
-        # from (pyrex_impl) import build_ext
-        build_ext = __import__(pyrex_impl, fromlist=['build_ext']).build_ext
-        break
-    except:
-        pass
-have_pyrex = 'build_ext' in globals()
-
-if have_pyrex:
-    cmdclassd['build_ext'] = build_ext
-    PYREX_SOURCE = "src/_region_filter.pyx"
-else:
-    PYREX_SOURCE = "src/_region_filter.c"
-
-WITH_FILTER = False
-import warnings
-
-if WITH_FILTER:
-    try:
-        import numpy
-    except ImportError:
-        warnings.warn("numpy must be installed to build the filtering module.")
-        sys.exit(1)
-
-    try:
-        numpy_include = numpy.get_include()
-    except AttributeError:
-        numpy_include = numpy.get_numpy_include()
-
-    ext_modules = [ Extension("pyregion._region_filter",
-                              [PYREX_SOURCE],
-                              include_dirs=['./src',
-                                            numpy_include,
-                                            ],
-                              libraries=[],
-                              )
-                    ]
-
+# not sure why this is needed. Without this, pyx file is not compiled.
+import Cython.Distutils.build_ext
+cmdclassd['build_ext'] =  Cython.Distutils.build_ext
 
 if sys.version_info[0] >= 3:
     #requires = ['astropy']
@@ -156,6 +116,8 @@ classifiers=['Development Status :: 5 - Production/Stable',
              'Topic :: Scientific/Engineering :: Astronomy',
              ]
 
+print extensions[0]
+
 setup(name=PACKAGENAME,
       version=VERSION,
       description=DESCRIPTION,
@@ -175,5 +137,5 @@ setup(name=PACKAGENAME,
       cmdclass=cmdclassd,
       classifiers=classifiers,
       zip_safe=False,
-      use_2to3=True
+      use_2to3=False
       )

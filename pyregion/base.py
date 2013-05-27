@@ -1,4 +1,3 @@
-from .version import __version__
 from .ds9_region_parser import RegionParser
 from .wcs_converter import check_wcs as _check_wcs
 from itertools import cycle
