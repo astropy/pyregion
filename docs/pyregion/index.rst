@@ -9,9 +9,8 @@ ciao region files.
 +----------------------------------------+----------------------------------------+
 | ds9                                    | pyregion + matplotlib                  |
 +========================================+========================================+
-| .. image::    _static/region_ds9.jpg   | .. image::    _static/region_mpl.png   |
+| .. image::    static/region_ds9.jpg    | .. image::    static/region_mpl.png    |
 |   :width: 300px                        |   :width: 300px                        |
-|   :target:    static/region_ds9.jpg    |   :target:    static/region_mpl.png    |
 +----------------------------------------+----------------------------------------+
 
 
