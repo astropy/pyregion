@@ -30,7 +30,7 @@ install:
    - export PYTHONIOENCODING=UTF8 # just in case
    - pip -q install --upgrade "numpy==$NUMPY_VERSION" --use-mirrors
    - pip -q install --upgrade Cython --use-mirrors
-   
+
    # Recent version of jinja2 and markupsafe not compatible with 3.2??
    - if [[ $TRAVIS_PYTHON_VERSION == '3.2'* ]]; then pip -q install --use-mirrors "markupsafe<0.15" "jinja2<2.7"; fi
    - pip -q install sphinx==1.1.3 --use-mirrors
@@ -41,7 +41,6 @@ install:
 
 script:
    - python setup.py install
-   # - python test.py
+   - python setup.py test
    - cd docs
    - make html
-

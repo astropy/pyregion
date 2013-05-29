@@ -116,8 +116,6 @@ classifiers=['Development Status :: 5 - Production/Stable',
              'Topic :: Scientific/Engineering :: Astronomy',
              ]
 
-print extensions[0]
-
 setup(name=PACKAGENAME,
       version=VERSION,
       description=DESCRIPTION,
