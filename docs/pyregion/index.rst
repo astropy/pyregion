@@ -20,9 +20,11 @@ Documentation
 .. toctree::
    :maxdepth: 1
 
-   users/index.rst
+   users/overview.rst
+   users/installing.rst
    examples.rst
 
+   api/index.rst
 
 .. note::
   *pyregion* is rather slow, likely due to a inefficient
@@ -33,5 +35,4 @@ Indices and tables
 ==================
 
 * :ref:`genindex`
-* :ref:`modindex`
 * :ref:`search`

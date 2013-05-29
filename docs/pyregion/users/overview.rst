@@ -15,9 +15,8 @@ by ds9. Ruler, Compass and Projection type is ignored.
 +----------------------------------------+----------------------------------------+
 | ds9                                    | pyregion + matplotlib                  |
 +========================================+========================================+
-| .. image:: ../_static/region_ds9.jpg   | .. image:: ../_static/region_mpl.png   |
+| .. image:: ../static/region_ds9.jpg    | .. image:: ../static/region_mpl.png    |
 |   :width: 300px                        |   :width: 300px                        |
-|   :target: ../static/region_ds9.jpg    |   :target: ../static/region_mpl.png    |
 +----------------------------------------+----------------------------------------+
 
 
@@ -155,7 +154,7 @@ these to the axes. ::
     for t in artist_list:
         ax.add_artist(t)
 
-.. plot:: figures/test_region_drawing.py
+.. plot:: pyregion/figures/test_region_drawing.py
 
 The (optional) argument of the *get_mpl_patches_texts* method is a
 callable object that takes the shape object as an argument and returns
@@ -167,7 +166,7 @@ complex shapes are not correctly handled as shown in above example,
 and you need to manually adjust the associated attributes of patches.
 
 
-.. plot:: figures/test_region_drawing2.py
+.. plot:: pyregion/figures/test_region_drawing2.py
    :include-source:
 
 
@@ -206,7 +205,7 @@ It will creates an mask in the shape of the given hdu image (the mask
 will be created after transforming the region to the image coordinate if
 necessary).
 
-.. plot:: figures/demo_filter_mask.py
+.. plot:: pyregion/figures/demo_filter_mask.py
    :include-source:
 
 

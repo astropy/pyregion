@@ -1,12 +1,12 @@
-.. _pywcsgrid_axes_wcs-api-index:
+.. _pyregion-api-index:
 
-########################
-  pywcsgrid2 API
-########################
+################
+  pyregion API
+################
 
 :Release: |version|
 :Date: |today|
 
 .. toctree::
 
-    axes_wcs.rst
+    pyregion.rst
