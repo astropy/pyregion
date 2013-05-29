@@ -41,7 +41,7 @@ install:
 
 script:
    - python setup.py install
-   - python test.py
-   - cd doc
-   - python make.py
+   # - python test.py
+   - cd docs
+   - make html
 
