@@ -123,21 +123,29 @@ def coord_system_guess(ctype1_name, ctype2_name, equinox):
 def fix_header(header):
     "return a new fixed header"
 
-    if hasattr(header, "ascardlist"):
-        old_cards = header.ascardlist()
-    else:
+    if hasattr(header, "cards"):
         old_cards = header.cards
+    else:
+        old_cards = header.ascardlist()
 
     new_cards = []
 
+    from operator import attrgetter
+    if old_cards and hasattr(old_cards[0], "keyword"):
+        get_key = attrgetter("keyword")
+    else:
+        get_key = attrgetter("key")
+
     for c in old_cards:
+        key = get_key(c)
+
         # ignore comments and history
-        if c.key in ["COMMENT", "HISTORY"]:
+        if key in ["COMMENT", "HISTORY"]:
             continue
 
         # use "deg"
-        if c.key.startswith("CUNIT") and c.value.lower().startswith("deg"):
-            c = type(c)(c.key, "deg")
+        if key.startswith("CUNIT") and c.value.lower().startswith("deg"):
+            c = type(c)(key, "deg")
 
         new_cards.append(c)
 
