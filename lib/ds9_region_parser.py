@@ -55,9 +55,6 @@ ds9_shape_defs = dict(circle=wcs_shape(CoordOdd, CoordEven, Distance),
                       text=wcs_shape(CoordOdd, CoordEven)
                       )
 
-
-
-
 class RegionParser(RegionPusher):
 
     def __init__(self):
@@ -135,8 +132,6 @@ class RegionParser(RegionPusher):
 
             self.flush()
 
-
-
     def convert_attr(self, l):
         global_attr = [], {}
 
@@ -148,7 +143,10 @@ class RegionParser(RegionPusher):
                     if len(kv) == 1:
                         global_attr[0].append(kv[0])
                     elif len(kv) == 2:
-                        global_attr[1][kv[0]] = kv[1]
+                        if kv[0] == 'tag':
+                            global_attr[1].setdefault(kv[0],set()).add(kv[1])
+                        else:
+                            global_attr[1][kv[0]] = kv[1]
 
             elif isinstance(l1, Shape):
                 if c1:
@@ -167,7 +165,6 @@ class RegionParser(RegionPusher):
                     yield shape, c1
             else:
                 yield l1, c1
-
 
     @staticmethod
     def sky_to_image(l, header):
@@ -265,7 +262,6 @@ class RegionParser(RegionPusher):
             else:
                 yield l1, c1
 
-
     def filter_shape(self, sss):
         return [s1[0] for s1 in sss if isinstance(s1[0], Shape)]
 
@@ -289,7 +285,6 @@ def test_regionLine():
                   "rotbox",
                   "ellipse"]
 
-
     rp = RegionParser()
 
     for s, n in zip(test_string_1, test_names):
@@ -309,7 +304,6 @@ def test_comment():
     c = rp.parseLine(s)[1]
 
     assert c == "comment2"
-
 
 def test_global():
     s = 'global color=green font="helvetica 10 normal" select=1 highlite=1 edit=1 move=1 delete=1 include=1 fixed=0 source'
