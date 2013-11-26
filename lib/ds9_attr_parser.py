@@ -12,6 +12,7 @@ from .parser_helper import as_comma_separated_list, wcs_shape, \
      comment_shell_like, define_simple_literals, \
      Shape
 
+
 def get_ds9_attr_parser():
     lhs = Word(alphas)
     paren = QuotedString("(",endQuoteChar=")")
@@ -27,8 +28,6 @@ def get_ds9_attr_parser():
     expr.setParseAction(lambda s, l, tok: tuple(tok))
 
     return ZeroOrMore(expr)
-
-
 
 class Ds9AttrParser(object):
     def set_continued(self, s, l, tok):
@@ -69,18 +68,31 @@ class Ds9AttrParser(object):
             return l[0], l[1:]
         else:
             return None, l
-
-
-
+            
 def get_attr(attr_list, global_attrs):
+    """
+    Parameters
+    ----------
+    attr_list : list
+        A list of (keyword,value) tuple pairs
+    global_attrs : tuple(list,dict)
+        has the global attributes which update the local attributes
+    """
     local_attr = [], {}
     for kv in attr_list:
+        keyword = kv[0]
         if len(kv) == 1:
-            local_attr[0].append(kv[0])
+            local_attr[0].append(keyword)
+            continue            
         elif len(kv) == 2:
-            local_attr[1][kv[0]] = kv[1]
+            value = kv[1]
         elif len(kv) > 2:
-            local_attr[1][kv[0]] = kv[1:]
+            value = kv[1:]
+            
+        if keyword == 'tag':
+            local_attr[1].setdefault(keyword,set()).add(value)
+        else:
+            local_attr[1][keyword] = value
 
     attr0 = copy.copy(global_attrs[0])
     attr1 = copy.copy(global_attrs[1])
@@ -93,18 +105,20 @@ def get_attr(attr_list, global_attrs):
 
     return attr0, attr1
 
-
-
-
-
-
 def test_attr():
-
     p = get_ds9_attr_parser()
     assert  p.parseString("color = green")[0] == ("color", "green")
     assert  p.parseString("font=\"123 123\"")[0] == ("font", '"123 123"')
     assert  p.parseString("color")[0] == ("color",)
     assert  p.parseString("tag={group 1}")[0] == ("tag","group 1")
+    
+def test_get_attr ():
+    attr_list = [('tag','group1'),('tag','group2'),('tag','group3'),('color','green')]
+    global_attrs = [],{}
+    
+    attr = get_attr(attr_list, global_attrs)
+    assert attr[0] == []
+    assert attr[1] == {'color': 'green', 'tag': set(['group1', 'group3', 'group2'])}
 
 if __name__ == "__main__":
     p = get_ds9_attr_parser()
