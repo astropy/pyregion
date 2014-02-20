@@ -126,7 +126,7 @@ def fix_header(header):
     if hasattr(header, "cards"):
         old_cards = header.cards
     else:
-        old_cards = header.ascardlist()
+        old_cards = header.ascard
 
     new_cards = []
 
