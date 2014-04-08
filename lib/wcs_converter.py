@@ -6,7 +6,7 @@ from .region_numbers import SimpleNumber, SimpleInteger
 import copy
 
 
-def convert_to_imagecoord(cl, fl, wcs_proj, sky_to_sky, xy0):
+def convert_to_imagecoord(cl, fl, wcs_proj, sky_to_sky, xy0, rot_wrt_axis=1):
     fl0 = fl
     new_cl = []
 
@@ -23,14 +23,17 @@ def convert_to_imagecoord(cl, fl, wcs_proj, sky_to_sky, xy0):
             cl = cl[2:]
             fl = fl[2:]
         elif fl[0] == Distance:
-            degree_per_pixel = estimate_cdelt(wcs_proj,
-                                              *xy0)
+            degree_per_pixel = estimate_cdelt(wcs_proj, *xy0)
             new_cl.append(cl[0]/degree_per_pixel)
             cl = cl[1:]
             fl = fl[1:]
         elif fl[0] == Angle:
             rot1, rot2 = estimate_angle(wcs_proj, xy0[0], xy0[1], sky_to_sky)
-            new_cl.append(cl[0]+rot1-180.)
+            if rot_wrt_axis == 1:
+                new_cl.append(cl[0]+rot1-180.)
+            else:
+                new_cl.append(cl[0]+rot2-90.) # use the angle between the Y axis and North
+
             cl = cl[1:]
             fl = fl[1:]
         else:

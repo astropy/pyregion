@@ -170,7 +170,7 @@ class RegionParser(RegionPusher):
 
 
     @staticmethod
-    def sky_to_image(l, header):
+    def sky_to_image(l, header, rot_wrt_axis=1):
 
         try:
             header["NAXIS"]
@@ -205,17 +205,19 @@ class RegionParser(RegionPusher):
                 xy0 = None
 
                 cl1, fl1 = cl[:n1], fl[:n1]
-                cl10, xy0 = convert_to_imagecoord(cl1, fl1, wcs_proj, sky_to_sky, xy0)
+                cl10, xy0 = convert_to_imagecoord(cl1, fl1, wcs_proj,
+                                    sky_to_sky, xy0, rot_wrt_axis = rot_wrt_axis)
 
                 nn2 = len(cl)-(len(fl) - n2)
                 cl2, fl2 = cl[n1:nn2], fl[n1:n2]
-                cl20, xy0 = convert_to_imagecoord(cl2, fl2, wcs_proj, sky_to_sky, xy0)
+                cl20, xy0 = convert_to_imagecoord(cl2, fl2, wcs_proj,
+                                    sky_to_sky, xy0, rot_wrt_axis = rot_wrt_axis)
 
                 cl3, fl3 = cl[nn2:], fl[n2:]
-                cl30, xy0 = convert_to_imagecoord(cl3, fl3, wcs_proj, sky_to_sky, xy0)
+                cl30, xy0 = convert_to_imagecoord(cl3, fl3, wcs_proj,
+                                    sky_to_sky, xy0, rot_wrt_axis = rot_wrt_axis)
 
                 new_cl = cl10 + cl20 + cl30
-
 
                 l1n = copy.copy(l1)
 
@@ -227,7 +229,7 @@ class RegionParser(RegionPusher):
 
                 if pc is None:
                     raise RuntimeError("Physical coordinate is not known.")
-                
+
                 cl = l1.coord_list
                 fl = ds9_shape_defs[l1.name].args_list
 
@@ -243,18 +245,17 @@ class RegionParser(RegionPusher):
 
                 cl1, fl1 = cl[:n1], fl[:n1]
                 cl10 = convert_physical_to_imagecoord(cl1, fl1, pc)
-                #cl10, xy0 = convert_to_imagecoord(cl1, fl1, wcs_proj, sky_to_sky, xy0)
+                #cl10, xy0 = convert_to_imagecoord(cl1, fl1, wcs_proj, sky_to_sky, xy0, rot_wrt_axis = rot_wrt_axis)
 
                 nn2 = len(cl)-(len(fl) - n2)
                 cl2, fl2 = cl[n1:nn2], fl[n1:n2]
                 cl20 = convert_physical_to_imagecoord(cl2, fl2, pc)
-                #cl20, xy0 = convert_to_imagecoord(cl2, fl2, wcs_proj, sky_to_sky, xy0)
+                #cl20, xy0 = convert_to_imagecoord(cl2, fl2, wcs_proj, sky_to_sky, xy0, rot_wrt_axis = rot_wrt_axis)
 
                 cl3, fl3 = cl[nn2:], fl[n2:]
                 cl30 = convert_physical_to_imagecoord(cl3, fl3, pc)
 
                 new_cl = cl10 + cl20 + cl30
-
 
                 l1n = copy.copy(l1)
 
