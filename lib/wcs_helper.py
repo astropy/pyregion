@@ -1,4 +1,5 @@
 import numpy as np
+import sys
 
 from .kapteyn_celestial import skymatrix, longlat2xyz, dotrans, xyz2longlat
 from . import kapteyn_celestial
@@ -13,7 +14,6 @@ except ImportError:
     except ImportError:
         pass
 
-import sys
 if sys.version < '3':
     def as_str(x):
         return x
@@ -50,7 +50,6 @@ def is_equal_coord_sys(src, dest):
 
 def is_string_like(obj):
     'Return True if *obj* looks like a string'
-    import sys
     if sys.version_info >= (3,0):
         if isinstance(obj, str): return True
     else:
@@ -115,8 +114,6 @@ def coord_system_guess(ctype1_name, ctype2_name, equinox):
        ctype2_name.upper().startswith("ELAT"):
         return "ecl"
 
-
-
     return None
 
 
@@ -150,6 +147,7 @@ def fix_header(header):
         new_cards.append(c)
 
     h = type(header)(new_cards)
+
     return h
 
 
@@ -284,7 +282,6 @@ class ProjectionPywcsNd(_ProjectionSubInterface, ProjectionBase):
         elif hasattr(header, "wcs"):
             self._pywcs = header
         else:
-
             raise ValueError("header must be an instance of pyfits.Header or astropy.io.fits.Header")
 
         ProjectionBase.__init__(self)
@@ -315,11 +312,15 @@ class ProjectionPywcsNd(_ProjectionSubInterface, ProjectionBase):
         xy1 = lon_lat.transpose()
 
         # somehow, wcs_sky2pix does not work for some cases
-        xy21 = [self._pywcs.wcs_sky2pix([xy11], 1)[0] for xy11 in xy1]
-        #xy21 = self._pywcs.wcs_sky2pix(xy1, 1)
+        #xy21 = [self._pywcs.wcs_sky2pix([xy11], 1)[0] for xy11 in xy1]
+        ##xy21 = self._pywcs.wcs_sky2pix(xy1, 1)
+        #xy2 = np.array(xy21).transpose()
 
-        xy2 = np.array(xy21).transpose()
+        xy21 = self._pywcs.wcs_sky2pix(xy1[:,0],xy1[:,1],origin=1)
+        xy2 = np.vstack(xy21)
+
         return xy2
+
 
     def toworld(self, xy):
         """ 1, 1 base """
@@ -334,7 +335,6 @@ class ProjectionPywcsNd(_ProjectionSubInterface, ProjectionBase):
     #def sub(self, axes):
     #    wcs = self._pywcs.sub(axes=axes)
     #    return ProjectionPywcs(wcs)
-
 
 
 class ProjectionPywcsSub(_ProjectionSubInterface, ProjectionBase):
@@ -538,6 +538,7 @@ class ProjectionSimple(ProjectionBase):
 
 ProjectionDefault = ProjectionPywcsNd
 
+
 def get_kapteyn_projection(header):
     if isinstance(header, ProjectionBase):
         projection = header
@@ -565,10 +566,6 @@ def estimate_cdelt_trans(transSky2Pix, x0, y0):
     cd2 = (dlon**2 + dlat**2)**.5
 
     return (cd1*cd2)**.5
-
-
-
-
 
 
 def estimate_angle_trans(transSky2Pix, x0, y0):
@@ -644,8 +641,6 @@ def estimate_angle(wcs_proj, x0, y0, sky_to_sky=None):
     a2 = np.arctan2(y2-y0, x2-x0)/np.pi*180.
 
     return a1[0], a2[0]
-
-
 
 if __name__ == "__main__":
     fk5_to_fk4 = sky2sky(FK5, FK4)
