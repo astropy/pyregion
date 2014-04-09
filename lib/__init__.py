@@ -134,21 +134,19 @@ class ShapeList(list):
     def write(self,outfile):
         """ Writes the current shape list out as a region file """
         if len(self) < 1:
-            print "WARNING: The region list is empty. The region file \"%s\" "\
-                           "will be empty." % outfile
+            print("WARNING: The region list is empty. The region file "\
+                  "'{:s}' will be empty.".format(outfile))
             try:
                 outf = open(outfile,'w')
                 outf.close()
                 return
             except IOError as e:
-                cmsg = "Unable to create region file \'%s\'." % outfile
+                cmsg = "Unable to create region file '{:s}'.".format(outfile)
                 if e.args:
-                    e.args = (e.args[0] + "\n" + cmsg,) + e.args[1:]
+                    e.args = (e.args[0] + os.linesep + cmsg,) + e.args[1:]
                 else:
                     e.args=(cmsg,)
                 raise e
-            except:
-                raise
 
         prev_cs = self[0].coord_format
 
@@ -157,8 +155,8 @@ class ShapeList(list):
             outf = _builtin_open(outfile,'w')
 
             attr0 = self[0].attr[1]
-            defaultline = " ".join( [ "%s=%s" % (a,attr0[a]) for a in attr0 \
-                                     if a!='text' ] )
+            defaultline = " ".join( [ "{:s}={:s}".format(a,attr0[a]) \
+                                      for a in attr0 if a != 'text' ] )
 
             # first line is globals
             print >>outf, "global", defaultline
@@ -169,7 +167,7 @@ class ShapeList(list):
                 shape_attr = '' if prev_cs == shape.coord_format \
                     else shape.coord_format+"; "
                 shape_excl = '-' if shape.exclude else ''
-                text_coordlist = [ "%f" % f for f in shape.coord_list ]
+                text_coordlist = [ "{:f}".format(f) for f in shape.coord_list ]
                 shape_coords = "(" + ",".join(text_coordlist) + ")"
                 shape_comment = " # " + shape.comment if shape.comment else ''
 
@@ -179,18 +177,14 @@ class ShapeList(list):
                 print >>outf, shape_str
 
         except IOError as e:
-            cmsg = "Unable to create region file \'%s\'." % outfile
+            cmsg = "Unable to create region file \'{:s}\'.".format(outfile)
             if e.args:
-                e.args = (e.args[0] + "\n" + cmsg,) + e.args[1:]
+                e.args = (e.args[0] + os.linesep + cmsg,) + e.args[1:]
             else:
                 e.args=(cmsg,)
-            if outf: outf.close()
             raise e
-        except:
+        finally:
             if outf: outf.close()
-            raise
-
-        outf.close()
 
 def parse(region_string):
     """
