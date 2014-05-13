@@ -50,8 +50,9 @@ copyright = '2009, Jae-Joon Lee'
 #version = '0.1'
 # The full version, including alpha/beta/rc tags.
 #release = '0.1b'
-import pyregion
-version = pyregion.__version__
+sys.path.insert(0,os.path.abspath("../lib"))
+from version import __version__ as version
+sys.path.pop(0)
 
 # There are two options for replacing |today|: either, you set today to some
 # non-false value, then it is used:
