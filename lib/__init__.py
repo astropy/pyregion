@@ -6,9 +6,21 @@ from itertools import cycle
 _builtin_open = open
 
 class ShapeList(list):
-    def __init__(self, *ka, **kw):
-        self._comment_list = kw.pop("comment_list", None)
-        list.__init__(self, *ka, **kw)
+    """ A list of shape objects
+    
+    """
+    def __init__(self, *args,comment_list=None):
+         """
+         Parameters
+         ----------
+         args : arguments 
+             Arguments passed to list(...), expected to be 'pyregion.parse_helper.Shape' objects
+         comment_list : list, None
+             list of comment strings for each argument
+         """          
+
+        self._comment_list = comment_list
+        list.__init__(self, *args)
 
     def __getitem__(self, key):
         if isinstance(key, slice):
