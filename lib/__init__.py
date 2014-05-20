@@ -103,29 +103,61 @@ class ShapeList(list):
 
         return mask
 
-    def write(self,outfile):
+
+    def write(self, outfile):
         """ Writes the current shape list out as a region file """
+        if len(self) < 1:
+            print("WARNING: The region list is empty. The region file "\
+                  "'{:s}' will be empty.".format(outfile))
+            try:
+                outf = open(outfile,'w')
+                outf.close()
+                return
+            except IOError as e:
+                cmsg = "Unable to create region file '{:s}'.".format(outfile)
+                if e.args:
+                    e.args = (e.args[0] + '\n' + cmsg,) + e.args[1:]
+                else:
+                    e.args=(cmsg,)
+                raise e
 
-        # check for consistent coordinate system
-        if len(set([shape.coord_format for shape in self])) > 1:
-            raise ValueError("Inconsistent coordinate formats")
+        prev_cs = self[0].coord_format
 
-        outf = _builtin_open(outfile,'w')
+        outf = None
+        try:
+            outf = _builtin_open(outfile,'w')
 
-        attr0 = self[0].attr[1]
-        defaultline = " ".join(["%s=%s" % (a,attr0[a]) for a in attr0 if a!='text'])
+            attr0 = self[0].attr[1]
+            defaultline = " ".join( [ "{:s}={:s}".format(a,attr0[a]) \
+                                      for a in attr0 if a != 'text' ] )
 
-        # first line is globals
-        print >>outf,"global",defaultline
-        # second line must be a coordinate format
-        print >>outf,self[0].coord_format
+            # first line is globals
+            print >>outf, "global", defaultline
+            # second line must be a coordinate format
+            print >>outf, prev_cs
 
-        for shape in self:
-            text_coordlist = ["%f" % f for f in shape.coord_list]
-            print >>outf, \
-                shape.name + "(" + ",".join(text_coordlist) + ") # " + shape.comment
+            for shape in self:
+                shape_attr = '' if prev_cs == shape.coord_format \
+                    else shape.coord_format+"; "
+                shape_excl = '-' if shape.exclude else ''
+                text_coordlist = [ "{:f}".format(f) for f in shape.coord_list ]
+                shape_coords = "(" + ",".join(text_coordlist) + ")"
+                shape_comment = " # " + shape.comment if shape.comment else ''
 
-        outf.close()
+                shape_str = shape_attr + shape_excl + shape.name + \
+                            shape_coords + shape_comment
+
+                print >>outf, shape_str
+
+        except IOError as e:
+            cmsg = "Unable to create region file \'{:s}\'.".format(outfile)
+            if e.args:
+                e.args = (e.args[0] + '\n' + cmsg,) + e.args[1:]
+            else:
+                e.args=(cmsg,)
+            raise e
+        finally:
+            if outf: outf.close()
 
 
 def parse(region_string):
