@@ -1,0 +1,3 @@
+2014-05-28 Merged a PR #26. This will change the type of 'tag'
+	attrubite from a string to a list of strings.
+
