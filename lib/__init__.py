@@ -6,9 +6,25 @@ from itertools import cycle
 _builtin_open = open
 
 class ShapeList(list):
-    def __init__(self, *ka, **kw):
-        self._comment_list = kw.pop("comment_list", None)
-        list.__init__(self, *ka, **kw)
+    """ A list of shape objects """
+    def __init__(self, *args, comment_list=None):
+        """
+        
+        Parameters
+        ----------
+        args : arguments 
+         Arguments passed to list(...), expected to be 'pyregion.parse_helper.Shape' objects
+        comment_list : list, None
+         list of comment strings for each argument
+        
+        
+        """    
+        if comment_list is not None:
+            if len(comment_list) != len(args):
+                err = "Ambiguous number of comments {} for number of shapes {}"
+                raise ValueError(err.format(len(comment_list),len(args)))
+        self._comment_list = comment_list
+        list.__init__(self, *args)
 
     def __getitem__(self, key):
         if isinstance(key, slice):
@@ -40,7 +56,6 @@ class ShapeList(list):
                                       header, rot_wrt_axis=rot_wrt_axis)
         shape_list, comment_list = zip(*list(r))
         return ShapeList(shape_list, comment_list=comment_list)
-
 
     def get_mpl_patches_texts(self, properties_func=None,
                               text_offset=5.0,
