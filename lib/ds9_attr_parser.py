@@ -32,7 +32,7 @@ def get_ds9_attr_parser():
 class Ds9AttrParser(object):
     def set_continued(self, s, l, tok):
         self.continued = True
-        
+
     def __init__(self):
         self.continued = False
 
@@ -42,6 +42,9 @@ class Ds9AttrParser(object):
                                          vector=wcs_shape(CoordOdd, CoordEven,
                                                           Distance, Angle),
                                          composite=wcs_shape(CoordOdd, CoordEven, Angle),
+                                         projection=wcs_shape(CoordOdd, CoordEven, CoordOdd, CoordEven, Distance),
+                                         segment=wcs_shape(CoordOdd, CoordEven,
+                                                           repeat=(0,2)),
                                          )
         regionShape = define_shape_helper(ds9_shape_in_comment_defs)
         regionShape = regionShape.setParseAction(lambda s, l, tok: Shape(tok[0], tok[1:]))
@@ -68,7 +71,7 @@ class Ds9AttrParser(object):
             return l[0], l[1:]
         else:
             return None, l
-            
+
 def get_attr(attr_list, global_attrs):
     """
     Parameters
@@ -83,12 +86,12 @@ def get_attr(attr_list, global_attrs):
         keyword = kv[0]
         if len(kv) == 1:
             local_attr[0].append(keyword)
-            continue            
+            continue
         elif len(kv) == 2:
             value = kv[1]
         elif len(kv) > 2:
             value = kv[1:]
-            
+
         if keyword == 'tag':
             local_attr[1].setdefault(keyword,set()).add(value)
         else:
@@ -111,14 +114,26 @@ def test_attr():
     assert  p.parseString("font=\"123 123\"")[0] == ("font", '"123 123"')
     assert  p.parseString("color")[0] == ("color",)
     assert  p.parseString("tag={group 1}")[0] == ("tag","group 1")
-    
+
 def test_get_attr ():
     attr_list = [('tag','group1'),('tag','group2'),('tag','group3'),('color','green')]
     global_attrs = [],{}
-    
+
     attr = get_attr(attr_list, global_attrs)
     assert attr[0] == []
     assert attr[1] == {'color': 'green', 'tag': set(['group1', 'group3', 'group2'])}
+
+def test_shape_in_comment():
+    parser = Ds9AttrParser()
+
+    r = parser.parse_check_shape("segment(0, 2)")
+    assert r[0].name == "segment"
+    assert r[1] == []
+
+    r = parser.parse_check_shape("projection(0, 2, 3, 2, 4)")
+    assert r[0].name == "projection"
+    assert r[1] == []
+
 
 if __name__ == "__main__":
     p = get_ds9_attr_parser()
