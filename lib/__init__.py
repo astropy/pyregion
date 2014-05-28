@@ -7,24 +7,24 @@ _builtin_open = open
 
 class ShapeList(list):
     """ A list of shape objects """
-    def __init__(self, *args, comment_list=None):
+    def __init__(self, shape_list, comment_list=None):
         """
-        
+
         Parameters
         ----------
-        args : arguments 
-         Arguments passed to list(...), expected to be 'pyregion.parse_helper.Shape' objects
+        shape_list : a list of 'pyregion.parse_helper.Shape' objects
         comment_list : list, None
          list of comment strings for each argument
-        
-        
-        """    
+
+
+        """
         if comment_list is not None:
-            if len(comment_list) != len(args):
+            if len(comment_list) != len(shape_list):
                 err = "Ambiguous number of comments {} for number of shapes {}"
-                raise ValueError(err.format(len(comment_list),len(args)))
+                raise ValueError(err.format(len(comment_list),
+                                            len(shape_list)))
         self._comment_list = comment_list
-        list.__init__(self, *args)
+        list.__init__(self, shape_list)
 
     def __getitem__(self, key):
         if isinstance(key, slice):
