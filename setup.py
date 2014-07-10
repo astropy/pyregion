@@ -35,8 +35,11 @@ for line in open('lib/version.py').readlines():
 def main():
     if sys.version_info[0] >= 3:
         install_requires = ['pyparsing>=2.0.0']
+    elif sys.version_info[:2] >= (2, 6):
+        # For Python 2.6 and 2.7, any version *except* 2.0.0 will work
+        install_requires = ['pyparsing!=2.0.0']
     else:
-        # pyparsing >= 2.0.0 is not compatible with Python 2
+        # For Python < 2.6, a version before 2.0.0 is required
         install_requires = ['pyparsing<2.0.0']
 
     ka = dict(name = "pyregion",
