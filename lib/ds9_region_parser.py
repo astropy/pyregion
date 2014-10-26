@@ -169,9 +169,9 @@ class RegionParser(RegionPusher):
     @staticmethod
     def sky_to_image(l, header, rot_wrt_axis=1):
 
-        try:
+        try: # this is a hack to test if header is fits header of wcs object.
             header["NAXIS"]
-        except (KeyError, TypeError):
+        except (KeyError, TypeError, ValueError):
             pc = None
         else:
             pc = PhysicalCoordinate(header)
@@ -317,6 +317,3 @@ def test_global():
     ss = rp.parseLine(s)[0]
 
     assert isinstance(ss[0], Global)
-
-
-
