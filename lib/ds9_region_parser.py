@@ -28,6 +28,9 @@ from .physical_coordinate import PhysicalCoordinate
 ds9_shape_defs = dict(circle=wcs_shape(CoordOdd, CoordEven, Distance),
                       rotbox=wcs_shape(CoordOdd, CoordEven, Distance, Distance, Angle),
                       box=wcs_shape(CoordOdd, CoordEven, Distance, Distance, Angle),
+                      projection=wcs_shape(CoordOdd, CoordEven, CoordOdd, CoordEven, Distance),
+                      segment=wcs_shape(CoordOdd, CoordEven,
+                                        repeat=(0,2)),
                       polygon=wcs_shape(CoordOdd, CoordEven,
                                         repeat=(0,2)),
                       ellipse=wcs_shape(CoordOdd, CoordEven,
@@ -100,7 +103,10 @@ class RegionParser(RegionPusher):
 
 
     def parseLine(self, l):
-        self.parser.parseString(l)
+        try:
+            self.parser.parseString(l.lstrip("# "))
+        except ParseException:
+            self.parser.parseString(l)
         s, c, continued = self.stack, self.comment, self.continued
         self.flush()
 
