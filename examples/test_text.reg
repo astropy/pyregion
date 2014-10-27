@@ -1,0 +1,10 @@
+# Region file format: DS9 version 4.1
+# Filename: test01.fits
+global color=green dashlist=8 3 width=1 font="helvetica 10 normal" select=1 highlite=1 dash=0 fixed=0 edit=1 move=1 delete=1 include=1 source=1
+fk5
+line(171.2398,-59.290221,171.17045,-59.241461) # line=1 1 width=2
+# vector(171.15897,-59.260323,121.9732",291.286) vector=1
+# text(171.08249,-59.263998) font="helvetica 14 normal" text={Region}
+line(171.12155,-59.236131,171.06222,-59.243213) # line=0 0 font="helvetica 14 normal" dash=1
+# compass(171.09742,-59.292704,31.583948") compass=physical {N} {E} 1 1 font="helvetica 14 normal" dash=1
+# ruler(171.25782,-59.237453,171.2087,-59.261266) ruler=physical physical

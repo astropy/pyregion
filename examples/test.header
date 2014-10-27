@@ -1,0 +1,16 @@
+SIMPLE  =                    T / file does conform to FITS standard
+BITPIX  =                   16 / number of bits per data pixel
+NAXIS   =                    2 / number of data axes
+NAXIS1  =                 1629 / length of data axis
+NAXIS2  =                 1653 / length of data axis
+EXTEND  =                    T / FITS dataset may contain extensions
+CTYPE1  = 'RA---TAN'
+CRVAL1  =  1.7114680010248E+02
+CRPIX1  =  7.9250000000000E+02
+CDELT1  = -1.3666666666667E-04
+CUNIT1  = 'deg     '
+CTYPE2  = 'DEC--TAN'
+CRVAL2  = -5.9266678641361E+01
+CRPIX2  =  8.2750000000000E+02
+CDELT2  =  1.3666666666667E-04
+CUNIT2  = 'deg     '

@@ -1,0 +1,8 @@
+# Region file format: DS9 version 4.1
+# Filename: t1.fits
+global color=green dashlist=8 3 width=1 font="helvetica 10 normal" select=1 highlite=1 dash=0 fixed=0 edit=1 move=1 delete=1 include=1 source=1
+physical
+-ellipse(4053.9922,4121.9905,46,21,317.017)
+circle(4267.9987,4214.0083,37.623659)
+box(4034.5013,3987.0067,87,48,19.0384)
+polygon(4182.1103,4080.8819,4307.0067,4129.9947,4276.9938,3957.01,4182.1053,4021.1054)

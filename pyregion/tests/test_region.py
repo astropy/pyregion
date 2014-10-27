@@ -1,3 +1,4 @@
+import os
 from os.path import join
 
 try:
@@ -21,7 +22,7 @@ else:
         c = pyfits.Card()
         return c.fromstring(l)
 
-rootdir = "examples"
+rootdir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'examples')
 
 def demo_header():
     cards = pyfits.CardList()
