@@ -25,7 +25,7 @@ import warnings
 # compiler), set it to False
 WITH_FILTER = True
 
-for line in open('lib/version.py').readlines():
+for line in open('pyregion/version.py').readlines():
     if (line.startswith('__version__')):
         exec(line.strip())
 
@@ -49,7 +49,7 @@ def main():
               license = "MIT",
               platforms = ["Linux","MacOS X"],
               packages = ['pyregion'],
-              package_dir={'pyregion':'lib'},
+              package_dir={'pyregion':'pyregion'},
               install_requires = install_requires,
               use_2to3 = False,
               )
