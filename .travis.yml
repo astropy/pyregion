@@ -40,8 +40,8 @@ install:
    - if [[ $ASTROPY_VERSION == development ]]; then pip install git+http://github.com/astropy/astropy.git#egg=astropy --use-mirrors; fi
 
 script:
-   - python setup.py install
-   - python test.py
-   - cd doc
+   - python setup.py build_ext --inplace
+   - py.test pyregion
+   - cd docs
    - python make.py
 
