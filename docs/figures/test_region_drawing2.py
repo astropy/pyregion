@@ -49,5 +49,5 @@ for p in patch_list1 + patch_list2:
 for t in artist_list1 + artist_list2:
     ax.add_artist(t)
 
-plt.show()
+plt.savefig('test2.png')
 

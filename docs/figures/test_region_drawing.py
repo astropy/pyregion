@@ -33,5 +33,5 @@ for p in patch_list:
 for t in text_list:
     ax.add_artist(t)
 
-plt.show()
+plt.savefig('test1.png')
 
