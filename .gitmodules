@@ -1,3 +1,6 @@
 [submodule "docs/build/html"]
 	path = docs/build/html
 	url = git://github.com/leejjoon/pyregion.git
+[submodule "astropy_helpers"]
+	path = astropy_helpers
+	url = http://github.com/astropy/astropy-helpers.git
