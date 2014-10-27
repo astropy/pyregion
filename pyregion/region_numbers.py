@@ -64,12 +64,6 @@ def _simple_number():
 
 simple_number = _simple_number()
 
-def test_usn():
-    for f in ["32.4", "0.23", "0.3e-7", "1.234e+7"]:
-        assert usn.parseString(f)[0] == f
-        #assert usn.parseString(f)[0][0] == float(f)
-
-
 
 class SimpleInteger(object):
     def __repr__(self):
@@ -90,10 +84,6 @@ def _unsigned_integer():
 
 
 simple_integer = _unsigned_integer()
-
-def test_integer():
-    for f in ["32", "+3"]:
-        assert simple_integer.parseString(f)[0].text == f
 
 
 def get_degree(s, l, tok):
@@ -193,15 +183,6 @@ sexadecimal60 = _sexadecimal().setParseAction(lambda s, l, tok: DMS(tok))
 sexadecimal24 = _sexadecimal().setParseAction(lambda s, l, tok: HMS(tok))
 
 
-def test_sexadecimal():
-    s = sexadecimal60.parseString
-
-    assert s("32:24:32.2")[0].v == Sixty(1, 32, 24, 32.2).v
-    assert s("-32:24:32.2")[0].v == Sixty(-1, 32, 24, 32.2).v
-    assert s("+32:24:32.2")[0].v == Sixty(1, 32, 24, 32.2).v
-
-
-
 def _hms_number():
     _h = (usn + Literal("h")).leaveWhitespace()
     _m = (usn + Literal("m")).leaveWhitespace()
@@ -244,13 +225,6 @@ hms_number = _hms_number()
 dms_number = _dms_number()
 
 
-def test_hms():
-    s = hms_number.parseString
-
-    assert s("32h24m32.2s")[0].v == Sixty(1, 32, 24, 32.2).v
-    assert s("0h24m32.2s")[0].v == Sixty(1, 0, 24, 32.2).v
-    assert s("32h")[0].v == Sixty(1, 32, 0, 0).v
-
 
 
 # def _dms_number():
@@ -270,16 +244,6 @@ def test_hms():
 #     return dms
 
 
-
-def test_dms():
-    s = dms_number.parseString
-
-    assert s("32d24m32.2s")[0].v == Sixty(1, 32, 24, 32.2).v
-    assert s("-32d24m32.2s")[0].v == Sixty(-1, 32, 24, 32.2).v
-    assert s("32d")[0].v == Sixty(1, 32, 0, 0).v
-
-
-
 def _angular_distance():
     _m = (usn + Literal("\'")).leaveWhitespace()
     _s = (usn + Literal("\"")).leaveWhitespace()
@@ -292,17 +256,7 @@ def _angular_distance():
 
     return ms
 
-
 angular_distance = _angular_distance()
-
-def test_ang_distance():
-    s = angular_distance.parseString
-
-    assert s("32.3'")[0].v == Sixty(1, 0, 32.3, 0.).v
-    assert s("32\'24\"")[0].v == Sixty(1, 0, 32, 24).v
-
-
-
 
 
 class Arg(object):
@@ -349,24 +303,3 @@ class Integer:
 #             )
 
 
-
-def test_coord_odd():
-    s = CoordOdd.parser.parseString
-
-    assert s("32h24m32.2s")[0].v == Sixty(1, 32, 24, 32.2).v
-    assert s("32:24:32.2s")[0].v == Sixty(1, 32, 24, 32.2).v
-    assert s("32.24")[0].v == 32.24
-
-    s1 = s("32:24:32.2s")[0]
-    assert isinstance(s1, HMS)
-
-
-def test_coord_odd():
-    s = CoordOdd.parser.parseString
-
-    assert s("32h24m32.2s")[0].v == Sixty(1, 32, 24, 32.2).v
-    assert s("32:24:32.2s")[0].v == Sixty(1, 32, 24, 32.2).v
-    assert s("32.24")[0].v == 32.24
-
-    s1 = s("32:24:32.2s")[0]
-    assert isinstance(s1, HMS)
