@@ -1,4 +1,3 @@
-import pyregion
 from os.path import join
 
 try:
@@ -8,7 +7,8 @@ except ImportError:
 
 import numpy as np
 
-from pyregion.wcs_helper import fix_lon
+from ..wcs_helper import fix_lon
+from .. import open as pyregion_open
 
 # At some point, pyfits.Card.fromstring has changed from unbound
 # method to bounded method.
@@ -46,10 +46,10 @@ def test_region():
 
     header = demo_header()
 
-    ref_region = pyregion.open(join(rootdir,ref_region_name)).as_imagecoord(header)
+    ref_region = pyregion_open(join(rootdir,ref_region_name)).as_imagecoord(header)
 
     for reg_name in region_list:
-        r = pyregion.open(join(rootdir,reg_name)).as_imagecoord(header)
+        r = pyregion_open(join(rootdir,reg_name)).as_imagecoord(header)
         for reg0, reg in zip(ref_region, r):
             if reg.name == "rotbox":
                 reg.name = "box"

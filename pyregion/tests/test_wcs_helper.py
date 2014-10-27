@@ -1,6 +1,6 @@
 import numpy as np
-#from pylab import savefig
-import pyregion
+
+from .. import parse
 
 try:
     from astropy import wcs as pywcs
@@ -30,6 +30,6 @@ def test_estimate_cdelt():
     assert np.allclose([cdelt], [0.1])
 
     region_string="fk5; circle(%s, %s, 0.5000)" % (ra,dec)
-    reg = pyregion.parse(region_string).as_imagecoord(wcs)
+    reg = parse(region_string).as_imagecoord(wcs)
 
     assert np.allclose([reg[0].coord_list[-1]], [0.5/0.1])
