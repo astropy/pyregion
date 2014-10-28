@@ -2,7 +2,7 @@ from ..parser_helper import define_shape
 
 
 def test_define_shape():
-    from .region_numbers import CoordOdd, CoordEven, Distance
+    from ..region_numbers import CoordOdd, CoordEven, Distance
     args = [s.parser for s in [CoordOdd, CoordEven, Distance]]
     circle_parser = define_shape("circle", args, args_repeat=None)
 
