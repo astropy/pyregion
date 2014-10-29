@@ -1,6 +1,22 @@
-recursive-include examples *.py *.reg
-include examples/*.header
-include src/_region_filter.c
-include src/_region_filter.pyx
-include LICENSE LICENSE_kapteyn.txt
-include distribute_setup.py
+include LICENSE
+include LICENSE_kapteyn.txt
+include README
+
+include ez_setup.py
+include ah_bootstrap.py
+include setup.cfg
+
+recursive-include docs *
+recursive-include licenses *
+recursive-include cextern *
+recursive-include scripts *
+
+prune docs/_build
+prune build
+
+recursive-include astropy_helpers *
+exclude astropy_helpers/.git
+exclude astropy_helpers/.gitignore
+
+exclude *.pyc *.o
+prune docs/api

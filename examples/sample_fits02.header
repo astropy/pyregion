@@ -1,0 +1,40 @@
+SIMPLE  =                    T / Written by SkyView Thu Mar 19 00:15:05 GMT 2009
+BITPIX  =                  -64 / 4 byte floating point
+NAXIS   =                    2 / Two dimensional image
+NAXIS1  =                  300 / Width of image
+NAXIS2  =                  300 / Height of image
+CRVAL1  =               304.75 / Reference longitude
+CRVAL2  =                 45.7 / Reference latitude
+RADESYS = 'FK5     '           / Coordinate system
+EQUINOX =               2000.0 / Epoch of the equinox
+CTYPE1  = 'RA---TAN'           / Coordinates -- projection
+CTYPE2  = 'DEC--TAN'           / Coordinates -- projection
+CRPIX1  =                150.5 / X reference pixel
+CRPIX2  =                150.5 / Y reference pixel
+CDELT1  =   -0.006666666666667 / X scale
+CDELT2  = 0.006666666666666666 / Y scale
+COMMENT
+COMMENT  SkyView Survey metadata
+COMMENT
+COMMENT Provenance:  Observational data from NASA Goddard Space       Flight C
+COMMENT           enter, mosaicking of images done by SkyView.
+COMMENT Copyright:   Public domain
+COMMENT Regime:      X-ray
+COMMENT NSurvey:     1
+COMMENT Frequency:   0.3 EHz (.1-2.4 keV)
+COMMENT Coverage:    Isolated pointings in the sky.  Total       coverage < 14
+COMMENT           %
+COMMENT PixelScale:  15"
+COMMENT PixelUnits:  cts/s/pixel
+COMMENT Resolution:  30" but variable across the field of view
+COMMENT Coordinates: Equatorial
+COMMENT Equinox:     2000
+COMMENT Projection:  Gnomonic
+COMMENT Epoch:       1991-1994
+COMMENT Reference:   ROSAT Mission Description and Data Products Guide, availa
+COMMENT           ble thr ough the ROSAT Guest Observer Facility, NASA GSFC.
+COMMENT           SkyView Rosat Survey Generation  description.
+COMMENT
+COMMENT Survey specific cards
+COMMENT
+SURVEY  = 'PSPC 2.0 Deg-Inten'

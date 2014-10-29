@@ -1,3 +1,5 @@
+import os
+
 import matplotlib.pyplot as plt
 import matplotlib.cm as cm
 
@@ -8,7 +10,7 @@ except ImportError:
     import pyfits
 
 # read in the image
-xray_name="pspc_skyview.fits"
+xray_name= "pspc_skyview.fits"
 f_xray = pyfits.open(xray_name)
 
 try:

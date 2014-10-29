@@ -1,0 +1,9 @@
+# Region file format: DS9 version 4.1
+# Filename: E3000-7000.b1.img.fl.fits
+global color=green dashlist=8 3 width=1 font="helvetica 10 normal" select=1 highlite=1 dash=0 fixed=0 edit=1 move=1 delete=1 include=1 source=1
+image
+-ellipse(750,853,46,21,317.017) # width=3 text={Ellipse} background
+circle(964,945,37.6236) # color=cyan text={Circle}
+box(730.5,718,87,48,19.0384) # width=4 text={Rectangle}
+polygon(878.11237,811.88766,1003,861,973.00003,688,878.11237,752.11234) # text={Polygon}
+point(800, 960) # point=box color=black text={Point}
