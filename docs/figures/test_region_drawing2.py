@@ -9,10 +9,8 @@ try:
 except ImportError:
     import pyfits
 
-ROOT = os.path.dirname(os.path.abspath(__file__))
-
 # read in the image
-xray_name= os.path.join(ROOT, "pspc_skyview.fits")
+xray_name= "pspc_skyview.fits"
 f_xray = pyfits.open(xray_name)
 
 try:
@@ -23,7 +21,7 @@ except ImportError:
 
 ax.imshow(f_xray[0].data, cmap=cm.gray, vmin=0., vmax=0.00038, origin="lower")
 
-reg_name = os.path.join(ROOT, "test.reg")
+reg_name = "test.reg"
 r = pyregion.open(reg_name).as_imagecoord(header=f_xray[0].header)
 
 from pyregion.mpl_helper import properties_func_default
@@ -49,5 +47,5 @@ for p in patch_list1 + patch_list2:
 for t in artist_list1 + artist_list2:
     ax.add_artist(t)
 
-plt.savefig('test2.png')
+plt.show()
 
