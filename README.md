@@ -10,7 +10,6 @@ pyregion is "easy_install"able.
 
 http://pypi.python.org/pypi/pyregion
 
-
 FEATURES
 --------
 
@@ -27,3 +26,10 @@ All files (see exception below) are under MIT License. See LICENSE.
 * "lib/kapteyn_celestial.py" is from the Kapteyn package
   (http://www.astro.rug.nl/software/kapteyn/). See
   LICENSE_kapteyn.txt.
+
+Status
+------
+
+[![Build Status](https://travis-ci.org/astropy/pyregion.png?branch=master)](https://travis-ci.org/astropy/pyregion)
+
+[![Coverage Status](https://coveralls.io/repos/astropy/pyregion/badge.png?branch=master)](https://coveralls.io/r/astropy/pyregion?branch=master)
