@@ -50,7 +50,7 @@ copyright = '2009, Jae-Joon Lee'
 #version = '0.1'
 # The full version, including alpha/beta/rc tags.
 #release = '0.1b'
-sys.path.insert(0,os.path.abspath("../lib"))
+sys.path.insert(0,os.path.abspath("../pyregion"))
 from version import __version__ as version
 sys.path.pop(0)
 

@@ -3,45 +3,53 @@ language: python
 python:
     - 2.6
     - 2.7
-    - 3.2
     - 3.3
+    - 3.4
 
 env:
     # try all python versions with the latest stable numpy and astropy
-    - ASTROPY_VERSION=stable NUMPY_VERSION=1.7.1 SETUP_CMD='test'
+    - ASTROPY_VERSION=stable NUMPY_VERSION=1.9.0 SETUP_CMD='test'
 
 matrix:
     include:
         # try latest developer version of astropy
         - python: 2.7
           env: ASTROPY_VERSION=development NUMPY_VERSION=1.7.1 SETUP_CMD='test'
-        - python: 3.2
-          env: ASTROPY_VERSION=development NUMPY_VERSION=1.7.1 SETUP_CMD='test'
         - python: 3.3
-          env: ASTROPY_VERSION=development NUMPY_VERSION=1.7.1 SETUP_CMD='test'
+          env: ASTROPY_VERSION=development NUMPY_VERSION=1.9.0 SETUP_CMD='test'
+        - python: 3.4
+          env: ASTROPY_VERSION=development NUMPY_VERSION=1.9.0 SETUP_CMD='test'
 
 before_install:
-   # We do this to make sure we get the dependencies so pip works below
-   - sudo apt-get update -qq
-   - sudo apt-get install -qq python-numpy python-sphinx cython libatlas-dev liblapack-dev gfortran
-   - sudo apt-get install -qq python-sphinx graphviz texlive-latex-extra dvipng python-matplotlib
+
+    # Use utf8 encoding. Should be default, but this is insurance against
+    # future changes
+    - export PYTHONIOENCODING=UTF8
+
+    # Install conda
+    - wget http://repo.continuum.io/miniconda/Miniconda-latest-Linux-x86_64.sh -O miniconda.sh
+    - chmod +x miniconda.sh
+    - ./miniconda.sh -b
+    - export PATH=/home/travis/miniconda/bin:$PATH
+    - conda update --yes conda
+
+    # We do this to make sure we get the dependencies so pip works below
+    - sudo apt-get install graphviz texlive-latex-extra dvipng
 
 install:
-   - export PYTHONIOENCODING=UTF8 # just in case
-   - pip -q install --upgrade "numpy==$NUMPY_VERSION" --use-mirrors
-   - pip -q install --upgrade Cython --use-mirrors
-   
-   # Recent version of jinja2 and markupsafe not compatible with 3.2??
-   - if [[ $TRAVIS_PYTHON_VERSION == '3.2'* ]]; then pip -q install --use-mirrors "markupsafe<0.15" "jinja2<2.7"; fi
-   - pip -q install sphinx==1.1.3 --use-mirrors
-   - pip -q install matplotlib --use-mirrors
 
-   - if [[ $ASTROPY_VERSION == stable ]]; then pip install astropy --use-mirrors; fi
-   - if [[ $ASTROPY_VERSION == development ]]; then pip install git+http://github.com/astropy/astropy.git#egg=astropy --use-mirrors; fi
+    # CONDA
+    - conda create --yes -n test -c astropy-ci-extras python=$TRAVIS_PYTHON_VERSION
+    - source activate test
+
+    # CORE DEPENDENCIES
+    - conda install --yes -c astropy-ci-extras numpy=$NUMPY_VERSION pytest pip Cython matplotlib sphinx pyparsing
+
+    - if [[ $ASTROPY_VERSION == stable ]]; then conda install --yes -c astropy-ci-extras astropy; fi
+    - if [[ $ASTROPY_VERSION == development ]]; then pip install git+http://github.com/astropy/astropy.git#egg=astropy --use-mirrors; fi
 
 script:
-   - python setup.py install
-   - python test.py
-   - cd doc
+   - python setup.py build_ext --inplace
+   - py.test pyregion
+   - cd docs
    - python make.py
-

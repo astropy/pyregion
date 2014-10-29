@@ -13,10 +13,10 @@ have_pyrex = 'build_ext' in globals()
 
 if have_pyrex:
     cmdclass = {'build_ext': build_ext}
-    PYREX_SOURCE = "src/_region_filter.pyx"
+    PYREX_SOURCE = "pyregion/src/_region_filter.pyx"
 else:
     cmdclass = {}
-    PYREX_SOURCE = "src/_region_filter.c"
+    PYREX_SOURCE = "pyregion/src/_region_filter.c"
 
 import sys
 import warnings
@@ -25,7 +25,7 @@ import warnings
 # compiler), set it to False
 WITH_FILTER = True
 
-for line in open('lib/version.py').readlines():
+for line in open('pyregion/version.py').readlines():
     if (line.startswith('__version__')):
         exec(line.strip())
 
@@ -49,7 +49,7 @@ def main():
               license = "MIT",
               platforms = ["Linux","MacOS X"],
               packages = ['pyregion'],
-              package_dir={'pyregion':'lib'},
+              package_dir={'pyregion':'pyregion'},
               install_requires = install_requires,
               use_2to3 = False,
               )
@@ -81,7 +81,7 @@ def main():
 
         ka["ext_modules"] = [ Extension("pyregion._region_filter",
                                         [PYREX_SOURCE],
-                                        include_dirs=['./src',
+                                        include_dirs=['pyregion/src',
                                                       numpy_include,
                                                       ],
                                         libraries=[],
