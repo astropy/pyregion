@@ -155,7 +155,7 @@ these to the axes. ::
     for t in artist_list:
         ax.add_artist(t)
 
-.. plot:: figures/test_region_drawing.py
+.. plot:: figures/region_drawing.py
 
 The (optional) argument of the *get_mpl_patches_texts* method is a
 callable object that takes the shape object as an argument and returns
@@ -167,7 +167,7 @@ complex shapes are not correctly handled as shown in above example,
 and you need to manually adjust the associated attributes of patches.
 
 
-.. plot:: figures/test_region_drawing2.py
+.. plot:: figures/region_drawing2.py
    :include-source:
 
 
