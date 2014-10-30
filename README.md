@@ -10,7 +10,7 @@ PyPI: http://pypi.python.org/pypi/pyregion
 
 Installation: ``pip install pyregion``
 
-Lead developer: Jae-Joon Lee ([@leejjoon](http://github.com/leejjoon)
+Lead developer: Jae-Joon Lee ([@leejjoon](http://github.com/leejjoon))
 
 FEATURES
 --------
