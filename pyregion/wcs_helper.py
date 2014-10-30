@@ -12,6 +12,7 @@ except ImportError:
         import pywcs
     except ImportError:
         pass
+from astropy.io.fits import Header
 
 import sys
 if sys.version < '3':
@@ -260,18 +261,14 @@ class ProjectionPywcsNd(_ProjectionSubInterface, ProjectionBase):
     """
     def __init__(self, header):
         """
-        header could be pyfits.Header instance of pywcs.WCS instance.
+        header could be astropy.io.fits.Header, pywcs.WCS, or astropy.wcs.WCS instance
         """
 
-        # We can't check the header type using isinstance since we don't know
-        # if it comes from PyFITS or Astropy, so instead we check if it has
-        # the 'ascard' attribute that both header classes define.
-
-        if hasattr(header, 'ascard'):
+        if isinstance(header, Header):
 
             header = fix_header(header)
 
-            # Since we don't know if PyFITS or PyWCS are from Astropy, and the
+            # Since we don't know if PyWCS is from Astropy, and the
             # WCS object in PyWCS and Astropy both accept a string
             # representation of the header, we use this instead (both
             # internally use `repr(header.ascard)` which returns str,
@@ -285,7 +282,7 @@ class ProjectionPywcsNd(_ProjectionSubInterface, ProjectionBase):
             self._pywcs = header
         else:
 
-            raise ValueError("header must be an instance of pyfits.Header or astropy.io.fits.Header")
+            raise ValueError("header must be an instance of astropy.io.fits.Header or a WCS object")
 
         ProjectionBase.__init__(self)
 
