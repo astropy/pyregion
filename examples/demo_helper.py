@@ -3,31 +3,6 @@ import pyregion
 
 import math
 
-try:
-    from astropy.io import fits as pyfits
-except ImportError:
-    import pyfits
-
-# At some point, pyfits.Card.fromstring has changed from unbound
-# method to bounded method.
-
-if pyfits.Card.fromstring.__self__: # 
-    def pyfits_card_fromstring(l):
-        return pyfits.Card.fromstring(l)
-else:
-    def pyfits_card_fromstring(l):
-        c = pyfits.Card()
-        return c.fromstring(l)
-
-def demo_header():
-    cards = pyfits.CardList()
-    for l in open("sample_fits01.header"):
-        card = pyfits_card_fromstring(l.strip())
-        cards.append(card)
-    h = pyfits.Header(cards)
-    return h
-
-
 def show_region(fig, region_list):
     h = demo_header()
 

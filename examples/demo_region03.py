@@ -1,7 +1,4 @@
-try:
-    from astropy.io import fits as pyfits
-except ImportError:
-    import pyfits
+from astropy.io.fits import Header
 
 import matplotlib.pyplot as plt
 import pyregion
@@ -11,17 +8,8 @@ import math
 from mpl_toolkits.axes_grid1 import ImageGrid
 import pywcsgrid2
 
-
-from demo_helper import pyfits_card_fromstring
-
-
 def get_test_header():
-    cards = pyfits.CardList()
-    for l in open("sample_fits01.header"):
-        card = pyfits_card_fromstring(l.strip())
-        cards.append(card)
-    h = pyfits.Header(cards)
-    return h
+    return Header.fromtextfile('sample_fits01.header')
 
 if 1:
 

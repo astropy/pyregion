@@ -70,19 +70,12 @@ astropy
 -------
 * OPTIONAL
 * `Astropy <https://github.com/astropy/astropy/>`__
-* With astropy installed, pywcs and pyfits are not needed.
 
 pywcs
 -----
 * OPTIONAL
 * used for coordinate conversions
 * `Homepage <https://trac.assembla.com/astrolib/>`__
-
-pyfits
-------
-* OPTIONAL
-* `Homepage <http://www.stsci.edu/resources/software_hardware/pyfits>`__
-
 
 matplotlib
 ----------

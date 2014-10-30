@@ -118,10 +118,10 @@ The shape object has following attributes,
 The ShapeList class have a few method that could be
 useful. *ShapeList.as_imagecoord* returns a new ShapeList instance
 with the coordinates converted to the image coordinate. It
-requires the Pyfits.Header instance.::
+requires the astropy.io.fits.Header instance.::
 
-    import pyfits
-    f = pyfits.open("t1.fits")
+    from astropy.io import fits
+    f = fits.open("t1.fits")
     r2 = pyregion.parse(region_string).as_imagecoord(f[0].header)
 
 The return value is a new ShapeList instance, but the coordinate is
