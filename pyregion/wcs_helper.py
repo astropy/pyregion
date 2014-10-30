@@ -6,16 +6,7 @@ from astropy.io.fits import Header
 
 from .kapteyn_celestial import skymatrix, longlat2xyz, dotrans, xyz2longlat
 from . import kapteyn_celestial
-
-if sys.version < '3':
-    def as_str(x):
-        return x
-else:
-    def as_str(x):
-        if hasattr(x, "decode"):
-            return x.decode()
-        else:
-            return x
+from astropy.extern import six
 
 _pattern_ra = re.compile(r"^RA")
 _pattern_dec = re.compile(r"^DEC")
@@ -43,29 +34,12 @@ UnknownWcs = "unknown wcs"
 image_like_coordformats = ["image", "physical", "detector", "logical"]
 
 
-def is_equal_coord_sys(src, dest):
-    return (src.lower() == dest.lower())
-
-
-def is_string_like(obj):
-    'Return True if *obj* looks like a string'
-    import sys
-    if sys.version_info >= (3, 0):
-        if isinstance(obj, str): return True
-    else:
-        if isinstance(obj, (str, unicode)): return True
-    try: obj + ''
-    except: return False
-    return True
-
-
 class sky2sky(object):
     def __init__(self, src, dest):
-
-        if is_string_like(src):
+        if isinstance(src, six.string_types):
             src = coord_system[src.lower()]
 
-        if is_string_like(dest):
+        if isinstance(dest, six.string_types):
             dest = coord_system[dest.lower()]
 
         self.src = src
@@ -109,39 +83,6 @@ def coord_system_guess(ctype1_name, ctype2_name, equinox):
         return "ecl"
 
     return None
-
-
-def fix_header(header):
-    "return a new fixed header"
-
-    if hasattr(header, "cards"):
-        old_cards = header.cards
-    else:
-        old_cards = header.ascardlist()
-
-    new_cards = []
-
-    from operator import attrgetter
-    if old_cards and hasattr(old_cards[0], "keyword"):
-        get_key = attrgetter("keyword")
-    else:
-        get_key = attrgetter("key")
-
-    for c in old_cards:
-        key = get_key(c)
-
-        # ignore comments and history
-        if key in ["COMMENT", "HISTORY"]:
-            continue
-
-        # use "deg"
-        if key.startswith("CUNIT") and c.value.lower().startswith("deg"):
-            c = type(c)(key, "deg")
-
-        new_cards.append(c)
-
-    h = type(header)(new_cards)
-    return h
 
 
 def fix_lon(lon, lon_ref):
@@ -220,10 +161,6 @@ class _ProjectionSubInterface:
         proj_sub = ProjectionPywcsSub(self, axis_nums_to_keep, ref_pixel)
         return proj_sub
 
-    def sub(self, axes):
-        axis_nums_to_keep = [i-1 for i in axes]
-        return self.substitute(axis_nums_to_keep, [0] * self.naxis)
-
 
 class ProjectionPywcsNd(_ProjectionSubInterface, ProjectionBase):
     """
@@ -235,9 +172,7 @@ class ProjectionPywcsNd(_ProjectionSubInterface, ProjectionBase):
         """
 
         if isinstance(header, Header):
-            header = fix_header(header)
             self._pywcs = WCS(header=header)
-
         elif isinstance(header, WCS):
             self._pywcs = header
         else:
@@ -247,7 +182,7 @@ class ProjectionPywcsNd(_ProjectionSubInterface, ProjectionBase):
         ProjectionBase.__init__(self)
 
     def _get_ctypes(self):
-        return tuple(as_str(s) for s in self._pywcs.wcs.ctype)
+        return tuple(self._pywcs.wcs.ctype)
 
     ctypes = property(_get_ctypes)
 
@@ -320,7 +255,6 @@ class ProjectionPywcsSub(_ProjectionSubInterface, ProjectionBase):
     equinox = property(_get_equinox)
 
     def _get_naxis(self):
-        # return self.proj.naxis - self._nsub
         return self._nsub
 
     naxis = property(_get_naxis)
@@ -364,126 +298,7 @@ class ProjectionPywcsSub(_ProjectionSubInterface, ProjectionBase):
         xyz2 = self.proj.toworld(np.asarray(xyz))
         xyz2r = [xyz2[i] for i in self._axis_nums_to_keep]
 
-        # fixme
-        # xyz2r[0] = self._fix_lon(xyz2r[0])
-
         return xyz2r
-
-
-class ProjectionPywcs(ProjectionBase):
-    """
-    A wrapper for WCS
-    """
-    def __init__(self, header):
-        if isinstance(header, Header):
-            self._pywcs = WCS(header=header)
-        else:
-            self._pywcs = header
-        ProjectionBase.__init__(self)
-
-    def _get_ctypes(self):
-        return tuple(as_str(s) for s in self._pywcs.wcs.ctype)
-
-    ctypes = property(_get_ctypes)
-
-    def _get_equinox(self):
-        return self._pywcs.wcs.equinox
-
-    equinox = property(_get_equinox)
-
-    def topixel(self, xy):
-        """ 1, 1 base """
-        xy2 = self._pywcs.wcs_world2pix(np.asarray(xy).T, 1)
-        return xy2.T[:2]
-
-    def toworld(self, xy):
-        """ 1, 1 base """
-        xy2 = self._pywcs.wcs_pix2world(np.asarray(xy).T, 1)
-        return xy2.T[:2]
-
-    def sub(self, axes):
-        wcs = self._pywcs.sub(axes=axes)
-        return ProjectionPywcs(wcs)
-
-
-class ProjectionSimple(ProjectionBase):
-    """
-    A wrapper for WCS
-    """
-    def __init__(self, header):
-        ProjectionBase.__init__(self)
-        self._pywcs = WCS(header=header)
-        self._simple_init(header)
-
-    def _get_ctypes(self):
-        return tuple(as_str(s) for s in self._pywcs.wcs.ctype)
-
-    ctypes = property(_get_ctypes)
-
-    def _get_equinox(self):
-        return self._pywcs.wcs.equinox
-
-    equinox = property(_get_equinox)
-
-    def _get_naxis(self):
-        return self._pywcs.wcs.naxis
-
-    naxis = property(_get_naxis)
-
-    def _simple_init(self, header):
-        self.crpix1 = header["CRPIX1"]
-        self.crval1 = header["CRVAL1"]
-        self.cdelt1 = header["CDELT1"]
-
-        self.crpix2 = header["CRPIX2"]
-        self.crval2 = header["CRVAL2"]
-        self.cdelt2 = header["CDELT2"]
-
-        self.cos_phi = np.cos(self.crval2/180.*np.pi)
-
-    def _simple_to_pixel(self, lon, lat):
-        lon, lat = np.asarray(lon), np.asarray(lat)
-
-        lon = self._fix_lon(lon)
-
-        x = (lon - self.crval1)/self.cdelt1*self.cos_phi + self.crpix1
-        y = (lat - self.crval2)/self.cdelt2 + self.crpix2
-
-        return x, y
-
-    def _simple_to_world(self, x, y):
-        x, y = np.asarray(x), np.asarray(y)
-        lon = (x - self.crpix1)*self.cdelt1/self.cos_phi + self.crval1
-        lat = (y - self.crpix2)*self.cdelt2 + self.crval2
-
-        lon = self._fix_lon(lon)
-
-        return lon, lat
-
-    def topixel(self, xy):
-        """ 1, 1 base """
-        lon, lat = xy[0], xy[1]
-        x, y = self._simple_to_pixel(lon, lat)
-        return np.array([x, y])
-
-    def toworld(self, xy):
-        """ 1, 1 base """
-        x, y = xy[0], xy[1]
-        lon, lat = self._simple_to_world(x, y)
-        return np.array([lon, lat])
-
-    def substitute(self, axis_nums, values):
-        return self
-
-    def sub(self, axis_nums):
-        return self
-
-    # def sub(self, axes):
-    #     wcs = self._pywcs.sub(axes=axes)
-    #     return ProjectionPywcs(wcs)
-
-
-ProjectionDefault = ProjectionPywcsNd
 
 
 def get_kapteyn_projection(header):
@@ -492,53 +307,7 @@ def get_kapteyn_projection(header):
     else:
         projection = ProjectionPywcsNd(header)
 
-    # projection = projection.sub(axes=[1,2])
     return projection
-
-
-def estimate_cdelt_trans(transSky2Pix, x0, y0):
-
-    transPix2Sky = transSky2Pix.inverted()
-
-    lon0, lat0 = transPix2Sky.transform_point((x0, y0))
-
-    lon1, lat1 = transPix2Sky.transform_point((x0+1, y0))
-    dlon = (lon1-lon0)*np.cos(lat0/180.*np.pi)
-    dlat = (lat1 - lat0)
-    cd1 = (dlon**2 + dlat**2)**.5
-
-    lon2, lat2 = transPix2Sky.transform_point((x0, y0+1))
-    dlon = (lon2-lon0)*np.cos(lat0/180.*np.pi)
-    dlat = (lat2-lat0)
-    cd2 = (dlon**2 + dlat**2)**.5
-
-    return (cd1*cd2)**.5
-
-
-def estimate_angle_trans(transSky2Pix, x0, y0):
-    """
-    return a tuple of two angles (in degree) of increasing direction
-    of 1st and 2nd coordinates.
-
-    note that x, y = wcs_proj.topixel(sky_to_sky((l1, l2)))
-
-    """
-
-    cdelt = estimate_cdelt_trans(transSky2Pix, x0, y0)
-
-    transPix2Sky = transSky2Pix.inverted()
-
-    lon0, lat0 = transPix2Sky.transform_point((x0, y0))
-
-    x1, y1 = transSky2Pix.transform_point((lon0 + cdelt*np.cos(lat0/180.*np.pi),
-                                           lat0))
-
-    x2, y2 = transSky2Pix.transform_point((lon0, lat0+cdelt))
-
-    a1 = np.arctan2(y1-y0, x1-x0)/np.pi*180.
-    a2 = np.arctan2(y2-y0, x2-x0)/np.pi*180.
-
-    return a1, a2
 
 
 def estimate_cdelt(wcs_proj, x0, y0):

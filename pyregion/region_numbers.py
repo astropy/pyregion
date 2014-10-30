@@ -13,17 +13,8 @@ def _unsigned_simple_number():
     return fnumber  # .setParseAction(lambda s,l,t: (float(t[0]), t[0]))
     # return fnumber.leaveWhitespace().setParseAction(lambda s,l,t: [ float(t[0])])
 
-# simple_number = _simple_number()
-
 usn = _unsigned_simple_number()
 
-
-def getSign(s, l, tok):
-    if not tok: return (1, "")
-    if tok[0] == "-":
-        return -1, "-"
-    else:
-        return 1, "+"
 
 
 def get_default(v):
@@ -34,7 +25,6 @@ def get_default(v):
     return _f
 
 optional_sign = Optional(Literal("+") | Literal("-")).setParseAction(get_default(""))
-# optional_sign = Optional(Literal("+") | Literal("-")) #.setParseAction(getSign)
 
 
 class SimpleNumber(object):
@@ -78,10 +68,6 @@ def _unsigned_integer():
 
 
 simple_integer = _unsigned_integer()
-
-
-def get_degree(s, l, tok):
-    pass
 
 
 class Sixty(object):
