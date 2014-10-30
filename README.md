@@ -4,11 +4,11 @@ pyregion
 pyregion is a python module to parse ds9 region files.
 It also supports ciao region files.
 
-Homepage : http://leejjoon.github.com/pyregion/
+Homepage : http://pyregion.readthedocs.org/
 
-pyregion is "easy_install"able.
+PyPI: http://pypi.python.org/pypi/pyregion
 
-http://pypi.python.org/pypi/pyregion
+Installation: ``pip install pyregion``
 
 FEATURES
 --------
