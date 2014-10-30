@@ -71,12 +71,6 @@ astropy
 * OPTIONAL
 * `Astropy <https://github.com/astropy/astropy/>`__
 
-pywcs
------
-* OPTIONAL
-* used for coordinate conversions
-* `Homepage <https://trac.assembla.com/astrolib/>`__
-
 matplotlib
 ----------
 * OPTIONAL

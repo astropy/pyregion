@@ -3,15 +3,7 @@ import numpy as np
 from .kapteyn_celestial import skymatrix, longlat2xyz, dotrans, xyz2longlat
 from . import kapteyn_celestial
 
-pywcs = None
-
-try:
-    from astropy import wcs as pywcs
-except ImportError:
-    try:
-        import pywcs
-    except ImportError:
-        pass
+from astropy.wcs import WCS
 from astropy.io.fits import Header
 
 import sys
@@ -164,7 +156,7 @@ def fix_lon(lon, lon_ref):
 
 class ProjectionBase(object):
     """
-    A wrapper for kapteyn.projection or pywcs
+    A wrapper for kapteyn.projection or WCS
     """
 
     def __init__(self):
@@ -257,28 +249,18 @@ class _ProjectionSubInterface:
 
 class ProjectionPywcsNd(_ProjectionSubInterface, ProjectionBase):
     """
-    A wrapper for pywcs
+    A wrapper for WCS
     """
     def __init__(self, header):
         """
-        header could be astropy.io.fits.Header, pywcs.WCS, or astropy.wcs.WCS instance
+        header could be astropy.io.fits.Header or astropy.wcs.WCS instance
         """
 
         if isinstance(header, Header):
-
             header = fix_header(header)
+            self._pywcs = WCS(header=header)
 
-            # Since we don't know if PyWCS is from Astropy, and the
-            # WCS object in PyWCS and Astropy both accept a string
-            # representation of the header, we use this instead (both
-            # internally use `repr(header.ascard)` which returns str,
-            # and is compatible with Python 3
-
-            header = repr(header.ascard).encode('latin1')
-
-            self._pywcs = pywcs.WCS(header=header)
-
-        elif hasattr(header, "wcs"):
+        elif isinstance(header, WCS):
             self._pywcs = header
         else:
 
@@ -336,7 +318,7 @@ class ProjectionPywcsNd(_ProjectionSubInterface, ProjectionBase):
 
 class ProjectionPywcsSub(_ProjectionSubInterface, ProjectionBase):
     """
-    A wrapper for pywcs
+    A wrapper for WCS
     """
     def __init__(self, proj, axis_nums_to_keep, ref_pixel):
         """
@@ -421,11 +403,11 @@ class ProjectionPywcsSub(_ProjectionSubInterface, ProjectionBase):
 
 class ProjectionPywcs(ProjectionBase):
     """
-    A wrapper for pywcs
+    A wrapper for WCS
     """
     def __init__(self, header):
-        if hasattr(header, "ascard"):
-            self._pywcs = pywcs.WCS(header=header)
+        if isinstance(header, Header):
+            self._pywcs = WCS(header=header)
         else:
             self._pywcs = header
         ProjectionBase.__init__(self)
@@ -457,11 +439,11 @@ class ProjectionPywcs(ProjectionBase):
 
 class ProjectionSimple(ProjectionBase):
     """
-    A wrapper for pywcs
+    A wrapper for WCS
     """
     def __init__(self, header):
         ProjectionBase.__init__(self)
-        self._pywcs = pywcs.WCS(header=header)
+        self._pywcs = WCS(header=header)
         self._simple_init(header)
 
     def _get_ctypes(self):

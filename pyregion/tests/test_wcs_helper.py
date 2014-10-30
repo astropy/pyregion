@@ -2,10 +2,7 @@ import numpy as np
 
 from .. import parse
 
-try:
-    from astropy import wcs as pywcs
-except ImportError:
-    import pywcs
+from astropy.wcs import WCS
 
 def test_estimate_cdelt():
     l,b=0,0
@@ -16,7 +13,7 @@ def test_estimate_cdelt():
     # This is 'almost' the ra,dec of l,b=0,0 - works
     # ra,dec=266.40,-28.93
 
-    wcs = pywcs.WCS(naxis=2)
+    wcs = WCS(naxis=2)
 
     wcs.wcs.crpix = [5.5, 5.5]
     wcs.wcs.cdelt = [0.1, -0.1]
@@ -26,7 +23,7 @@ def test_estimate_cdelt():
     import pyregion.wcs_helper as wcs_helper
     proj = wcs_helper.get_kapteyn_projection(wcs)
     cdelt = wcs_helper.estimate_cdelt(proj, 5.5, 5.5)
-    
+
     assert np.allclose([cdelt], [0.1])
 
     region_string="fk5; circle(%s, %s, 0.5000)" % (ra,dec)
