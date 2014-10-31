@@ -11,8 +11,12 @@ xray_name="pspc_skyview.fits"
 f_xray = fits.open(xray_name)
 
 try:
-    import pywcsgrid2
-    ax=pywcsgrid2.subplot(111, header=f_xray[0].header)
+    from astropy.wcs import WCS
+    from wcsaxes import WCSAxes
+    wcs = WCS(f_xray[0].header)
+    fig = plt.figure()
+    ax = WCSAxes(fig, [0.1, 0.1, 0.8, 0.8], wcs=wcs)
+    fig.add_axes(ax)
 except ImportError:
     ax=plt.subplot(111)
 
