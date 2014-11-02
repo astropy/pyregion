@@ -1,33 +1,30 @@
 import copy
 
-from pyparsing import Literal, CaselessKeyword, CaselessLiteral, \
-     Word, Optional, OneOrMore, Group, Combine, ZeroOrMore, nums, \
-     Forward, StringEnd, restOfLine, alphas, alphanums, CharsNotIn, \
-     MatchFirst, And, Or, quotedString, QuotedString, White
+from pyparsing import (Literal, CaselessKeyword, Word, Optional, Combine,
+                       ZeroOrMore, nums, alphas, And, Or, quotedString,
+                       QuotedString, White)
 
 from .region_numbers import CoordOdd, CoordEven, Distance, Angle
 
-from .parser_helper import as_comma_separated_list, wcs_shape, \
-     define_shape, define_shape_helper, define_expr, define_line, \
-     comment_shell_like, define_simple_literals, \
-     Shape
+from .parser_helper import wcs_shape, define_shape_helper, Shape
 
 
 def get_ds9_attr_parser():
     lhs = Word(alphas)
-    paren = QuotedString("(",endQuoteChar=")")
-    rhs = Or([Word(alphas+nums),
-              Combine(Word(alphas) + White() + Word(nums)), # for point
+    paren = QuotedString("(", endQuoteChar=")")
+    rhs = Or([Word(alphas + nums),
+              Combine(Word(alphas) + White() + Word(nums)),  # for point
               quotedString,
-              QuotedString("{",endQuoteChar="}"),
+              QuotedString("{", endQuoteChar="}"),
               paren + ZeroOrMore(paren),
-              Word(nums+" "),
-              Word(nums+".")
+              Word(nums + " "),
+              Word(nums + ".")
               ])
     expr = lhs + Optional(Literal("=").suppress() + rhs)
     expr.setParseAction(lambda s, l, tok: tuple(tok))
 
     return ZeroOrMore(expr)
+
 
 class Ds9AttrParser(object):
     def set_continued(self, s, l, tok):
@@ -44,21 +41,17 @@ class Ds9AttrParser(object):
                                          composite=wcs_shape(CoordOdd, CoordEven, Angle),
                                          projection=wcs_shape(CoordOdd, CoordEven, CoordOdd, CoordEven, Distance),
                                          segment=wcs_shape(CoordOdd, CoordEven,
-                                                           repeat=(0,2)),
+                                                           repeat=(0, 2)),
                                          )
         regionShape = define_shape_helper(ds9_shape_in_comment_defs)
         regionShape = regionShape.setParseAction(lambda s, l, tok: Shape(tok[0], tok[1:]))
 
-
         self.parser_default = ds9_attr_parser
 
         cont = CaselessKeyword("||").setParseAction(self.set_continued).suppress()
-        line = Optional(And([regionShape,
-                             Optional(cont)])) \
-                             + ds9_attr_parser
+        line = Optional(And([regionShape, Optional(cont)])) + ds9_attr_parser
 
         self.parser_with_shape = line
-
 
     def parse_default(self, s):
         return self.parser_default.parseString(s)
@@ -72,14 +65,15 @@ class Ds9AttrParser(object):
         else:
             return None, l
 
+
 def get_attr(attr_list, global_attrs):
     """
     Parameters
     ----------
     attr_list : list
-        A list of (keyword,value) tuple pairs
-    global_attrs : tuple(list,dict)
-        has the global attributes which update the local attributes
+        A list of (keyword, value) tuple pairs
+    global_attrs : tuple(list, dict)
+        Global attributes which update the local attributes
     """
     local_attr = [], {}
     for kv in attr_list:
@@ -93,7 +87,7 @@ def get_attr(attr_list, global_attrs):
             value = kv[1:]
 
         if keyword == 'tag':
-            local_attr[1].setdefault(keyword,set()).add(value)
+            local_attr[1].setdefault(keyword, set()).add(value)
         else:
             local_attr[1][keyword] = value
 
@@ -107,10 +101,3 @@ def get_attr(attr_list, global_attrs):
         attr1.update(local_attr[1])
 
     return attr0, attr1
-
-
-if __name__ == "__main__":
-    p = get_ds9_attr_parser()
-    s = 'point=cross 40 color=green dashlist= 8 4 font="helvetica 10 normal" tag={group 1} select=1 source panda=(1 3 2)(2 3 4)'
-    #s = 'dashlist= 8 4 font=1'
-    ss = p.parseString(s)

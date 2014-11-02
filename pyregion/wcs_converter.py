@@ -1,9 +1,9 @@
+import copy
+
 from .wcs_helper import estimate_cdelt, estimate_angle
 from .region_numbers import CoordOdd, CoordEven, Distance, Angle
 from .parser_helper import Shape, CoordCommand
 from .region_numbers import SimpleNumber, SimpleInteger
-
-import copy
 
 
 def convert_to_imagecoord(cl, fl, wcs_proj, sky_to_sky, xy0, rot_wrt_axis=1):
@@ -24,7 +24,7 @@ def convert_to_imagecoord(cl, fl, wcs_proj, sky_to_sky, xy0, rot_wrt_axis=1):
             fl = fl[2:]
         elif fl[0] == Distance:
             degree_per_pixel = estimate_cdelt(wcs_proj, *xy0)
-            new_cl.append(cl[0]/degree_per_pixel)
+            new_cl.append(cl[0] / degree_per_pixel)
             cl = cl[1:]
             fl = fl[1:]
         elif fl[0] == Angle:
@@ -71,8 +71,6 @@ def convert_physical_to_imagecoord(cl, fl, pc):
     return new_cl
 
 
-
-
 def check_wcs_and_convert(args, all_dms=False):
 
     is_wcs = False
@@ -80,7 +78,7 @@ def check_wcs_and_convert(args, all_dms=False):
     value_list = []
     for a in args:
         if isinstance(a, SimpleNumber) or isinstance(a, SimpleInteger) \
-               or all_dms:
+                or all_dms:
             value_list.append(a.v)
         else:
             value_list.append(a.degree)
@@ -103,7 +101,7 @@ def check_wcs(l):
             else:
                 is_wcs, coord_list = check_wcs_and_convert(l1.params)
 
-            if is_wcs and (default_coord == "physical"): # ciao format
+            if is_wcs and (default_coord == "physical"):  # ciao format
                 coord_format = "fk5"
             else:
                 coord_format = default_coord
@@ -116,6 +114,3 @@ def check_wcs(l):
             yield l1n, c1
         else:
             yield l1, c1
-
-
-

@@ -1,29 +1,22 @@
-
-import pyparsing
-
-from pyparsing import Literal, CaselessKeyword, CaselessLiteral, \
-     Word, Optional, OneOrMore, Group, Combine, ZeroOrMore, nums, \
-     Forward, StringEnd, restOfLine, alphas, alphanums, Empty, \
-     Or
+from pyparsing import Literal, Optional, Combine, Or, Word, nums
 
 
 def _unsigned_simple_number():
     # fnumber : 102.43, 12304.3e10,
     #           .32???
-    point = Literal( "." )
-    e     = Literal("e") | Literal("E") #CaselessLiteral( "E" )
-    fnumber = Combine( Word(nums) +
-                       Optional( point + Optional( Word( nums ) ) ) +
-                       Optional( e + Word( "+-"+nums, nums ) ) )
+    point = Literal(".")
+    e     = Literal("e") | Literal("E")  # CaselessLiteral( "E" )
+    fnumber = Combine(Word(nums) +
+                      Optional(point + Optional(Word(nums))) +
+                      Optional(e + Word("+-" + nums, nums)))
 
-    return fnumber #.setParseAction(lambda s,l,t: (float(t[0]), t[0]))
-    #return fnumber.leaveWhitespace().setParseAction(lambda s,l,t: [ float(t[0])])
+    return fnumber  # .setParseAction(lambda s,l,t: (float(t[0]), t[0]))
+    # return fnumber.leaveWhitespace().setParseAction(lambda s,l,t: [ float(t[0])])
 
-
-
-#simple_number = _simple_number()
+# simple_number = _simple_number()
 
 usn = _unsigned_simple_number()
+
 
 def getSign(s, l, tok):
     if not tok: return (1, "")
@@ -31,6 +24,7 @@ def getSign(s, l, tok):
         return -1, "-"
     else:
         return 1, "+"
+
 
 def get_default(v):
     def _f(s, l, tok):
@@ -40,7 +34,7 @@ def get_default(v):
     return _f
 
 optional_sign = Optional(Literal("+") | Literal("-")).setParseAction(get_default(""))
-#optional_sign = Optional(Literal("+") | Literal("-")) #.setParseAction(getSign)
+# optional_sign = Optional(Literal("+") | Literal("-")) #.setParseAction(getSign)
 
 
 class SimpleNumber(object):
@@ -53,7 +47,6 @@ class SimpleNumber(object):
     def __init__(self, text):
         self.text = text
         self.v = float(text)
-
 
 
 def _simple_number():
@@ -76,6 +69,7 @@ class SimpleInteger(object):
         self.text = text
         self.v = int(text)
 
+
 def _unsigned_integer():
     s = Combine(Optional("+") + Word(nums))
     s.setParseAction(lambda s, l, tok: SimpleInteger(tok[0]))
@@ -94,6 +88,7 @@ class Sixty(object):
     def __init__(self, sn, d, m, s):
         self.v = sn * (d +(m + s/60.)/60.)
         self.degree = self.v
+
 
 class HMS(object):
     def __repr__(self):
@@ -114,7 +109,6 @@ class HMS(object):
             d, m, s = float(kl[1]), float(kl[3]), 0.
         else:
             d, m, s = float(kl[1]), 0., 0.
-
 
         self.v = sn * (d +(m + s/60.)/60.)
         self.degree = self.v * 15
@@ -140,10 +134,8 @@ class DMS(object):
         else:
             d, m, s = float(kl[1]), 0., 0.
 
-
         self.v = sn * (d +(m + s/60.)/60.)
         self.degree = self.v
-
 
 
 class AngularDistance(object):
@@ -171,13 +163,7 @@ def _sexadecimal():
     s = optional_sign + usn + colon + usn + \
         Optional(colon + usn)
 
-        #Optional(colon + usn).setParseAction(get_default(0))
-
-    #s = s.leaveWhitespace()
-
     return s
-
-#sexadecimal = _sexadecimal()
 
 sexadecimal60 = _sexadecimal().setParseAction(lambda s, l, tok: DMS(tok))
 sexadecimal24 = _sexadecimal().setParseAction(lambda s, l, tok: HMS(tok))
@@ -187,7 +173,6 @@ def _hms_number():
     _h = (usn + Literal("h")).leaveWhitespace()
     _m = (usn + Literal("m")).leaveWhitespace()
     _s = (usn + Literal("s")).leaveWhitespace()
-
 
     hms = optional_sign + _h + Optional(_m + Optional(_s))
 
@@ -201,57 +186,23 @@ def _dms_number():
     _m = (usn + Literal("m")).leaveWhitespace()
     _s = (usn + Literal("s")).leaveWhitespace()
 
-
     dms = optional_sign + _d + Optional(_m + Optional(_s))
 
     dms = dms.setParseAction(lambda s, l, tok: DMS(tok))
 
     return dms
 
-
-    #zzz = Empty().setParseAction(lambda s, l, tok: 0)
-
-
-    #_hms = optional_sign + Or([_h + Optional(_m).setParseAction(get_default(0)) \
-    #                           + Optional(_s).setParseAction(get_default(0)),
-    #                           zzz + _m + Optional(_s).setParseAction(get_default(0)),
-    #                           zzz + zzz + _s])
-
-    #_hms = _hms.leaveWhitespace()
-
-
-
 hms_number = _hms_number()
 dms_number = _dms_number()
-
-
-
-
-# def _dms_number():
-#     _d = (usn + Literal("d")).leaveWhitespace()
-#     _m = (usn + Literal("m")).leaveWhitespace()
-#     _s = (usn + Literal("s")).leaveWhitespace()
-
-#     zzz = Empty().setParseAction(lambda s, l, tok: 0)
-
-#     _dms = optional_sign + Or([_d + Optional(_m).setParseAction(get_default(0)) + Optional(_s).setParseAction(get_default(0)),
-#                                zzz + _m + Optional(_s).setParseAction(get_default(0)),
-#                                zzz + zzz + _s])
-
-#     #_hms = _hms.leaveWhitespace()
-#     dms = _dms.setParseAction(lambda s, l, tok: DMS(*tok))
-
-#     return dms
 
 
 def _angular_distance():
     _m = (usn + Literal("\'")).leaveWhitespace()
     _s = (usn + Literal("\"")).leaveWhitespace()
 
-    ms = Or([ _m + Optional(_s),
-               _s])
+    ms = Or([_m + Optional(_s), _s])
 
-    #_hms = _hms.leaveWhitespace()
+    # _hms = _hms.leaveWhitespace()
     ms = ms.setParseAction(lambda s, l, tok: AngularDistance(tok))
 
     return ms
@@ -269,37 +220,22 @@ class CoordOdd:
     parser = (hms_number | sexadecimal24 | simple_number)
     type = HMS
 
+
 class CoordEven:
     parser = (dms_number | sexadecimal60 | simple_number)
     type = DMS
+
 
 class Distance:
     parser = (angular_distance | simple_number)
     type = AngularDistance
 
+
 class Angle:
     parser = (simple_number)
     type = simple_number
 
+
 class Integer:
     parser = simple_integer
     type = simple_number
-
-
-# CoordOdd = Arg(type=HMS,
-#                parser=(hms_number | sexadecimal24 | simple_number)
-#                )
-
-# CoordEven = Arg(type=DMS,
-#                 parser=(dms_number | sexadecimal60 | simple_number)
-#                 )
-
-# Distance = Arg(type=AngularDistance,
-#                parser=(angular_distance | simple_number)
-#                )
-
-# Angle = Arg(type=float,
-#             parser=(simple_number)
-#             )
-
-

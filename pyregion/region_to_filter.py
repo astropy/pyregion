@@ -2,6 +2,7 @@ import numpy as np
 import pyregion._region_filter as region_filter
 import warnings
 
+
 def as_region_filter(shape_list, origin=1):
     """
     Often, the regions files implicitly assume the lower-left corner
@@ -49,8 +50,6 @@ def as_region_filter(shape_list, origin=1):
                 f = region_filter.Rotated(region_filter.Ellipse(xc, yc, w, h),
                                           angle, xc, yc)
 
-
-
         elif shape.name == "annulus":
             xc, yc  = shape.coord_list[:2]
             # -1 for change origin to 0,0
@@ -93,7 +92,7 @@ def as_region_filter(shape_list, origin=1):
             f1 = region_filter.Ellipse(xc, yc, r21, r22) & ~region_filter.Ellipse(xc, yc, r11, r12)
             f2 = f1 & region_filter.AngleRange(xc, yc, a1, a2)
             f = region_filter.Rotated(f2, angle, xc, yc)
-            #f = f2 & region_filter.AngleRange(xc, yc, a1, a2)
+            # f = f2 & region_filter.AngleRange(xc, yc, a1, a2)
 
         elif shape.name == "bpanda":
             xc, yc, a1, a2, an, r11, r12, r21, r22, rn, angle = shape.coord_list
@@ -103,16 +102,16 @@ def as_region_filter(shape_list, origin=1):
             f1 = region_filter.Box(xc, yc, r21, r22) & ~region_filter.Box(xc, yc, r11, r12)
             f2 = f1 & region_filter.AngleRange(xc, yc, a1, a2)
             f = region_filter.Rotated(f2, angle, xc, yc)
-            #f = f2 & region_filter.AngleRange(xc, yc, a1, a2)
+            # f = f2 & region_filter.AngleRange(xc, yc, a1, a2)
 
         else:
-            warnings.warn("'as_region_filter' does not know how to convert '%s' to a region filter." % (shape.name,))
+            warnings.warn("'as_region_filter' does not know how to convert {0}"
+                          " to a region filter.".format(shape.name))
             continue
 
         if shape.exclude:
             filter_list = [region_filter.RegionOrList(*filter_list) & ~f]
         else:
             filter_list.append(f)
-
 
     return region_filter.RegionOrList(*filter_list)
