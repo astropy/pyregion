@@ -1,10 +1,7 @@
 import os
 from os.path import join
 
-try:
-    from astropy.io import fits as pyfits
-except ImportError:
-    import pyfits
+from astropy.io.fits import Header
 
 import numpy as np
 
@@ -12,26 +9,10 @@ from ..wcs_helper import fix_lon
 from .. import open as pyregion_open
 from .. import get_mask
 
-# At some point, pyfits.Card.fromstring has changed from unbound
-# method to bounded method.
-
-if pyfits.Card.fromstring.__self__: # 
-    def pyfits_card_fromstring(l):
-        return pyfits.Card.fromstring(l)
-else:
-    def pyfits_card_fromstring(l):
-        c = pyfits.Card()
-        return c.fromstring(l)
-
 rootdir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'examples')
 
 def demo_header():
-    cards = pyfits.CardList()
-    for l in open(join(rootdir, "sample_fits01.header")):
-        card = pyfits_card_fromstring(l.strip())
-        cards.append(card)
-    h = pyfits.Header(cards)
-    return h
+    return Header.fromtextfile(join(rootdir, "sample_fits01.header"))
 
 def test_region():
 
@@ -53,4 +34,4 @@ def test_region():
     # for reg_name in region_list:
     #     r = pyregion_open(join(rootdir,reg_name)).as_imagecoord(header)
     #     get_mask(r)
-        
+

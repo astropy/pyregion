@@ -1,9 +1,4 @@
-try:
-    from astropy.io import fits as pyfits
-except ImportError:
-    import pyfits
-
-from demo_helper import pyfits_card_fromstring
+from astropy.io.fits import Header
 
 import matplotlib.pyplot as plt
 
@@ -11,12 +6,7 @@ import pyregion
 
 # read in the image
 def demo_header():
-    cards = pyfits.CardList()
-    for l in open("sample_fits02.header"):
-        card = pyfits_card_fromstring(l.strip())
-        cards.append(card)
-    h = pyfits.Header(cards)
-    return h
+    return Header.fromtextfile("sample_fits02.header")
 
 header = demo_header() # sample fits header
 shape = (header["NAXIS1"], header["NAXIS2"])

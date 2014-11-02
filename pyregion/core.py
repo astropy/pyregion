@@ -219,7 +219,7 @@ def read_region_as_imagecoord(s, header, rot_wrt_axis=1):
 
 def get_mask(region, hdu, origin=1):
     """
-    f = pyfits.read("test.fits")
+    f = fits.read("test.fits")
     reg = read_region_as_imagecoord(s, f[0].header)
     mask = get_mask(reg, f[0])
     """

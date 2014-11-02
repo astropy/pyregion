@@ -4,14 +4,11 @@ import matplotlib.pyplot as plt
 import matplotlib.cm as cm
 
 import pyregion
-try:
-    from astropy.io import fits as pyfits
-except ImportError:
-    import pyfits
+from astropy.io import fits
 
 # read in the image
 xray_name="pspc_skyview.fits"
-f_xray = pyfits.open(xray_name)
+f_xray = fits.open(xray_name)
 
 try:
     import pywcsgrid2
