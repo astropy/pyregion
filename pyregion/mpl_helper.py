@@ -7,7 +7,6 @@ from matplotlib.path import Path
 from matplotlib.lines import Line2D
 from matplotlib.transforms import Affine2D, Bbox, IdentityTransform
 from matplotlib.text import Annotation
-from . import read_region_as_imagecoord
 
 
 def rotated_polygon(xy, ox, oy, angle):
@@ -124,6 +123,7 @@ def _get_text(txt, x, y, dx, dy, ha="center", va="center", **kwargs):
         textcolor = mpl.rcParams['text.color']
     ann = Annotation(txt, (x, y), xytext=(dx, dy),
                      xycoords='data',
+                     textcoords="offset points",
                      color=textcolor,
                      ha=ha, va=va,
                      **kwargs)

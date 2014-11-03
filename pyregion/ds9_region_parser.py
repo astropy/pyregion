@@ -62,7 +62,9 @@ class RegionParser(RegionPusher):
                                  negate_func=lambda s, l, tok: tok[-1].set_exclude(),
                                  )
 
-        coord_command_keys = "PHYSICAL IMAGE FK4 B1950 FK5 J2000 GALACTIC ECLIPTIC ICRS LINEAR AMPLIFIER DETECTOR".split()
+        coord_command_keys = ['PHYSICAL', 'IMAGE', 'FK4', 'B1950', 'FK5',
+                              'J2000', 'GALACTIC', 'ECLIPTIC', 'ICRS',
+                              'LINEAR', 'AMPLIFIER', 'DETECTOR']
 
         coordCommand = define_simple_literals(coord_command_keys,
                                               parseAction=lambda s, l, tok: CoordCommand(tok[-1]))
