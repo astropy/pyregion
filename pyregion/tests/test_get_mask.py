@@ -5,7 +5,6 @@ from astropy.io.fits import Header
 
 import numpy as np
 
-from ..wcs_helper import fix_lon
 from .. import open as pyregion_open
 from .. import get_mask
 
