@@ -1,35 +1,14 @@
-
-cdef extern from "stdio.h":
-    pass
-
-cdef extern from "stdlib.h":
-    pass
-
-# cdef extern from "geom2.h":
-#     ctypedef struct Metric:
-#         double g_x
-#         double g_y
-
-#     ctypedef struct RegionContext:
-#         int (*init_metric)(Metric *m, double x0, double y0)
-
-#     #cdef extern RegionContext metric_wcs
-
-
-
 cimport  c_numpy
 from c_numpy cimport npy_bool
 cimport c_python
-
-
 c_numpy.import_array()
-#c_numpy.import_ufunc()
 
 ctypedef int Py_ssize_t
 
 
 class NotYetImplemented(Exception):
     pass
+
 
 class RegionFilterException(Exception):
     pass
@@ -45,15 +24,13 @@ cdef struct Metric:
 cdef int MetricSetOrigin(Metric *m, double x0, double y0):
     m.x0 = x0
     m.y0 = y0
-    #m.g_x = 1.
-    #m.g_y = 1.
 
 
 cdef struct _RegionContext:
     int (*update_metric)(Metric *m)
 
+
 cdef class RegionContext:
-    #cdef int (*init_metric)(Metric *m, double x0, double y0)
     cdef _RegionContext c
 
     def __init__(self):
@@ -76,33 +53,20 @@ cdef int _update_metric_wcs(Metric *m):
     m.g_y = 1.
 
 
-
-#cdef RegionContext metric_default
-#metric_default._set(_init_metric_default)
-
 cdef RegionContext metric_wcs
 metric_wcs = RegionContext()
 metric_wcs.set_update_func(_update_metric_wcs)
 
 
-
 class BaseClassInitException(Exception):
     pass
 
-cdef class RegionBase:
-    #cdef double sin_theta
-    #cdef double cos_theta
 
+cdef class RegionBase:
     cdef Metric m
     cdef RegionContext c
 
-    #cdef __new__(self):
-    #    MetricInit(&(self.m), xc, yc)
-
     def __init__(self):
-        #selc.c = metric_default
-        #self.update_context(metric_default)
-        #MetricInit(&(self.m), x0, y0)
         raise BaseClassInitException()
 
     cdef update_metric(self):
@@ -115,7 +79,6 @@ cdef class RegionBase:
         self.c = cnt
         self.update_metric()
 
-
     cdef metric_set_origin(self, double xc, double yc,
                            RegionContext cnt):
 
@@ -124,8 +87,6 @@ cdef class RegionBase:
             self.set_context(cnt)
         else:
             self.update_metric()
-
-
 
     def __invert__(self):
         return RegionNot(self)
@@ -155,7 +116,8 @@ cdef class RegionBase:
         elif c_python.PySequence_Check(img_or_shape):
             shape = img_or_shape
         else:
-            raise RegionFilterException("the inut needs to be a numpy 2-d array or a tuple of two integers")
+            raise RegionFilterException("the inut needs to be a numpy 2-d array"
+            " or a tuple of two integers")
 
         if c_python.PySequence_Length(shape) != 2:
             raise RegionFilterException("shape of the input image must be 2d: %s is given" % (str(shape)))
@@ -196,7 +158,6 @@ cdef class RegionBase:
         """
         return self._inside(x, y)
 
-
     def inside(self, x, y=None):
         if y is None:
             if len(x.shape) == 2 and x.shape[-1] == 2:
@@ -231,7 +192,6 @@ cdef class RegionBase:
         for i from 0 <= i < n:
             rd[i] = self._inside(xyd[2*i], xyd[2*i+1])
         return ra
-
 
     def inside_x_y(self, x, y):
         """
@@ -271,42 +231,6 @@ cdef class RegionBase:
         return ra
 
 
-#     def inside2(self, x, y):
-#         cdef c_numpy.ndarray xa
-#         cdef c_numpy.ndarray ya
-#         cdef c_numpy.ndarray ra
-#         cdef double *xd
-#         cdef double *yd
-#         cdef npy_bool *rd
-#         cdef int i
-#         cdef int ((*_inside_ptr)(RegionBase, double ,double ))
-#         cdef int n
-
-#         # This approach fails!
-
-#         cobj = c_python.PyObject_GetAttrString(self, "__pyx_vtable__")
-
-#         _inside_ptr = <int ((*)(RegionBase, double, double))>  c_python.PyCObject_AsVoidPtr(cobj)
-
-#         xa = c_numpy.PyArray_ContiguousFromAny(x, c_numpy.NPY_DOUBLE, 1, 0)
-#         ya = c_numpy.PyArray_ContiguousFromAny(y, c_numpy.NPY_DOUBLE, 1, 0)
-
-#         ra = c_numpy.PyArray_EMPTY(xa.nd, xa.dimensions,
-#                                    c_numpy.NPY_BOOL, 0)
-
-#         xd = <double *> c_numpy.PyArray_DATA(xa)
-#         yd = <double *> c_numpy.PyArray_DATA(ya)
-#         rd = <npy_bool *> c_numpy.PyArray_DATA(ra)
-
-#         n = c_numpy.PyArray_SIZE(xa)
-#         for i from 0 <= i < n:
-#             #self._inside(xd[0], yd[0])
-#             #rd[i] = _inside_ptr(self, xd[i], yd[i])
-#             rd[i] = self._inside(xd[i], yd[i])
-
-#         return ra
-
-
 cdef class RegionNot(RegionBase):
     """
     >>> r = RegionNot(r2)
@@ -344,16 +268,6 @@ cdef class RegionList(RegionBase):
     def __delitem__(self, Py_ssize_t x):
         del self.child_regions[x]
 
-    # def __getslice__(self, Py_ssize_t i, Py_ssize_t j):
-    #     return self.__class__(*self.child_regions[i:j])
-
-    # def __setslice__(self, Py_ssize_t i, Py_ssize_t j, x):
-    #     self._check_type_of_list(x)
-    #     self.child_regions[i:j] = x
-
-    # def __delslice__(self, Py_ssize_t i, Py_ssize_t j):
-    #     del self.child_regions[i:j]
-
     def __contains__(self, RegionBase x):
         return x in self.child_regions
 
@@ -379,7 +293,6 @@ cdef class RegionOrList(RegionList):
                 return 1
         return 0
 
-
     def __repr__(self):
         return "Or"+repr(self.child_regions)
 
@@ -400,7 +313,6 @@ cdef class RegionAndList(RegionList):
             if not (<RegionBase> c_python.PyList_GET_ITEM(child_regions, i))._inside(x, y):
                 return 0
         return 1
-
 
     def __repr__(self):
         return "And"+repr(self.child_regions)
@@ -440,100 +352,15 @@ def RegionOr(RegionBase region1, RegionBase region2):
     return RegionOrList(*(region1_list + region2_list))
 
 
-# cdef class RegionAnd_OLD(RegionBase):
-#     cdef RegionBase child_region1
-#     cdef RegionBase child_region2
-
-#     def __init__(self, RegionBase child_region1, RegionBase child_region2):
-#         self.child_region1 = child_region1
-#         self.child_region2 = child_region2
-
-#     cdef npy_bool _inside(self, double x, double y):
-#         return (self.child_region1._inside(x, y)) & (self.child_region2._inside(x, y))
-
-
-# cdef class RegionOr_OLD(RegionBase):
-#     cdef RegionBase child_region1
-#     cdef RegionBase child_region2
-
-#     def __init__(self, RegionBase child_region1, RegionBase child_region2):
-#         self.child_region1 = child_region1
-#         self.child_region2 = child_region2
-
-#     cdef npy_bool _inside(self, double x, double y):
-#         return (self.child_region1._inside(x, y)) | (self.child_region2._inside(x, y))
-
-
-
-# cdef class Transformed(RegionBase):
-#     cdef double T11, T12, T21, T22
-#     cdef double TI11, TI12, TI21, TI22
-#     cdef double origin_x, origin_y
-#     cdef RegionBase child_region
-
-#     def __init__(self,
-#                  RegionBase child_region,
-#                  double T11, double T12, double T21, double T22,
-#                  double origin_x, double origin_y):
-
-#         self.child_region = child_region
-
-#         self.T11 = T11
-#         self.T12 = T12
-#         self.T21 = T21
-#         self.T22 = T22
-
-#         # calculate inverse transform!
-#         self.TI11 = T11
-#         self.TI12 = T12
-#         self.TI21 = T21
-#         self.TI22 = T22
-
-#         self.origin_x = origin_x
-#         self.origin_y = origin_y
-
-
-#     cdef int _transform(self, double x, double y, double *xp, double *yp):
-#         cdef double x1, x2, y1, y2
-
-#         x1 = x - self.origin_x
-#         y1 = y - self.origin_y
-
-#         # FIX IT!
-#         x2 = x1
-#         y2 = y1
-
-#         xp[0] = x2 + self.origin_x
-#         yp[0] = y2 + self.origin_y
-
-
-
-#     cdef npy_bool _inside(self, double x, double y):
-#         cdef double xp, yp
-#         cdef npy_bool r
-
-#         self._transform(x, y, &xp, &yp)
-#         r = self.child_region._inside(xp, yp)
-
-#         return r
-
-
-
-
 cdef class Transform(RegionBase):
     cdef RegionBase child_region
 
     def __init__(self, RegionBase child_region):
         self.child_region = child_region
 
-
     property child:
         def __get__(self):
             return self.child_region
-
-        #def __del__(self):
-        #    del self.child_region
-
 
     cdef int _transform(self, double x, double y, double *xp, double *yp):
         xp[0] = x
@@ -559,12 +386,10 @@ cdef extern from "math.h":
 
 cdef class Rotated(Transform):
     """
-    Rotated
+    Rotate the region by degree in anti-colockwise direction.
 
      >>> reg = Rotated(child_region, degree, origin_x, origin_y)
 
-
-    Rotate the region by degree in anti-colockwise direction.
     """
 
     cdef double sin_theta
@@ -583,7 +408,6 @@ cdef class Rotated(Transform):
 
         self.origin_x = origin_x
         self.origin_y = origin_y
-
 
     cdef int _transform(self, double x, double y, double *xp, double *yp):
         cdef double x1, x2, y1, y2
@@ -606,11 +430,10 @@ cdef class Rotated(Transform):
 
 cdef class Translated(Transform):
     """
-    Translated region
+    Translated region.
 
      >>> Translate(child_region, dx, dy)
     """
-    # translated region
 
     cdef double dx
     cdef double dy
@@ -628,26 +451,19 @@ cdef class Translated(Transform):
         yp[0] = y - self.dy
 
 
-
-
-
-
 # Basic Shapes
 
 cdef class Circle(RegionBase):
     """
-    Circle
+    Circle.
 
-      >>> cir = Circle(xc, yc, radius, RegionContext c=None)
+    >>> cir = Circle(xc, yc, radius, RegionContext c=None)
 
     """
     cdef double xc
     cdef double yc
     cdef double radius
     cdef double radius2
-
-    #cdef Metric m
-
 
     cdef _set_v(self, double xc, double yc, double radius):
         self.xc = xc
@@ -658,16 +474,11 @@ cdef class Circle(RegionBase):
     cdef _get_v(self):
         return (self.xc, self.yc, self.radius)
 
-
     def __init__(self, double xc, double yc, double radius,
                  RegionContext c=None):
-        """
-        """
-        #if c:
-        #    self.c = c
+
         self.metric_set_origin(xc, yc, c)
         self._set_v(xc, yc, radius)
-
 
     cdef npy_bool _inside(self, double x, double y):
         cdef double dist2
@@ -679,13 +490,11 @@ cdef class Circle(RegionBase):
         return "Circle(%f, %f, %f)" % (self.xc, self.yc, self.radius)
 
 
-
 cdef class Ellipse(RegionBase):
     """
-    Ellipse
+    Ellipse.
 
-      >>> shape = Ellipse(xc, yc, radius_major, radius_minor)
-
+    >>> shape = Ellipse(xc, yc, radius_major, radius_minor)
     """
 
     cdef double xc
@@ -695,7 +504,6 @@ cdef class Ellipse(RegionBase):
     cdef double radius_minor
     cdef double radius_minor_2
     cdef double radius_major_2_radius_minor_2
-
 
     def __init__(self, double xc, double yc,
                  double radius_major, double radius_minor,
@@ -714,8 +522,6 @@ cdef class Ellipse(RegionBase):
         self.radius_major_2_radius_minor_2 = self.radius_major_2 * self.radius_minor_2
 
         self.metric_set_origin(xc, yc, c)
-        #MetricInit(&(self.m), xc, yc)
-
 
     cdef npy_bool _inside(self, double x, double y):
         cdef double dist2
@@ -727,19 +533,17 @@ cdef class Ellipse(RegionBase):
         return "Ellipse(%f, %f, %f, %f)" % (self.xc, self.yc, self.radius_major, self.radius_minor)
 
 
-
 cdef class Box(RegionBase):
     """
-    Box
+    Box.
 
     >>> shape = Box(xc, yc, width, height)
-
     """
+
     cdef double x1
     cdef double x2
     cdef double y1
     cdef double y2
-
 
     def __init__(self, double xc, double yc, double width, double height,
                  RegionContext c=None):
@@ -755,31 +559,26 @@ cdef class Box(RegionBase):
         self.y2 = yc + halfheight
 
         self.metric_set_origin(xc, yc, c)
-        #MetricInit(&(self.m), xc, yc)
-
 
     cdef npy_bool _inside(self, double x, double y):
         return (self.x1 <= x) & (x <= self.x2) & (self.y1 <= y) & (y <= self.y2)
 
 
-
 cdef class Polygon(RegionBase):
     """
-    Polygon
+    Polygon.
 
      >>> shape = Polygon(x, y)
 
+     Parameters:
      x, y : list of floats
     """
     cdef c_numpy.ndarray xa
     cdef c_numpy.ndarray ya
-    #cdef object xa
-    #cdef object ya
 
     cdef double *x
     cdef double *y
     cdef int n
-
 
     def __init__(self, x, y,
                  RegionContext c=None):
@@ -792,7 +591,6 @@ cdef class Polygon(RegionBase):
         self.y = <double *> c_numpy.PyArray_DATA(self.ya)
 
         self.metric_set_origin(self.x[0], self.y[0], c)
-        #MetricInit(&(self.m), )
 
     cdef npy_bool _inside(self, double x, double y):
         cdef int i, j
@@ -802,21 +600,10 @@ cdef class Polygon(RegionBase):
         cdef double _t
         cdef double y_yp_i, y_yp_j
 
-
         j = self.n - 1
         r = 0
         xp = self.x
         yp = self.y
-
-
-        # aopted from "http://alienryderflex.com/polygon/"
-        # When the point is on the edge, the behavior seems undefined...
-#         for i from 0 <= i < self.n:
-#             if ((yp[i]<=y) & (yp[j]>y) | (yp[j]<=y) & (yp[i]>y)):
-#                 _t = xp[i]+(y-yp[i])/(yp[j]-yp[i])*(xp[j]-xp[i])
-#                 if (_t<x):
-#                     r = not r
-#             j=i
 
         #stable version, but would require more time
         for i from 0 <= i < self.n:
@@ -836,17 +623,14 @@ cdef class Polygon(RegionBase):
                     r = not r
             j=i
 
-
-
         return r
 
 
 cdef class AngleRange(RegionBase):
     """
-    AngleRange
+    AngleRange.
 
-      >>> shape = Ellipse(xc, yc, degree1, degree2)
-
+    >>> shape = Ellipse(xc, yc, degree1, degree2)
     """
 
     cdef double xc
@@ -855,7 +639,6 @@ cdef class AngleRange(RegionBase):
     cdef double degree2
     cdef double radian1
     cdef double radian2
-
 
     def __init__(self, double xc, double yc,
                  double degree1, double degree2,
@@ -872,13 +655,11 @@ cdef class AngleRange(RegionBase):
 
         self.metric_set_origin(xc, yc, c)
 
-
     cdef double _fix_angle(self, double a):
         if a > self.radian1:
             return self.radian1 + fmod((a-self.radian1), 2*M_PI)
         else:
             return self.radian1 + 2.*M_PI - fmod((self.radian1-a), 2*M_PI)
-        
 
     cdef npy_bool _inside(self, double x, double y):
         cdef double dx, dy, theta
@@ -888,8 +669,6 @@ cdef class AngleRange(RegionBase):
 
         theta = atan2(dy, dx)
 
-        #if theta < self.radian1:
-        #    theta += 2.*M_PI
         theta = self._fix_angle(theta)
         return (theta < self.radian2)
 
