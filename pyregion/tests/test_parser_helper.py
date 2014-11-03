@@ -20,7 +20,7 @@ def test_define_shape():
     assert isinstance(p[1], CoordEven.type)
 
     args = [s.parser for s in [CoordOdd, CoordEven, Distance, Distance]]
-    ell_parser = define_shape("ell", args, args_repeat=(2,4))
+    ell_parser = define_shape("ell", args, args_repeat=(2, 4))
 
     p = ell_parser.parseString("ell(1:2:2, 2:2:2, 3, 4, 5, 6)")
     assert p[0] == "ell"
@@ -28,9 +28,8 @@ def test_define_shape():
     assert isinstance(p[2], CoordEven.type)
 
     args = [s.parser for s in [CoordOdd, CoordEven]]
-    polygon_parser = define_shape("polygon", args, args_repeat=(0,2))
+    polygon_parser = define_shape("polygon", args, args_repeat=(0, 2))
     p = polygon_parser.parseString("polygon(3:2:4.22, 3:3:4., 3:2:3, 3.2)")
     assert p[0] == "polygon"
     assert isinstance(p[-2], CoordOdd.type)
     assert isinstance(p[2], CoordEven.type)
-    #assert isinstance(p[-1], float)
