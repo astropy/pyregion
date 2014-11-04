@@ -191,7 +191,6 @@ class RegionParser(RegionPusher):
                 else:
                     n1 = 0
                     n2 = len(cl)
-                # new_cl = []
 
                 xy0 = None
 
@@ -233,7 +232,6 @@ class RegionParser(RegionPusher):
                 else:
                     n1 = 0
                     n2 = len(cl)
-                # new_cl = []
 
                 xy0 = None
 

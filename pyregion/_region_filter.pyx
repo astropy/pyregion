@@ -1,3 +1,11 @@
+cdef extern from "stdio.h":
+    pass
+
+
+cdef extern from "stdlib.h":
+    pass
+
+
 cimport  c_numpy
 from c_numpy cimport npy_bool
 cimport c_python
@@ -117,10 +125,11 @@ cdef class RegionBase:
             shape = img_or_shape
         else:
             raise RegionFilterException("the inut needs to be a numpy 2-d array"
-            " or a tuple of two integers")
+                                        " or a tuple of two integers")
 
         if c_python.PySequence_Length(shape) != 2:
-            raise RegionFilterException("shape of the input image must be 2d: %s is given" % (str(shape)))
+            raise RegionFilterException("shape of the input image must be 2d: "
+                                        "%s is given" % (str(shape)))
 
         ny = c_python.PySequence_GetItem(shape, 0)
         nx = c_python.PySequence_GetItem(shape, 1)

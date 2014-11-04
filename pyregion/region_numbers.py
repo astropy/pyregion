@@ -11,10 +11,8 @@ def _unsigned_simple_number():
                       Optional(e + Word("+-" + nums, nums)))
 
     return fnumber  # .setParseAction(lambda s,l,t: (float(t[0]), t[0]))
-    # return fnumber.leaveWhitespace().setParseAction(lambda s,l,t: [ float(t[0])])
 
 usn = _unsigned_simple_number()
-
 
 
 def get_default(v):
@@ -188,7 +186,6 @@ def _angular_distance():
 
     ms = Or([_m + Optional(_s), _s])
 
-    # _hms = _hms.leaveWhitespace()
     ms = ms.setParseAction(lambda s, l, tok: AngularDistance(tok))
 
     return ms
