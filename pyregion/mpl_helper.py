@@ -116,6 +116,7 @@ def properties_func_default(shape, saved_attrs):
 def _get_text(txt, x, y, dx, dy, ha="center", va="center", **kwargs):
     if "color" in kwargs:
         textcolor = kwargs["color"]
+        del kwargs["color"]
     elif "markeredgecolor" in kwargs:
         textcolor = kwargs["markeredgecolor"]
     else:
