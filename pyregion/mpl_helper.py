@@ -1,16 +1,13 @@
 import copy
+import numpy as np
+from math import cos, sin, pi, atan2
+import warnings
 import matplotlib.patches as mpatches
-from matplotlib.text import Text
 from matplotlib.path import Path
 from matplotlib.lines import Line2D
 from matplotlib.transforms import Affine2D, Bbox, IdentityTransform
-
 from matplotlib.text import Annotation
 
-import numpy as np
-from math import cos, sin, pi, atan2
-
-import warnings
 
 def rotated_polygon(xy, ox, oy, angle):
     # angle in degree
@@ -20,30 +17,31 @@ def rotated_polygon(xy, ox, oy, angle):
     ct = cos(theta)
 
     xy = np.asarray(xy, dtype="d")
-    x, y = xy[:,0], xy[:,1]
+    x, y = xy[:, 0], xy[:, 1]
     x1 = x - ox
     y1 = y - oy
 
-    x2 =  ct*x1 + -st*y1
-    y2 =  st*x1 +  ct*y1
+    x2 = ct*x1 + -st*y1
+    y2 = st*x1 +  ct*y1
 
     xp = x2 + ox
     yp = y2 + oy
 
-    return np.hstack((xp.reshape((-1,1)), yp.reshape((-1,1))))
+    return np.hstack((xp.reshape((-1, 1)), yp.reshape((-1, 1))))
 
     # sss3 = [s1[0] for s1 in sss2 if isinstance(s1[0], parser_ds9.Shape)]
 
-_point_type_dict=dict(circle="o",
-                      box="s",
-                      diamond="D",
-                      x="x",
-                      cross="+",
-                      arrow="^",
-                      boxcircle="*")
+_point_type_dict = dict(circle="o",
+                        box="s",
+                        diamond="D",
+                        x="x",
+                        cross="+",
+                        arrow="^",
+                        boxcircle="*")
 
 _ds9_to_mpl_colormap = dict(green="lime",
                             )
+
 
 def properties_func_default(shape, saved_attrs):
 
@@ -56,7 +54,7 @@ def properties_func_default(shape, saved_attrs):
     color = attr_dict.get("color", None)
     color = _ds9_to_mpl_colormap.get(color, color)
 
-    if shape.name ==  "text":
+    if shape.name == "text":
         kwargs = dict(color=color,
                       rotation=attr_dict.get("textangle", 0),
                       )
@@ -64,8 +62,8 @@ def properties_func_default(shape, saved_attrs):
         if font:
             a = font.split()
             if len(a) >= 3:
-                fontsize=float(a[1])
-                kwargs["fontsize"]=fontsize
+                fontsize = float(a[1])
+                kwargs["fontsize"] = fontsize
     elif shape.name == "point":
         point_attrs = attr_dict.get("point", "boxcircle").split()
         if len(point_attrs) == 1:
@@ -83,19 +81,19 @@ def properties_func_default(shape, saved_attrs):
                       markersize=point_size
                       )
     elif shape.name in ["line", "vector"]:
-        fontsize = 10 # default font size
+        fontsize = 10  # default font size
 
         font = attr_dict.get("font")
         if font:
             a = font.split()
             if len(a) >= 3:
-                fontsize=float(a[1])
+                fontsize = float(a[1])
 
         kwargs = dict(color=color,
                       linewidth=int(attr_dict.get("width", 1)),
                       mutation_scale=fontsize,
                       )
-        if int(attr_dict.get("dash","0")):
+        if int(attr_dict.get("dash", "0")):
             kwargs["linestyle"] = "dashed"
 
     else:
@@ -107,7 +105,7 @@ def properties_func_default(shape, saved_attrs):
         if "background" in attr_list:
             kwargs["linestyle"] = "dashed"
 
-        if int(attr_dict.get("dash","0")):
+        if int(attr_dict.get("dash", "0")):
             kwargs["linestyle"] = "dashed"
         if shape.exclude:
             kwargs["hatch"] = "/"
@@ -120,9 +118,13 @@ def _get_text(txt, x, y, dx, dy, ha="center", va="center", **kwargs):
         textcolor = kwargs["color"]
     elif "markeredgecolor" in kwargs:
         textcolor = kwargs["markeredgecolor"]
+    else:
+        import matplotlib as mpl
+        textcolor = mpl.rcParams['text.color']
     ann = Annotation(txt, (x, y), xytext=(dx, dy),
                      xycoords='data',
                      textcoords="offset points",
+                     color=textcolor,
                      ha=ha, va=va,
                      **kwargs)
     ann.set_transform(IdentityTransform())
@@ -185,7 +187,6 @@ def as_mpl_artists(shape_list,
         # text associated with the shape
         txt = shape.attr[1].get("text")
 
-
         if shape.name == "polygon":
             xy = np.array(shape.coord_list)
             xy.shape = -1,2
@@ -205,7 +206,6 @@ def as_mpl_artists(shape_list,
             rotbox = rotated_polygon(box, xc, yc, rot)
             patches = [mpatches.Polygon(rotbox, closed=True, **kwargs)]
 
-
         elif shape.name == "ellipse":
             xc, yc  = shape.coord_list[:2]
             # -1 for change origin to 0,0
@@ -215,9 +215,8 @@ def as_mpl_artists(shape_list,
             maj_list, min_list = shape.coord_list[2:-1:2], shape.coord_list[3:-1:2]
 
             patches = [mpatches.Ellipse((xc, yc), 2*maj, 2*min,
-                                        angle=angle, **kwargs) \
+                                        angle=angle, **kwargs)
                        for maj, min in zip(maj_list, min_list)]
-
 
         elif shape.name == "annulus":
             xc, yc  = shape.coord_list[:2]
@@ -225,32 +224,27 @@ def as_mpl_artists(shape_list,
             xc, yc = xc-origin, yc-origin
             r_list = shape.coord_list[2:]
 
-            patches = [mpatches.Ellipse((xc, yc), 2*r, 2*r,
-                                        **kwargs) \
-                       for r in r_list]
-
+            patches = [mpatches.Ellipse((xc, yc), 2*r, 2*r, **kwargs) for r in r_list]
 
         elif shape.name == "circle":
             xc, yc, major = shape.coord_list
             # -1 for change origin to 0,0
             xc, yc = xc-origin, yc-origin
-            patches = [mpatches.Ellipse((xc, yc), 2*major, 2*major,
-                                        angle=0, **kwargs)]
+            patches = [mpatches.Ellipse((xc, yc), 2*major, 2*major, angle=0, **kwargs)]
 
         elif shape.name == "panda":
             xc, yc, a1, a2, an, r1, r2, rn = shape.coord_list
             # -1 for change origin to 0,0
             xc, yc = xc-origin, yc-origin
             patches = [mpatches.Arc((xc, yc), rr*2, rr*2, angle=0,
-                                    theta1=a1, theta2=a2, **kwargs) \
+                                    theta1=a1, theta2=a2, **kwargs)
                        for rr in np.linspace(r1, r2, rn+1)]
 
             for aa in np.linspace(a1, a2, an+1):
                 xx = np.array([r1, r2]) * np.cos(aa/180.*np.pi) + xc
                 yy = np.array([r1, r2]) * np.sin(aa/180.*np.pi) + yc
-                p = Path(np.transpose([xx,yy]))
+                p = Path(np.transpose([xx, yy]))
                 patches.append(mpatches.PathPatch(p, **kwargs))
-
 
         elif shape.name == "pie":
             xc, yc, r1, r2, a1, a2 = shape.coord_list
@@ -258,18 +252,17 @@ def as_mpl_artists(shape_list,
             xc, yc = xc-origin, yc-origin
 
             patches = [mpatches.Arc((xc, yc), rr*2, rr*2, angle=0,
-                                   theta1=a1, theta2=a2, **kwargs) \
+                                    theta1=a1, theta2=a2, **kwargs)
                        for rr in [r1, r2]]
 
             for aa in [a1, a2]:
                 xx = np.array([r1, r2]) * np.cos(aa/180.*np.pi) + xc
                 yy = np.array([r1, r2]) * np.sin(aa/180.*np.pi) + yc
-                p = Path(np.transpose([xx,yy]))
+                p = Path(np.transpose([xx, yy]))
                 patches.append(mpatches.PathPatch(p, **kwargs))
 
-
         elif shape.name == "epanda":
-            xc, yc, a1, a2, an, r11, r12,r21, r22, rn, angle = shape.coord_list
+            xc, yc, a1, a2, an, r11, r12, r21, r22, rn, angle = shape.coord_list
             # -1 for change origin to 0,0
             xc, yc = xc-origin, yc-origin
 
@@ -283,14 +276,14 @@ def as_mpl_artists(shape_list,
 
             patches = [mpatches.Arc((xc, yc), rr1*2, rr2*2,
                                     angle=angle, theta1=a1, theta2=a2,
-                                  **kwargs) \
+                                    **kwargs)
                        for rr1, rr2 in zip(np.linspace(r11, r21, rn+1),
                                            np.linspace(r12, r22, rn+1))]
 
             for aa in np.linspace(a1, a2, an+1):
                 xx = np.array([r11, r21]) * np.cos(aa/180.*np.pi)
                 yy = np.array([r11, r21]) * np.sin(aa/180.*np.pi)
-                p = Path(np.transpose([xx,yy]))
+                p = Path(np.transpose([xx, yy]))
                 tr = Affine2D().scale(1, r12/r11).rotate_deg(angle).translate(xc, yc)
                 p2 = tr.transform_path(p)
                 patches.append(mpatches.PathPatch(p2, **kwargs))
@@ -334,7 +327,7 @@ def as_mpl_artists(shape_list,
                 if int(a2):
                     arrowstyle = arrowstyle + ">"
 
-            else: # shape.name == "vector"
+            else:  # shape.name == "vector"
                 x1, y1, l, a  = shape.coord_list[:4]
                 # -1 for change origin to 0,0
                 x1, y1 = x1-origin, y1-origin
@@ -342,9 +335,9 @@ def as_mpl_artists(shape_list,
                 v1 = int(shape.attr[1].get("vector", "0").strip())
 
                 if v1:
-                    arrowstyle="->"
+                    arrowstyle = "->"
                 else:
-                    arrowstyle="-"
+                    arrowstyle = "-"
 
             patches = [mpatches.FancyArrowPatch(posA=(x1, y1),
                                                 posB=(x2, y2),
@@ -357,8 +350,8 @@ def as_mpl_artists(shape_list,
                                                 **kwargs)]
 
         else:
-            warnings.warn("'as_mpl_artists' does not know how to convert '%s' to mpl artist" % (shape.name,))
-
+            warnings.warn("'as_mpl_artists' does not know how to convert {0} "
+                          "to mpl artist".format(shape.name))
 
         patch_list.extend(patches)
 
@@ -392,18 +385,3 @@ def as_mpl_artists(shape_list,
             artist_list.append(_t)
 
     return patch_list, artist_list
-
-
-if 0:
-    import parser_ds9
-    regname = "az_region.reg"
-    shape_list = region_read_as_imagecoord(regname, wcs)
-    p = as_mpl_patches(shape_list)
-
-    clf()
-    ax = gca()
-    [ax.add_patch(p1) for p1 in p]
-    xlim(0,1500)
-    ylim(0,1500)
-
-    draw()

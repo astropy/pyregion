@@ -22,6 +22,7 @@ def test_regionLine():
         assert len(s) == 1
         assert s[0].name == n
 
+
 def test_comment():
     s = "circle(3323, 423, 423) # comment"
 
@@ -34,6 +35,7 @@ def test_comment():
     c = rp.parseLine(s)[1]
 
     assert c == "comment2"
+
 
 def test_global():
     s = 'global color=green font="helvetica 10 normal" select=1 highlite=1 edit=1 move=1 delete=1 include=1 fixed=0 source'

@@ -5,6 +5,7 @@ from .wcs_converter import check_wcs as _check_wcs
 
 _builtin_open = open
 
+
 class ShapeList(list):
     """ A list of shape objects """
     def __init__(self, shape_list, comment_list=None):
@@ -43,9 +44,9 @@ class ShapeList(list):
 
     def as_imagecoord(self, header, rot_wrt_axis=1):
         """
-        Return a new ShapeList where the coordinate of the each shape
+        Return a new `ShapeList` where the coordinate of the each shape
         is converted to the image coordinate using the given header
-        information
+        information.
         """
 
         comment_list = self._comment_list
@@ -64,9 +65,9 @@ class ShapeList(list):
         Often, the regions files implicitly assume the lower-left
         corner of the image as a coordinate (1,1). However, the python
         convetion is that the array index starts from 0. By default
-        (origin = 1), coordinates of the returned mpl artists have
+        (``origin=1``), coordinates of the returned mpl artists have
         coordinate shifted by (1, 1). If you do not want this shift,
-        use origin=0.
+        use ``origin=0``.
         """
         from .mpl_helper import as_mpl_artists
         patches, txts = as_mpl_artists(self, properties_func,
@@ -80,9 +81,9 @@ class ShapeList(list):
         Often, the regions files implicitly assume the lower-left
         corner of the image as a coordinate (1,1). However, the python
         convetion is that the array index starts from 0. By default
-        (origin = 1), coordinates of the returned mpl artists have
+        (``origin=1``), coordinates of the returned mpl artists have
         coordinate shifted by (1, 1). If you do not want this shift,
-        use origin=0.
+        use ``origin=0``.
         """
 
         from .region_to_filter import as_region_filter
@@ -97,7 +98,6 @@ class ShapeList(list):
         region_filter = as_region_filter(reg_in_imagecoord, origin=1)
 
         return region_filter
-
 
     def get_mask(self, hdu=None, header=None, shape=None, rot_wrt_axis=1):
         """
@@ -118,14 +118,13 @@ class ShapeList(list):
 
         return mask
 
-
     def write(self, outfile):
         """ Writes the current shape list out as a region file """
         if len(self) < 1:
-            print("WARNING: The region list is empty. The region file "\
+            print("WARNING: The region list is empty. The region file "
                   "'{:s}' will be empty.".format(outfile))
             try:
-                outf = open(outfile,'w')
+                outf = open(outfile, 'w')
                 outf.close()
                 return
             except IOError as e:
@@ -133,18 +132,18 @@ class ShapeList(list):
                 if e.args:
                     e.args = (e.args[0] + '\n' + cmsg,) + e.args[1:]
                 else:
-                    e.args=(cmsg,)
+                    e.args = (cmsg,)
                 raise e
 
         prev_cs = self[0].coord_format
 
         outf = None
         try:
-            outf = _builtin_open(outfile,'w')
+            outf = _builtin_open(outfile, 'w')
 
             attr0 = self[0].attr[1]
-            defaultline = " ".join( [ "{:s}={:s}".format(a,attr0[a]) \
-                                      for a in attr0 if a != 'text' ] )
+            defaultline = " ".join(["{:s}={:s}".format(a, attr0[a])
+                                    for a in attr0 if a != 'text' ] )
 
             # first line is globals
             print >>outf, "global", defaultline
@@ -155,7 +154,7 @@ class ShapeList(list):
                 shape_attr = '' if prev_cs == shape.coord_format \
                     else shape.coord_format+"; "
                 shape_excl = '-' if shape.exclude else ''
-                text_coordlist = [ "{:f}".format(f) for f in shape.coord_list ]
+                text_coordlist = ["{:f}".format(f) for f in shape.coord_list ]
                 shape_coords = "(" + ",".join(text_coordlist) + ")"
                 shape_comment = " # " + shape.comment if shape.comment else ''
 
@@ -169,7 +168,7 @@ class ShapeList(list):
             if e.args:
                 e.args = (e.args[0] + '\n' + cmsg,) + e.args[1:]
             else:
-                e.args=(cmsg,)
+                e.args = (cmsg,)
             raise e
         finally:
             if outf: outf.close()
@@ -188,14 +187,10 @@ def parse(region_string):
     shape_list, comment_list = rp.filter_shape2(sss2)
     return ShapeList(shape_list, comment_list=comment_list)
 
+
 def open(fname):
     region_string = _builtin_open(fname).read()
     return parse(region_string)
-
-
-# def parse_deprecated(region_string):
-#     rp = RegionParser()
-#     return rp.parseString(region_string)
 
 
 def read_region(s):
@@ -219,9 +214,14 @@ def read_region_as_imagecoord(s, header, rot_wrt_axis=1):
 
 def get_mask(region, hdu, origin=1):
     """
-    f = fits.read("test.fits")
-    reg = read_region_as_imagecoord(s, f[0].header)
-    mask = get_mask(reg, f[0])
+    Examples
+    --------
+    >>> from astropy.io import fits
+    >>> from pyregion import read_region_as_imagecoord, get_mask
+    >>> f = fits.read("test.fits")
+    >>> region = "test01.reg"
+    >>> reg = read_region_as_imagecoord(open(region), f[0].header)
+    >>> mask = get_mask(reg, f[0])
     """
     from pyregion.region_to_filter import as_region_filter
 
@@ -229,13 +229,3 @@ def get_mask(region, hdu, origin=1):
     region_filter = as_region_filter(region, origin=origin)
     mask = region_filter.mask(data)
     return mask
-
-
-if __name__ == '__main__':
-    #reg = pyregion.open("../mos_fov.reg")
-    import pyregion
-    proposed_fov = 'fk5;circle(290.96388,14.019167,843.31194")'
-    reg = pyregion.parse(proposed_fov)
-    reg_imagecoord = reg.as_imagecoord(header)
-    patches, txts = reg.get_mpl_patches_texts()
-    m = reg.get_mask(hdu=f[0])

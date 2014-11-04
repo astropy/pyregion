@@ -6,7 +6,6 @@ from ..region_numbers import (usn, simple_integer, sexadecimal60, Sixty,
 def test_usn():
     for f in ["32.4", "0.23", "0.3e-7", "1.234e+7"]:
         assert usn.parseString(f)[0] == f
-        #assert usn.parseString(f)[0][0] == float(f)
 
 
 def test_integer():

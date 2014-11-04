@@ -1,7 +1,5 @@
-from pyparsing import Literal, CaselessKeyword, CaselessLiteral, \
-     Word, Optional, OneOrMore, Group, Combine, ZeroOrMore, nums, \
-     Forward, StringEnd, restOfLine, alphas, alphanums, CharsNotIn, \
-     MatchFirst, And, Or
+from pyparsing import (Literal, CaselessKeyword, Optional, OneOrMore,
+                       ZeroOrMore, restOfLine, MatchFirst, And, Or)
 
 
 def as_comma_separated_list(al):
@@ -32,7 +30,6 @@ def define_shape(name, shape_args, args_repeat=None):
 
     shape_name = CaselessKeyword(name)
 
-
     if args_repeat is None:
         shape_with_parens = And([shape_name, lparen,
                                  as_comma_separated_list(shape_args),
@@ -52,7 +49,7 @@ def define_shape(name, shape_args, args_repeat=None):
         if ss:
             ar = as_comma_separated_list(ss)
             if sl:
-                sl.extend([comma+ ar, ZeroOrMore(comma + ar)])
+                sl.extend([comma + ar, ZeroOrMore(comma + ar)])
             else:
                 sl.extend([ar, ZeroOrMore(comma + ar)])
 
@@ -69,10 +66,7 @@ def define_shape(name, shape_args, args_repeat=None):
 
         shape_with_spaces = shape_name + OneOrMore(And(shape_args))
 
-
     return (shape_with_parens | shape_with_spaces)
-
-
 
 
 def define_shape_helper(shape_defs):
@@ -81,12 +75,10 @@ def define_shape_helper(shape_defs):
     for n, args in shape_defs.items():
         s = define_shape(n,
                          args.get_pyparsing(),
-                         args_repeat = args.args_repeat)
-
+                         args_repeat=args.args_repeat)
         l.append(s)
 
     return Or(l)
-
 
 
 def define_expr(regionShape, negate_func):
@@ -106,12 +98,9 @@ def define_line(atom,
 
     atomList = atom + ZeroOrMore(atomSeparator + atom)
 
-    line = (atomList + Optional(comment)) | \
-           comment
+    line = (atomList + Optional(comment)) | comment
 
     return line
-
-
 
 
 def comment_shell_like(comment_begin, parseAction=None):
@@ -142,13 +131,13 @@ class Shape(object):
         self.comment = None
         self.exclude = False
         self.continued = False
-        
+
     def __repr__(self):
         params_string = ",".join(map(repr, self.params))
         if self.exclude:
-            return "Shape : -%s ( %s )" %  (self.name, params_string)
+            return "Shape : -%s ( %s )" % (self.name, params_string)
         else:
-            return "Shape : %s ( %s )" %  (self.name, params_string)
+            return "Shape : %s ( %s )" % (self.name, params_string)
 
     def set_exclude(self):
         self.exclude = True
@@ -161,13 +150,16 @@ class Property(object):
     def __repr__(self):
         return "Property : " + repr(self.text)
 
+
 class CoordCommand(Property):
     def __repr__(self):
         return "CoordCommand : " + repr(self.text)
 
+
 class Global(Property):
     def __repr__(self):
         return "Global : " + repr(self.text)
+
 
 class Comment(Property):
     def __repr__(self):
@@ -182,7 +174,7 @@ class RegionPusher(object):
         self.stack = []
         self.comment = None
         self.continued = None
-        
+
     def pushAtom(self, s, l, tok):
         self.stack.append(tok[-1])
 
@@ -191,4 +183,3 @@ class RegionPusher(object):
 
     def set_continued(self, s, l, tok):
         self.continued = True
-
