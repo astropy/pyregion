@@ -3,6 +3,12 @@ import pyregion
 
 import math
 
+
+def demo_header():
+    from astropy.io.fits import Header
+    return Header.fromtextfile("sample_fits01.header")
+
+
 def show_region(fig, region_list):
     h = demo_header()
 

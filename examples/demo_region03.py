@@ -1,56 +1,51 @@
-from astropy.io.fits import Header
-
 import matplotlib.pyplot as plt
+from mpl_toolkits.axes_grid.anchored_artists import AnchoredText
+
+from astropy.io.fits import Header
+from astropy.wcs import WCS
+
+from wcsaxes import WCSAxes
+
 import pyregion
 
-import math
+region_list = ["test_text.reg",
+               "test_context.reg"]
 
-from mpl_toolkits.axes_grid1 import ImageGrid
-import pywcsgrid2
+# Create figure
+fig = plt.figure(figsize=(8,4))
 
-def get_test_header():
-    return Header.fromtextfile('sample_fits01.header')
+# Parse WCS information
+header = Header.fromtextfile('sample_fits01.header')
+wcs = WCS(header)
 
-if 1:
+# Create axes
+ax1 = WCSAxes(fig, [0.1, 0.1, 0.4, 0.8], wcs=wcs)
+fig.add_axes(ax1)
+ax2 = WCSAxes(fig, [0.5, 0.1, 0.4, 0.8], wcs=wcs)
+fig.add_axes(ax2)
 
-    region_list = ["test_text.reg", "test_context.reg"]
+# Hide labels on y axis
+ax2.coords[1].set_ticklabel_position('')
 
-    h = get_test_header()
+for ax, reg_name in zip([ax1, ax2], region_list):
 
-    n = len(region_list)
-    nx = int(math.ceil(n**.5))
-    ny = int(math.ceil(1.*n/nx))
-
-
-    fig = plt.figure(1, figsize=(7,5))
-    fig.clf()
-    nrows_ncols = (ny, nx)
-    grid= ImageGrid(fig, 111, nrows_ncols,
-                    ngrids=n,  add_all=True, share_all=True,
-                    axes_class=(pywcsgrid2.Axes, dict(header=h)))
-
-    ax = grid[0]
     ax.set_xlim(300, 1300)
     ax.set_ylim(300, 1300)
     ax.set_aspect(1)
 
-    #plt.imshow(d, origin="lower", cmap=plt.cm.gray_r)
+    r = pyregion.open(reg_name).as_imagecoord(header)
 
-    from mpl_toolkits.axes_grid.anchored_artists import AnchoredText
+    patch_list, text_list = r.get_mpl_patches_texts()
 
-    for ax, reg_name in zip(grid, region_list):
-        r = pyregion.open(reg_name).as_imagecoord(h)
+    for p in patch_list:
+        ax.add_patch(p)
 
-        patch_list, text_list = r.get_mpl_patches_texts()
-        for p in patch_list:
-            ax.add_patch(p)
-        for t in text_list:
-            ax.add_artist(t)
+    for t in text_list:
+        ax.add_artist(t)
 
+    atext = AnchoredText(reg_name, loc=2)
 
-        atext = AnchoredText(reg_name.replace("_", r"\_"),
-                             loc=2)
-        ax.add_artist(atext)
+    ax.add_artist(atext)
 
-    plt.draw()
-    plt.show()
+plt.draw()
+plt.show()

@@ -49,7 +49,7 @@ Being based on pyparsing module, pyparsing need to be installed to use
 pyregion. Optionally, you also requires pywcs
 module installed for coordinate
 conversion. Displaying regions is supported for matplotlib.  Some
-example uses pywcsgrid2.
+example uses wcsaxes.
 
 By default, pyregion build a filtering module, which requires a C compiler.
 If you don't want, edit "setup.py" ::
@@ -74,9 +74,9 @@ astropy
 matplotlib
 ----------
 * OPTIONAL
-* `Homepage <http://matplotlib.sourceforge.net/>`__
+* `Homepage <http://matplotlib.org/>`__
 
-pywcsgrid2
-----------
+wcsaxes
+-------
 * OPTIONAL
-* `Homepage <http://leejjoon.github.com/pywcsgrid2/>`__
+* `Homepage <https://github.com/astrofrog/wcsaxes>`__

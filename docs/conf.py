@@ -49,6 +49,11 @@ setup_cfg = dict(conf.items('metadata'))
 
 # -- General configuration ----------------------------------------------------
 
+# Remove intersphinx mappings we don't need (for faster docs build)
+del intersphinx_mapping['h5py']
+del intersphinx_mapping['scipy']
+
+
 # If your documentation needs a minimal Sphinx version, state it here.
 #needs_sphinx = '1.2'
 
