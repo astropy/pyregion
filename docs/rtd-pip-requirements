@@ -3,4 +3,4 @@ matplotlib
 Cython
 astropy-helpers
 astropy
--e git+git://github.com/astropy/wcsaxes.git
+-e git+git://github.com/astropy/wcsaxes.git#egg=wcsaxes
