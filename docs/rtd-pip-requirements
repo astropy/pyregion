@@ -3,4 +3,4 @@ matplotlib
 Cython
 astropy-helpers
 astropy
-wcsaxes
+-e git+git://github.com/astropy/wcsaxes.git
