@@ -1,76 +1,136 @@
 import copy
 
-from .wcs_helper import estimate_cdelt, estimate_angle
-from .region_numbers import CoordOdd, CoordEven, Distance, Angle
+from astropy.coordinates import SkyCoord
+from astropy.wcs.utils import wcs_to_celestial_frame
+from astropy.wcs import WCS
+from .wcs_helper import _estimate_cdelt, _estimate_angle
+from .region_numbers import CoordOdd, Distance, Angle
 from .parser_helper import Shape, CoordCommand
 from .region_numbers import SimpleNumber, SimpleInteger
+import numpy as np
 
 
-def convert_to_imagecoord(cl, fl, wcs_proj, sky_to_sky, xy0, rot_wrt_axis=1):
-    fl0 = fl
-    new_cl = []
+def _generate_arg_types(coordlist_length, shape_name):
+    """Find coordinate types based on shape name and coordlist length
 
-    while cl:
-        if len(fl) == 0:
-            fl = fl0
+    This function returns a list of coordinate types based on which
+    coordinates can be repeated for a given type of shap
 
-        if fl[0] == CoordOdd and fl[1] == CoordEven:
+    Parameters
+    ----------
+    coordlist_length : int
+        The number of coordinates or arguments used to define the shape.
 
-            ll = sky_to_sky([cl[0]], [cl[1]])
-            x0, y0 = wcs_proj.topixel(ll)
-            xy0 = [x0[0], y0[0]]
-            new_cl.extend(xy0)
-            cl = cl[2:]
-            fl = fl[2:]
-        elif fl[0] == Distance:
-            degree_per_pixel = estimate_cdelt(wcs_proj, *xy0)
-            new_cl.append(cl[0] / degree_per_pixel)
-            cl = cl[1:]
-            fl = fl[1:]
-        elif fl[0] == Angle:
-            rot1, rot2 = estimate_angle(wcs_proj, xy0[0], xy0[1], sky_to_sky)
-            if rot_wrt_axis == 1:
-                # use the angle between the X axis and North
-                new_cl.append(cl[0] + rot1 - 180.)
-            elif rot_wrt_axis == 2:
-                # use the angle between the Y axis and North
-                new_cl.append(cl[0] + rot2 - 90.)
-            else:
-                raise ValueError('Invalid rot_wrt_axis: {}. Allowed values: 1 or 2.'.format(rot_wrt_axis))
-            cl = cl[1:]
-            fl = fl[1:]
+    shape_name : str
+        One of the names in `pyregion.ds9_shape_defs`.
+
+    Returns
+    -------
+    arg_types : list
+        A list of objects from `pyregion.region_numbers` with a length equal to
+        coordlist_length.
+
+    """
+    from .ds9_region_parser import ds9_shape_defs
+
+    initial_arg_types = ds9_shape_defs[shape_name].args_list
+    arg_repeats = ds9_shape_defs[shape_name].args_repeat
+
+    if arg_repeats is None:
+        return initial_arg_types
+    else:
+        # repeat args between n1 and n2
+        n1, n2 = arg_repeats
+        arg_types = list(initial_arg_types[:n1])
+        num_of_repeats = coordlist_length - (len(initial_arg_types) - n2)
+        arg_types.extend((num_of_repeats-n1) //
+                         (n2 - n1) * initial_arg_types[n1:n2])
+        arg_types.extend(initial_arg_types[n2:])
+        return arg_types
+
+
+def convert_to_imagecoord(shape, header, rot_wrt_axis=1):
+    """Convert the coordlist of `shape` to image coordinates
+
+    Parameters
+    ----------
+    shape : `pyregion.parser_helper.Shape`
+        The `Shape` to convert coordinates
+
+    header : `~astropy.io.fits.Header` or `~astropy.wcs.WCS`
+        Specifies what WCS transformations to use.
+
+    rot_wrt_axis : 1 or 2
+        Specifies whether to measure angles East of North or West of North.
+        Currently ignored. TODO
+
+    Returns
+    -------
+    new_coordlist : list
+        A list of image coordinates defining the shape.
+
+    """
+    arg_types = _generate_arg_types(len(shape.coord_list), shape.name)
+
+    new_coordlist = []
+    last_coordinate = None
+    old_coordinate = None
+    coord_list_iter = iter(zip(shape.coord_list, arg_types))
+    if isinstance(header, WCS):
+        new_wcs = header
+    else:
+        new_wcs = WCS(header)
+
+    for coordinate, coordinate_type in coord_list_iter:
+        if coordinate_type == CoordOdd:
+            even_coordinate = next(coord_list_iter)[0]
+
+            old_coordinate = SkyCoord(coordinate, even_coordinate,
+                                      frame=shape.coord_format, unit='degree')
+            last_coordinate = old_coordinate.to_pixel(new_wcs, origin=1)
+            last_coordinate = [np.asscalar(x) for x in last_coordinate]
+
+            new_coordlist.extend(last_coordinate)
+
+        elif coordinate_type == Distance:
+            degree_per_pixel = _estimate_cdelt(new_wcs, *last_coordinate)
+            new_coordlist.append(coordinate / degree_per_pixel)
+
+        elif coordinate_type == Angle:
+            new_angle = _estimate_angle(coordinate, old_coordinate,
+                                        wcs_to_celestial_frame(new_wcs))
+            new_coordlist.append(new_angle.to('degree').value)
+
         else:
-            new_cl.append(cl[0])
-            cl = cl[1:]
-            fl = fl[1:]
+            new_coordlist.append(coordinate)
 
-    return new_cl, xy0
+    return new_coordlist
 
 
-def convert_physical_to_imagecoord(cl, fl, pc):
-    fl0 = fl
-    new_cl = []
+def convert_physical_to_imagecoord(shape, header):
+    arg_types = _generate_arg_types(len(shape.coord_list), shape.name)
 
-    while cl:
-        if len(fl) == 0:
-            fl = fl0
+    new_coordlist = []
+    last_coordinate = None
+    old_coordinate = None
+    coord_list_iter = iter(zip(shape.coord_list, arg_types))
 
-        if fl[0] == CoordOdd and fl[1] == CoordEven:
+    new_wcs = WCS(header)
+    from .physical_coordinate import PhysicalCoordinate
+    pc = PhysicalCoordinate(header)
 
-            xy0 = pc.to_image(cl[0], cl[1])
-            new_cl.extend(xy0)
-            cl = cl[2:]
-            fl = fl[2:]
-        elif fl[0] == Distance:
-            new_cl.append(pc.to_image_distance(cl[0]))
-            cl = cl[1:]
-            fl = fl[1:]
+    for coordinate, coordinate_type in coord_list_iter:
+        if coordinate_type == CoordOdd:
+            even_coordinate = next(coord_list_iter)[0]
+
+            xy0 = pc.to_image(coordinate, even_coordinate)
+            new_coordlist.extend(xy0)
+        elif coordinate_type == Distance:
+            new_coordlist.append(pc.to_image_distance(coordinate))
         else:
-            new_cl.append(cl[0])
-            cl = cl[1:]
-            fl = fl[1:]
+            new_coordlist.append(coordinate)
 
-    return new_cl
+    return new_coordlist
 
 
 def check_wcs_and_convert(args, all_dms=False):
