@@ -49,9 +49,7 @@ Dependencies
 **Requirements**
 
 Being based on pyparsing module, pyparsing need to be installed to use
-pyregion. Optionally, you also requires pywcs
-module installed for coordinate
-conversion. Displaying regions is supported for matplotlib.  Some
+pyregion. Displaying regions is supported for matplotlib.  Some
 example uses wcsaxes.
 
 By default, pyregion build a filtering module, which requires a C compiler.
@@ -71,7 +69,7 @@ pyparsing
 
 astropy
 -------
-* OPTIONAL
+* REQUIRED
 * `Astropy <https://github.com/astropy/astropy/>`__
 
 matplotlib

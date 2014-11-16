@@ -47,7 +47,8 @@ class RegionParser(RegionPusher):
 
         self.shape_definition = ds9_shape_defs
         regionShape = define_shape_helper(self.shape_definition)
-        regionShape = regionShape.setParseAction(lambda s, l, tok: Shape(tok[0], tok[1:]))
+        regionShape = regionShape.setParseAction(
+            lambda s, l, tok: Shape(tok[0], tok[1:]))
 
         regionExpr = define_expr(regionShape,
                                  negate_func=lambda s, l, tok: tok[-1].set_exclude(),

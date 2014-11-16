@@ -15,10 +15,6 @@ c_numpy.import_array()
 ctypedef int Py_ssize_t
 
 
-class NotYetImplemented(Exception):
-    pass
-
-
 class RegionFilterException(Exception):
     pass
 

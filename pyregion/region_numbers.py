@@ -200,12 +200,6 @@ def _angular_distance():
 angular_distance = _angular_distance()
 
 
-class Arg(object):
-    def __init__(self, type, parser):
-        self.type = type
-        self.parser = parser
-
-
 class CoordOdd:
     parser = (hms_number | sexadecimal24 | simple_number)
     type = HMS
