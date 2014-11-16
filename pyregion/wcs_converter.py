@@ -95,9 +95,8 @@ def convert_to_imagecoord(shape, header):
                                  degree_per_pixel.to('degree').value)
 
         elif coordinate_type == Angle:
-            new_angle = _estimate_angle(coordinate, old_coordinate,
-                                        wcs_to_celestial_frame(new_wcs))
-            new_coordlist.append(new_angle.to('degree').value)
+            new_angle = _estimate_angle(coordinate, old_coordinate, new_wcs)
+            new_coordlist.append(new_angle)
 
         else:
             new_coordlist.append(coordinate)
