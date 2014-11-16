@@ -45,6 +45,11 @@ def _estimate_angle(angle, origin, new_frame, offset=1e-7):
     This should be replaced with a better solution, perferably in astropy.
     See discussion in https://github.com/astropy/astropy/issues/3093
 
+    According to http://cxc.harvard.edu/ciao/ahelp/dmregions.html#Angles
+    this is *definitely* wrong. Angles should be measured counter-clockwise
+    from the X axis (not East of North) and this difference screws up
+    non-orthagonal axes (see https://github.com/astropy/pyregion/pull/34 )
+
     Parameters
     ----------
     angle : float, int

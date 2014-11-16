@@ -49,7 +49,7 @@ def _generate_arg_types(coordlist_length, shape_name):
         return arg_types
 
 
-def convert_to_imagecoord(shape, header, rot_wrt_axis=1):
+def convert_to_imagecoord(shape, header):
     """Convert the coordlist of `shape` to image coordinates
 
     Parameters
@@ -59,10 +59,6 @@ def convert_to_imagecoord(shape, header, rot_wrt_axis=1):
 
     header : `~astropy.io.fits.Header` or `~astropy.wcs.WCS`
         Specifies what WCS transformations to use.
-
-    rot_wrt_axis : 1 or 2
-        Specifies whether to measure angles East of North or West of North.
-        Currently ignored. TODO
 
     Returns
     -------
