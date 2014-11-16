@@ -1,12 +1,7 @@
-from astropy.wcs import WCS
-from astropy.coordinates import SkyCoord
-import numpy as np
 import pytest
 
 from ..ds9_region_parser import ds9_shape_defs
 from ..region_numbers import CoordOdd, CoordEven, Distance, Angle, Integer
-from .. import parse
-from .. import wcs_helper
 from .. import wcs_converter
 
 
