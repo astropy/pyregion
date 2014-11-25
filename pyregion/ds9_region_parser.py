@@ -10,7 +10,6 @@ from .parser_helper import (wcs_shape, define_shape_helper, Shape, Global,
 from .ds9_attr_parser import Ds9AttrParser, get_attr
 from .wcs_converter import (convert_to_imagecoord,
                             convert_physical_to_imagecoord)
-from .physical_coordinate import PhysicalCoordinate
 
 ds9_shape_defs = dict(
     circle=wcs_shape(CoordOdd, CoordEven, Distance),

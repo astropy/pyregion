@@ -4,7 +4,7 @@ from os.path import join
 from astropy.io.fits import Header
 from .. import open as pyregion_open
 
-rootdir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'examples')
+rootdir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'data')
 
 
 def demo_header():

@@ -1,7 +1,7 @@
 import copy
 
 from astropy.coordinates import SkyCoord
-from astropy.wcs.utils import celestial_pixel_scale, wcs_to_celestial_frame
+from astropy.wcs.utils import celestial_pixel_scale
 from astropy.wcs import WCS
 from .wcs_helper import _estimate_angle
 from .region_numbers import CoordOdd, Distance, Angle
@@ -82,7 +82,8 @@ def convert_to_imagecoord(shape, header):
             even_coordinate = next(coord_list_iter)[0]
 
             old_coordinate = SkyCoord(coordinate, even_coordinate,
-                                      frame=shape.coord_format, unit='degree')
+                                      frame=shape.coord_format, unit='degree',
+                                      obstime='J2000')
             last_coordinate = old_coordinate.to_pixel(new_wcs, origin=1)
             last_coordinate = [np.asscalar(x) for x in last_coordinate]
 
@@ -108,11 +109,8 @@ def convert_physical_to_imagecoord(shape, header):
     arg_types = _generate_arg_types(len(shape.coord_list), shape.name)
 
     new_coordlist = []
-    last_coordinate = None
-    old_coordinate = None
     coord_list_iter = iter(zip(shape.coord_list, arg_types))
 
-    new_wcs = WCS(header)
     from .physical_coordinate import PhysicalCoordinate
     pc = PhysicalCoordinate(header)
 

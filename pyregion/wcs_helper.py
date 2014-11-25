@@ -42,8 +42,16 @@ def _estimate_angle(angle, origin, new_wcs, offset=1e-9):
     lat0 = origin.data.lat.degree
 
     offset_point = SkyCoord(lon0, lat0+offset, unit='degree',
-                            frame=origin.frame.name)
+                            frame=origin.frame.name, obstime='J2000')
     x2, y2 = offset_point.to_pixel(new_wcs, origin=1)
+
+    # We lose precision when subtracting nearly equal numbers
+    # this handles the case of the axis at origin being aligned with
+    # the coordinate frame axis
+    if np.isclose(x0, x2, rtol=0):
+        x2 = x0
+    if np.isclose(y0, y2, rtol=0):
+        y2 = y0
 
     y_axis_rot = np.arctan2(y2-y0, x2-x0) / np.pi*180.
 

@@ -1,7 +1,7 @@
 import pytest
 
 from ..ds9_region_parser import ds9_shape_defs
-from ..region_numbers import CoordOdd, CoordEven, Distance, Angle, Integer
+from ..region_numbers import CoordOdd, CoordEven
 from .. import wcs_converter
 
 
