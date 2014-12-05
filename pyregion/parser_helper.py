@@ -167,22 +167,19 @@ class Property(object):
         self.text = text
 
     def __repr__(self):
-        return "Property : " + repr(self.text)
+        return "%s : %s" % (type(self).__name__, repr(self.text))
 
 
 class CoordCommand(Property):
-    def __repr__(self):
-        return "CoordCommand : " + repr(self.text)
+    pass
 
 
 class Global(Property):
-    def __repr__(self):
-        return "Global : " + repr(self.text)
+    pass
 
 
 class Comment(Property):
-    def __repr__(self):
-        return "Comment : " + repr(self.text)
+    pass
 
 
 class RegionPusher(object):
