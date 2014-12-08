@@ -1,0 +1,183 @@
+SIMPLE  =                    T / conforms to FITS standard                      
+BITPIX  =                   64 / array data type                                
+NAXIS   =                    2 / number of array dimensions                     
+NAXIS1  =                 4096                                                  
+NAXIS2  =                 2048                                                  
+ORIGIN  = 'NOAO-IRAF FITS Image Kernel July 2003' / FITS file originator        
+EXTNAME = 'SCI     '           / Extension name                                 
+EXTVER  =                    1 / Extension version                              
+DATE    = '2007-02-08T21:38:47' / Date FITS file was generated                  
+IRAF-TLM= '13:38:23 (20/08/2008)' / Time of last modification                   
+INHERIT =                    T / inherit the primary header                     
+EXPNAME = 'j94f05bgq                ' / exposure identifier                     
+BUNIT   = 'ELECTRONS'          / brightness units                               
+                                                                                
+              / WFC CCD CHIP IDENTIFICATION                                     
+                                                                                
+CCDCHIP =                    2 / CCD chip (1 or 2)                              
+                                                                                
+              / World Coordinate System and Related Parameters                  
+                                                                                
+WCSAXES =                    2 / number of World Coordinate System axes         
+CRPIX1  =               2048.0 / x-coordinate of reference pixel                
+CRPIX2  =               1024.0 / y-coordinate of reference pixel                
+CRVAL1  =        5.63056810618 / first axis value at reference pixel            
+CRVAL2  =   -72.05457184278998 / second axis value at reference pixel           
+CTYPE1  = 'RA---TAN-SIP'       / the coordinate type for the first axis         
+CTYPE2  = 'DEC--TAN-SIP'       / the coordinate type for the second axis        
+CD1_1   = 1.29056256197165E-05 / partial of first axis coordinate w.r.t. x      
+CD1_2   = 5.95309123310338E-06 / partial of first axis coordinate w.r.t. y      
+CD2_1   =  5.0220581265601E-06 / partial of second axis coordinate w.r.t. x     
+CD2_2   = -1.2644774105568E-05 / partial of second axis coordinate w.r.t. y     
+LTV1    =        0.0000000E+00 / offset in X to subsection start                
+LTV2    =        0.0000000E+00 / offset in Y to subsection start                
+LTM1_1  =                  1.0 / reciprocal of sampling rate in X               
+LTM2_2  =                  1.0 / reciprocal of sampling rate in Y               
+ORIENTAT=    154.7891975615892 / position angle of image y axis (deg. e of n)   
+RA_APER =   5.655000000000E+00 / RA of aperture reference position              
+DEC_APER=  -7.207055555556E+01 / Declination of aperture reference position     
+PA_APER =              154.533 / Position Angle of reference aperture center (de
+VAFACTOR=   1.000018683511E+00 / velocity aberration plate scale factor         
+RADESYS = 'FK5     '           / Coordinate system
+                                                                                
+              / READOUT DEFINITION PARAMETERS                                   
+                                                                                
+CENTERA1=                 2073 / subarray axis1 center pt in unbinned dect. pix 
+CENTERA2=                 1035 / subarray axis2 center pt in unbinned dect. pix 
+SIZAXIS1=                 4096 / subarray axis1 size in unbinned detector pixels
+SIZAXIS2=                 2048 / subarray axis2 size in unbinned detector pixels
+BINAXIS1=                    1 / axis1 data bin size in unbinned detector pixels
+BINAXIS2=                    1 / axis2 data bin size in unbinned detector pixels
+                                                                                
+              / PHOTOMETRY KEYWORDS                                             
+                                                                                
+PHOTMODE= 'ACS WFC1 F606W'     / observation con                                
+PHOTFLAM=        7.9064521E-20 / inverse sensitivity, ergs/cm2/Ang/electron     
+PHOTZPT =       -2.1100000E+01 / ST magnitude zero point                        
+PHOTPLAM=        5.9176797E+03 / Pivot wavelength (Angstroms)                   
+PHOTBW  =        6.7231146E+02 / RMS bandwidth of filter plus detector          
+                                                                                
+              / REPEATED EXPOSURES INFO                                         
+                                                                                
+NCOMBINE=                    1 / number of image sets combined during CR rejecti
+                                                                                
+              / DATA PACKET INFORMATION                                         
+                                                                                
+FILLCNT =                    0 / number of segments containing fill             
+ERRCNT  =                    0 / number of segments containing errors           
+PODPSFF =                    F / podps fill present (T/F)                       
+STDCFFF =                    F / ST DDF fill present (T/F)                      
+STDCFFP = 'x5569 '             / ST DDF fill pattern (hex)                      
+                                                                                
+              / ON-BOARD COMPRESSION INFORMATION                                
+                                                                                
+WFCMPRSD=                    F / was WFC data compressed? (T/F)                 
+CBLKSIZ =                    0 / size of compression block in 2-byte words      
+LOSTPIX =                    0 / #pixels lost due to buffer overflow            
+COMPTYP = 'None    '           / compression type performed (Partial/Full/None) 
+                                                                                
+              / IMAGE STATISTICS AND DATA QUALITY FLAGS                         
+                                                                                
+NGOODPIX=              7822781 / number of good pixels                          
+SDQFLAGS=                31743 / serious data quality flags                     
+GOODMIN =       -2.5959351E+02 / minimum value of good pixels                   
+GOODMAX =        6.5220551E+04 / maximum value of good pixels                   
+GOODMEAN=        2.0491536E+02 / mean value of good pixels                      
+SOFTERRS=                    0 / number of soft error pixels (DQF=1)            
+SNRMIN  =       -8.0327058E-01 / minimum signal to noise of good pixels         
+SNRMAX  =        2.1379723E+02 / maximum signal to noise of good pixels         
+SNRMEAN =        1.0889255E+01 / mean value of signal to noise of good pixels   
+MEANDARK=        1.5474443E+00 / average of the dark values subtracted          
+MEANBLEV=        2.4558604E+03 / average of all bias levels subtracted          
+MEANFLSH=             0.000000 / Mean number of counts in post flash exposure   
+OCRVAL1 =        5.63056810618 / first axis value at reference pixel            
+OCRVAL2 =      -72.05457184279 / second axis value at reference pixel           
+OCRPIX2 =               1024.0 / y-coordinate of reference pixel                
+OCRPIX1 =               2048.0 / x-coordinate of reference pixel                
+ONAXIS2 =                 2048 / Axis length                                    
+ONAXIS1 =                 4096 / Axis length                                    
+OCD2_2  =         -1.26445E-05 / partial of second axis coordinate w.r.t. y     
+OCD2_1  =          5.02243E-06 / partial of second axis coordinate w.r.t. x     
+OORIENTA=    154.7886863186197 / position angle of image y axis (deg. e of n)   
+OCTYPE1 = 'RA---TAN'           / the coordinate type for the first axis         
+OCD1_1  =          1.29046E-05 / partial of first axis coordinate w.r.t. x      
+OCD1_2  =           5.9531E-06 / partial of first axis coordinate w.r.t. y      
+OCTYPE2 = 'DEC--TAN'           / the coordinate type for the second axis        
+WCSCDATE= '21:39:44 (08/02/2007)' / Time WCS keywords were copied.              
+A_0_2   = 2.16615952976212E-06                                                  
+B_0_2   = -7.2168814507744E-06                                                  
+A_1_1   = -5.1974576466834E-06                                                  
+B_1_1   = 6.18443235774478E-06                                                  
+A_2_0   = 8.551277582556502E-06                                                 
+B_2_0   = -1.7464918770586E-06                                                  
+A_0_3   = 1.08193519820265E-11                                                  
+B_0_3   = -4.1754720492749E-10                                                  
+A_1_2   = -5.234870743692412E-10                                                
+B_1_2   = -6.169265268681388E-11                                                
+A_2_1   = -3.9771547747287E-11                                                  
+B_2_1   = -5.085716167386211E-10                                                
+A_3_0   = -4.7304448292227E-10                                                  
+B_3_0   = 8.56763542781631E-11                                                  
+A_0_4   = 1.49356171166049E-14                                                  
+B_0_4   = -9.9570490655478E-15                                                  
+A_1_3   = -2.456997553774615E-14                                                
+B_1_3   = 1.21743011568848E-14                                                  
+A_2_2   = 3.46791267104378E-14                                                  
+B_2_2   = -3.6614325928657E-14                                                  
+A_3_1   = 1.971022971660309E-15                                                 
+B_3_1   = -3.7795068054874E-15                                                  
+A_4_0   = 2.37430106240231E-14                                                  
+B_4_0   = -1.7687653826004E-14                                                  
+A_ORDER =                    4                                                  
+B_ORDER =                    4                                                  
+HISTORY The following throughput tables were used: crotacomp$hst_ota_007_syn.fit
+HISTORY s, cracscomp$acs_wfc_im123_004_syn.fits, cracscomp$acs_f606w_005_syn.fit
+HISTORY s, cracscomp$acs_wfc_ebe_win12f_005_syn.fits, cracscomp$acs_wfc_ccd1_017
+HISTORY _syn.fits                                                               
+TDDALPHA=   0.1195051334702275                                                  
+TDDBETA = -0.03716837782340918                                                  
+IDCSCALE=                 0.05                                                  
+IDCV2REF=    256.6222229003906                                                  
+IDCV3REF=    302.2264099121094                                                  
+IDCTHETA=                  0.0                                                  
+OCX10   = 0.001961771095643072                                                  
+OCX11   =   0.0498307741748614                                                  
+OCY10   =  0.05027452911198226                                                  
+OCY11   = 0.001490550115269471                                                  
+SORIENTA=    154.7925383197021 / position angle of image y axis (deg. e of n)   
+SCRVAL1 =        5.63056810618 / first axis value at reference pixel            
+SNAXIS2 =                 2048 / Axis length                                    
+SNAXIS1 =                 4096 / Axis length                                    
+SCRVAL2 =      -72.05457184279 / second axis value at reference pixel           
+SCTYPE1 = 'RA---TAN-SIP'       / the coordinate type for the first axis         
+SCTYPE2 = 'DEC--TAN-SIP'       / the coordinate type for the second axis        
+SCD2_2  = -1.264489181627715E-05 / partial of second axis coordinate w.r.t. y   
+SCD2_1  = 5.022886862247075E-06 / partial of second axis coordinate w.r.t. x    
+SCD1_2  = 5.952245949610081E-06 / partial of first axis coordinate w.r.t. y     
+SCRPIX2 =               1024.0 / y-coordinate of reference pixel                
+SCRPIX1 =               2048.0 / x-coordinate of reference pixel                
+SCD1_1  = 1.290545120875315E-05 / partial of first axis coordinate w.r.t. x     
+IDCXREF =               2048.0                                                  
+IDCYREF =               1024.0                                                  
+WCSNAMEO= 'OPUS    '                                                            
+WCSAXESO=                    2                                                  
+CRPIX1O =                 2048                                                  
+CRPIX2O =                 1024                                                  
+CDELT1O =                    1                                                  
+CDELT2O =                    1                                                  
+CUNIT1O = 'deg     '                                                            
+CUNIT2O = 'deg     '                                                            
+CTYPE1O = 'RA---TAN-SIP'                                                        
+CTYPE2O = 'DEC--TAN-SIP'                                                        
+CRVAL1O =        5.63056810618                                                  
+CRVAL2O =       -72.0545718428                                                  
+LONPOLEO=                  180                                                  
+LATPOLEO=       -72.0545718428                                                  
+RESTFRQO=                    0                                                  
+RESTWAVO=                    0                                                  
+CD1_1O  =    1.29056256334E-05                                                  
+CD1_2O  =     5.9530912342E-06                                                  
+CD2_1O  =    5.02205812656E-06                                                  
+CD2_2O  =   -1.26447741482E-05                                                  
+IDCTAB  = 'jref$qbu1641sj_idc.fits'                                             
+WCSNAME = 'IDC_qbu1641sj'                                                       

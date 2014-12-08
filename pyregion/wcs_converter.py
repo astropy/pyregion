@@ -1,9 +1,8 @@
 import copy
 
 from astropy.coordinates import SkyCoord
-from astropy.wcs.utils import celestial_pixel_scale
 from astropy.wcs import WCS
-from .wcs_helper import _estimate_angle
+from .wcs_helper import _estimate_angle, _get_combined_cdelt
 from .region_numbers import CoordOdd, Distance, Angle
 from .parser_helper import Shape, CoordCommand
 from .region_numbers import SimpleNumber, SimpleInteger
@@ -90,10 +89,8 @@ def convert_to_imagecoord(shape, header):
             new_coordlist.extend(last_coordinate)
 
         elif coordinate_type == Distance:
-            degree_per_pixel = celestial_pixel_scale(new_wcs,
-                                                     allow_nonsquare=True)
-            new_coordlist.append(coordinate /
-                                 degree_per_pixel.to('degree').value)
+            degree_per_pixel = _get_combined_cdelt(new_wcs)
+            new_coordlist.append(coordinate / degree_per_pixel)
 
         elif coordinate_type == Angle:
             new_angle = _estimate_angle(coordinate, old_coordinate, new_wcs)

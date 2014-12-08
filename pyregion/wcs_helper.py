@@ -1,5 +1,6 @@
 import numpy as np
 from astropy.coordinates import SkyCoord
+from astropy.wcs import InconsistentAxisTypesError
 
 
 def _estimate_angle(angle, origin, new_wcs, offset=1e-9):
@@ -36,6 +37,9 @@ def _estimate_angle(angle, origin, new_wcs, offset=1e-9):
         The angle, measured from the Y axis in the new WCS
 
     """
+    #uncomment in due time
+    #origin = SkyCoord.from_pixel(*new_wcs.wcs.crpix, wcs=new_wcs, origin=1)
+    offset = _get_cdelt(new_wcs)[0]
 
     x0, y0 = origin.to_pixel(new_wcs, origin=1)
     lon0 = origin.data.lon.degree
@@ -45,14 +49,43 @@ def _estimate_angle(angle, origin, new_wcs, offset=1e-9):
                             frame=origin.frame.name, obstime='J2000')
     x2, y2 = offset_point.to_pixel(new_wcs, origin=1)
 
-    # We lose precision when subtracting nearly equal numbers
-    # this handles the case of the axis at origin being aligned with
-    # the coordinate frame axis
-    if np.isclose(x0, x2, rtol=0):
-        x2 = x0
-    if np.isclose(y0, y2, rtol=0):
-        y2 = y0
-
     y_axis_rot = np.arctan2(y2-y0, x2-x0) / np.pi*180.
 
-    return (y_axis_rot + angle - 90.) % 360.
+    # temp = (y_axis_rot - 90)
+    temp = -(y_axis_rot - 90)
+    #return -angle + temp + 180
+    return angle - temp
+
+
+def _get_combined_cdelt(new_wcs):
+    scale = _get_cdelt(new_wcs)
+    if not np.allclose(scale[0],scale[1]):
+        return np.sqrt(scale[0]*scale[1])
+    return scale[0]
+
+
+def _get_cdelt(new_wcs):
+    pixel_scale_matrix = _get_pixel_scale_matrix(new_wcs)
+    scale = (pixel_scale_matrix**2).sum(axis=0)**0.5
+    return scale
+
+
+def _get_pixel_scale_matrix(wcs):
+    wcs = wcs.wcs
+    try:
+        cdelt = np.matrix(np.diag(wcs.get_cdelt()))
+        pc = np.matrix(wcs.get_pc())
+    except InconsistentAxisTypesError:
+        try:
+            cdelt = np.matrix(wcs.cd) * np.matrix(np.diag(wcs.cdelt))
+        except AttributeError:
+            cdelt = np.matrix(np.diag(wcs.cdelt))
+
+        try:
+            pc = np.matrix(wcs.pc)
+        except AttributeError:
+            pc = 1
+
+    pccd = np.array(cdelt * pc)
+
+    return pccd
