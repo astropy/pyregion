@@ -96,13 +96,12 @@ else:
     # For Python 2.6 and 2.7, any version *except* 2.0.0 will work
     install_requires = ['pyparsing!=2.0.0']
 
-install_requires += ['astropy']
+install_requires += ['astropy', 'numpy']
 
 setup(name=PACKAGENAME,
       version=VERSION,
       description=DESCRIPTION,
       scripts=scripts,
-      requires=['astropy'],
       install_requires=install_requires,
       provides=[PACKAGENAME],
       author=AUTHOR,
