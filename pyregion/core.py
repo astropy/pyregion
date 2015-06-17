@@ -95,7 +95,7 @@ class ShapeList(list):
         else:
             reg_in_imagecoord = self.as_imagecoord(header, rot_wrt_axis=rot_wrt_axis)
 
-        region_filter = as_region_filter(reg_in_imagecoord, origin=1)
+        region_filter = as_region_filter(reg_in_imagecoord, origin=origin)
 
         return region_filter
 
