@@ -2,11 +2,12 @@ import copy
 
 from astropy.coordinates import SkyCoord
 from astropy.wcs import WCS
-from .wcs_helper import _estimate_angle, _get_combined_cdelt
+from astropy.wcs.utils import proj_plane_pixel_area, proj_plane_pixel_scales
+import numpy as np
+from .wcs_helper import _estimate_angle
 from .region_numbers import CoordOdd, Distance, Angle
 from .parser_helper import Shape, CoordCommand
 from .region_numbers import SimpleNumber, SimpleInteger
-import numpy as np
 
 
 def _generate_arg_types(coordlist_length, shape_name):
@@ -56,7 +57,7 @@ def convert_to_imagecoord(shape, header):
     shape : `pyregion.parser_helper.Shape`
         The `Shape` to convert coordinates
 
-    header : `~astropy.io.fits.Header` or `~astropy.wcs.WCS`
+    header : `~astropy.io.fits.Header`
         Specifies what WCS transformations to use.
 
     Returns
@@ -68,13 +69,11 @@ def convert_to_imagecoord(shape, header):
     arg_types = _generate_arg_types(len(shape.coord_list), shape.name)
 
     new_coordlist = []
-    last_coordinate = None
-    old_coordinate = None
+    is_even_distance = True
     coord_list_iter = iter(zip(shape.coord_list, arg_types))
-    if isinstance(header, WCS):
-        new_wcs = header
-    else:
-        new_wcs = WCS(header)
+
+    new_wcs = WCS(header)
+    pixel_scales = proj_plane_pixel_scales(new_wcs)
 
     for coordinate, coordinate_type in coord_list_iter:
         if coordinate_type == CoordOdd:
@@ -83,17 +82,25 @@ def convert_to_imagecoord(shape, header):
             old_coordinate = SkyCoord(coordinate, even_coordinate,
                                       frame=shape.coord_format, unit='degree',
                                       obstime='J2000')
-            last_coordinate = old_coordinate.to_pixel(new_wcs, origin=1)
-            last_coordinate = [np.asscalar(x) for x in last_coordinate]
-
-            new_coordlist.extend(last_coordinate)
+            new_coordlist.extend(
+                np.asscalar(x)
+                for x in old_coordinate.to_pixel(new_wcs, origin=1)
+            )
 
         elif coordinate_type == Distance:
-            degree_per_pixel = _get_combined_cdelt(new_wcs)
+            if arg_types[-1] == Angle:
+                degree_per_pixel = pixel_scales[0 if is_even_distance else 1]
+
+                is_even_distance = not is_even_distance
+            else:
+                degree_per_pixel = np.sqrt(proj_plane_pixel_area(new_wcs))
+
             new_coordlist.append(coordinate / degree_per_pixel)
 
         elif coordinate_type == Angle:
-            new_angle = _estimate_angle(coordinate, old_coordinate, new_wcs)
+            new_angle = _estimate_angle(coordinate,
+                                        shape.coord_format,
+                                        header)
             new_coordlist.append(new_angle)
 
         else:

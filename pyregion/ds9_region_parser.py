@@ -160,7 +160,7 @@ class RegionParser(RegionPusher):
         ----------
         shapelist : `pyregion.ShapeList`
             The ShapeList to convert
-        header : `~astropy.io.fits.Header` or `~astropy.wcs.WCS`
+        header : `~astropy.io.fits.Header`
             Specifies what WCS transformations to use.
 
         Yields

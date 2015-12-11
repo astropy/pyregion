@@ -1,91 +1,91 @@
 import numpy as np
 from astropy.coordinates import SkyCoord
-from astropy.wcs import InconsistentAxisTypesError
+from astropy.wcs import WCS
+from astropy.wcs.utils import proj_plane_pixel_scales
 
 
-def _estimate_angle(angle, origin, new_wcs, offset=1e-9):
+def _estimate_angle(angle, reg_coordinate_frame, header):
     """Transform an angle into a different frame
-
-    This should be replaced with a better solution, perferably in astropy.
-    See discussion in https://github.com/astropy/astropy/issues/3093
-
-    This is influenced by https://github.com/astropy/pyregion/pull/34 ,
-    where Mihai Cara argues that measuring angles as East of North is wrong.
-    http://cxc.harvard.edu/ciao/ahelp/dmregions.html#Angles backs this up,
-    and so all angles are measured as if rot_wrt_axis=2 in PR #34.
-    This is only significant for images with non-orthagonal axes.
 
     Parameters
     ----------
     angle : float, int
         The number of degrees, measured from the Y axis in origin's frame
 
-    origin : `~astropy.coordinates.SkyCoord`
-        Coordinate from which the angle is measured
+    reg_coordinate_frame : str
+        Coordinate frame in which ``angle`` is defined
 
-    new_wcs : `~astropy.wcs.WCS` instance
-        The WCS to use for conversation of the angle
-
-    offset : float
-        This method creates a temporary coordinate to compute the angle in
-        the new frame. This offset gives the angular seperation in degrees
-        between these points
+    header : `~astropy.io.fits.Header` instance
+        Header describing the image
 
     Returns
     -------
     angle : float
-        The angle, measured from the Y axis in the new WCS
+        The angle, measured from the Y axis in the WCS defined by ``header'`
 
     """
-    #uncomment in due time
-    #origin = SkyCoord.from_pixel(*new_wcs.wcs.crpix, wcs=new_wcs, origin=1)
-    offset = _get_cdelt(new_wcs)[0]
 
-    x0, y0 = origin.to_pixel(new_wcs, origin=1)
-    lon0 = origin.data.lon.degree
-    lat0 = origin.data.lat.degree
-
-    offset_point = SkyCoord(lon0, lat0+offset, unit='degree',
-                            frame=origin.frame.name, obstime='J2000')
-    x2, y2 = offset_point.to_pixel(new_wcs, origin=1)
-
-    y_axis_rot = np.arctan2(y2-y0, x2-x0) / np.pi*180.
-
-    # temp = (y_axis_rot - 90)
-    temp = -(y_axis_rot - 90)
-    #return -angle + temp + 180
-    return angle - temp
+    y_axis_rot = _calculate_rotation_angle(reg_coordinate_frame, header)
+    return angle - y_axis_rot
 
 
-def _get_combined_cdelt(new_wcs):
-    scale = _get_cdelt(new_wcs)
-    if not np.allclose(scale[0],scale[1]):
-        return np.sqrt(scale[0]*scale[1])
-    return scale[0]
+def _calculate_rotation_angle(reg_coordinate_frame, header):
+    """Calculates the rotation angle from the region to the header's frame
 
+    This attempts to be compatible with the implementation used by SAOImage
+    DS9. In particular, this measures the rotation of the north axis as
+    measured at the center of the image, and therefore requires a
+    `~astropy.io.fits.Header` object with defined 'NAXIS1' and 'NAXIS2'
+    keywords.
 
-def _get_cdelt(new_wcs):
-    pixel_scale_matrix = _get_pixel_scale_matrix(new_wcs)
-    scale = (pixel_scale_matrix**2).sum(axis=0)**0.5
-    return scale
+    Parameters
+    ----------
+    reg_coordinate_frame : str
+        Coordinate frame used by the region file
 
+    header : `~astropy.io.fits.Header` instance
+        Header describing the image
 
-def _get_pixel_scale_matrix(wcs):
-    wcs = wcs.wcs
-    try:
-        cdelt = np.matrix(np.diag(wcs.get_cdelt()))
-        pc = np.matrix(wcs.get_pc())
-    except InconsistentAxisTypesError:
-        try:
-            cdelt = np.matrix(wcs.cd) * np.matrix(np.diag(wcs.cdelt))
-        except AttributeError:
-            cdelt = np.matrix(np.diag(wcs.cdelt))
+    Returns
+    -------
+    y_axis_rot : float
+        Degrees by which the north axis in the region's frame is rotated when
+        transformed to pixel coordinates
+    """
+    new_wcs = WCS(header)
+    region_frame = SkyCoord(
+        '0d 0d',
+        frame=reg_coordinate_frame,
+        obstime='J2000')
+    region_frame = SkyCoord(
+        '0d 0d',
+        frame=reg_coordinate_frame,
+        obstime='J2000',
+        equinox=region_frame.equinox)
 
-        try:
-            pc = np.matrix(wcs.pc)
-        except AttributeError:
-            pc = 1
+    origin = SkyCoord.from_pixel(
+        header['NAXIS1']/2,
+        header['NAXIS2']/2,
+        wcs=new_wcs,
+        origin=1).transform_to(region_frame)
 
-    pccd = np.array(cdelt * pc)
+    offset = proj_plane_pixel_scales(new_wcs)[1]
 
-    return pccd
+    origin_x, origin_y = origin.to_pixel(new_wcs, origin=1)
+    origin_lon = origin.data.lon.degree
+    origin_lat = origin.data.lat.degree
+
+    offset_point = SkyCoord(
+        origin_lon, origin_lat+offset, unit='degree',
+        frame=origin.frame.name, obstime='J2000')
+    offset_x, offset_y = offset_point.to_pixel(new_wcs, origin=1)
+
+    north_rot = np.arctan2(
+        offset_y-origin_y,
+        offset_x-origin_x) / np.pi*180.
+
+    if (new_wcs.wcs.get_cdelt() > 0).all() or \
+            (new_wcs.wcs.get_cdelt() < 0).all():
+        return north_rot - 90
+    else:
+        return -(north_rot - 90)
