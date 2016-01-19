@@ -20,7 +20,7 @@ env:
     global:
         - NUMPY_VERSION=stable
         - ASTROPY_VERSION=stable
-        - CONDA_DEPENDENCIES='matplotlib pyparsing'
+        - CONDA_DEPENDENCIES='matplotlib pyparsing Cython'
 
     matrix:
         - SETUP_CMD='egg_info'
