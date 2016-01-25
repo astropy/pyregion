@@ -49,7 +49,7 @@ matrix:
         - python: 3.5
           env: ASTROPY_VERSION=lts SETUP_CMD='test'
 
-        # Try all python versions with the latest numpy
+        # Try all python versions with the latest numpy available for them
         - python: 3.3
           env: SETUP_CMD='test --remote-data' NUMPY_VERSION=1.9
         - python: 2.6
@@ -64,8 +64,6 @@ matrix:
           env: NUMPY_VERSION=1.7 SETUP_CMD='test'
         - python: 2.7
           env: NUMPY_VERSION=1.6 SETUP_CMD='test'
-        - python: 2.7
-          env: NUMPY_VERSION=1.5 SETUP_CMD='test'
 
 before_install:
     # Make sure that interactive matplotlib backends work
