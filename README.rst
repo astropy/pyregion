@@ -32,6 +32,8 @@ All files (see exception below) are under MIT License. See LICENSE.
 Status
 ------
 
-[![Build Status](https://travis-ci.org/astropy/pyregion.png?branch=master)](https://travis-ci.org/astropy/pyregion)
+.. image:: https://travis-ci.org/astropy/pyregion.svg?branch=master
+    :target: https://travis-ci.org/astropy/pyregion
 
-[![Coverage Status](https://coveralls.io/repos/astropy/pyregion/badge.png?branch=master)](https://coveralls.io/r/astropy/pyregion?branch=master)
+.. image:: https://coveralls.io/repos/astropy/pyregion/badge.svg?branch=master
+    :target: https://coveralls.io/r/astropy/pyregion
