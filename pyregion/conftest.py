@@ -2,17 +2,7 @@
 # by importing them here in conftest.py they are discoverable by py.test
 # no matter how it is invoked within the source tree.
 
-import os
 from astropy.tests.pytest_plugins import *
-
-# This is to figure out photutils version, rather than using Astropy's
-from . import version
-
-try:
-    packagename = os.path.basename(os.path.dirname(__file__))
-    TESTED_VERSIONS[packagename] = version.version
-except NameError:
-    pass
 
 ## Uncomment the following line to treat all DeprecationWarnings as
 ## exceptions
@@ -21,6 +11,7 @@ except NameError:
 
 # Add astropy to test header information and remove unused packages.
 # Pytest header customisation was introduced in astropy 1.0.
+import os
 
 try:
     PYTEST_HEADER_MODULES['Astropy'] = 'astropy'
@@ -28,3 +19,13 @@ try:
     del PYTEST_HEADER_MODULES['Scipy']
 except NameError:
     pass
+
+# This is to figure out the affiliated package version, rather than
+# using Astropy's
+try:
+    from .version import version
+except ImportError:
+    version = 'dev'
+
+packagename = os.path.basename(os.path.dirname(__file__))
+TESTED_VERSIONS[packagename] = version
