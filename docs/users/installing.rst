@@ -28,12 +28,12 @@ To install with necessary dependency (pyparsing, see below), you may do
 
 The developement version of pyregion can be fount on the github page.
 
-* `Download <http://github.com/leejjoon/pyregion>`__
+* `Download <http://github.com/astropy/pyregion>`__
 
 To fetch the source
 code by cloning my git repository for any recent bug fix. ::
 
- # git clone git://github.com/leejjoon/pyregion.git
+ # git clone git://github.com/astropy/pyregion.git
  # cd pyregion
  # python setup.py install
 
