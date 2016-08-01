@@ -181,8 +181,8 @@ dms_number = _dms_number()
 
 
 def _angular_distance():
-    _m = (usn + Literal("\'")).leaveWhitespace()
-    _s = (usn + Literal("\"")).leaveWhitespace()
+    _m = (usn + Literal("\'").leaveWhitespace())
+    _s = (usn + Literal("\"").leaveWhitespace())
 
     ms = Or([_m + Optional(_s), _s])
 
