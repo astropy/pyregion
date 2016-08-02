@@ -3,15 +3,6 @@ from itertools import cycle
 from .ds9_region_parser import RegionParser
 from .wcs_converter import check_wcs as _check_wcs
 
-__all__ = [
-    'ShapeList',
-    'parse',
-    'open',
-    'read_region',
-    'read_region_as_imagecoord',
-    'get_mask',
-]
-
 _builtin_open = open
 
 
@@ -21,7 +12,7 @@ class ShapeList(list):
     Parameters
     ----------
     shape_list : list
-        List of 'pyregion.Shape' objects
+        List of `pyregion.Shape` objects
     comment_list : list, None
         List of comment strings for each argument
     """

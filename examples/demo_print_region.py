@@ -1,38 +1,35 @@
-from pyregion import read_region, read_region_as_imagecoord
-
-import math
-
+"""Example how to read and print regions.
+"""
 from astropy.io.fits import Header
+import pyregion
 
-def test_header():
-    return Header.fromtextfile("test.header")
 
-def print_region(r):
-    for i, l in enumerate(r):
-        print("[region %d]" % (i+1))
+def print_shape_list(shape_list):
+    for idx, shape in enumerate(shape_list, start=1):
+        print("[region %d]" % idx)
         print()
-        print("%s; %s(%s)" % (l.coord_format,
-                              l.name,
-                              ", ".join([str(s) for s in l.coord_list])))
+        print("%s; %s(%s)" % (shape.coord_format,
+                              shape.name,
+                              ", ".join([str(s) for s in shape.coord_list])))
 
-        print(l.attr[0])
-        print(", ".join(["%s=%s" % (k, v.strip()) for k, v in list(l.attr[1].items())]))
+        print(shape.attr[0])
+        print(", ".join(["%s=%s" % (k, v.strip()) for k, v in list(shape.attr[1].items())]))
         print()
+
 
 if __name__ == "__main__":
     print("** coordinate in FK5 **")
     print()
-    region_name = "test01_print.reg"
-    #region_name = "test_text.reg"
-    #region_name = "test01.reg"
-    r = read_region(open(region_name).read())
-    print_region(r)
+    filename = "test01_print.reg"
+    # filename = "test_text.reg"
+    # filename = "test01.reg"
+    shape_list = pyregion.open(filename)
+    print_shape_list(shape_list)
 
     print()
     print()
     print("** coordinate in image **")
     print()
-    header = test_header()
-    r = read_region_as_imagecoord(open(region_name).read(), header)
-    print_region(r)
-
+    header = Header.fromtextfile("test.header")
+    shape_list2 = shape_list.as_imagecoord(header=header)
+    print_shape_list(shape_list2)

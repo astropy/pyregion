@@ -2,10 +2,6 @@ from pyparsing import (Literal, CaselessKeyword, Optional, OneOrMore,
                        ZeroOrMore, restOfLine, MatchFirst, And, Or)
 
 
-__all__ = [
-    'Shape',
-]
-
 def as_comma_separated_list(al):
 
     l = [al[0]]
