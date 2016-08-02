@@ -3,25 +3,16 @@ from itertools import cycle
 from .ds9_region_parser import RegionParser
 from .wcs_converter import check_wcs as _check_wcs
 
-__all__ = [
-    'ShapeList',
-    'parse',
-    'open',
-    'read_region',
-    'read_region_as_imagecoord',
-    'get_mask',
-]
-
 _builtin_open = open
 
 
 class ShapeList(list):
-    """A list of shape objects.
+    """A list of `~pyregion.Shape` objects.
 
     Parameters
     ----------
     shape_list : list
-        List of 'pyregion.parse_helper.Shape' objects
+        List of `pyregion.Shape` objects
     comment_list : list, None
         List of comment strings for each argument
     """
@@ -232,7 +223,7 @@ def parse(region_string):
     Returns
     -------
     shapes : `ShapeList`
-        List of shapes
+        List of `~pyregion.Shape`
     """
     rp = RegionParser()
     ss = rp.parse(region_string)
@@ -254,7 +245,7 @@ def open(fname):
     Returns
     -------
     shapes : `ShapeList`
-        List of shapes
+        List of `~pyregion.Shape`
     """
     region_string = _builtin_open(fname).read()
     return parse(region_string)
@@ -270,15 +261,16 @@ def read_region(s):
 
     Returns
     -------
-    shapes : list
-        List of shapes
+    shapes : `ShapeList`
+        List of `~pyregion.Shape`
     """
     rp = RegionParser()
     ss = rp.parse(s)
     sss1 = rp.convert_attr(ss)
     sss2 = _check_wcs(sss1)
 
-    return rp.filter_shape(sss2)
+    shape_list = rp.filter_shape(sss2)
+    return ShapeList(shape_list)
 
 
 def read_region_as_imagecoord(s, header, rot_wrt_axis=1):
@@ -295,7 +287,7 @@ def read_region_as_imagecoord(s, header, rot_wrt_axis=1):
 
     Returns
     -------
-    shapes : list
+    shapes : `~pyregion.ShapeList`
         List of `~pyregion.Shape`
     """
     rp = RegionParser()
@@ -304,7 +296,8 @@ def read_region_as_imagecoord(s, header, rot_wrt_axis=1):
     sss2 = _check_wcs(sss1)
     sss3 = rp.sky_to_image(sss2, header, rot_wrt_axis=rot_wrt_axis)
 
-    return rp.filter_shape(sss3)
+    shape_list = rp.filter_shape(sss3)
+    return ShapeList(shape_list)
 
 
 def get_mask(region, hdu, origin=1):
@@ -312,7 +305,7 @@ def get_mask(region, hdu, origin=1):
 
     Parameters
     ----------
-    region : list
+    region : `~pyregion.ShapeList`
         List of `~pyregion.Shape`
     hdu : `~astropy.io.fits.ImageHDU`
         FITS image HDU
