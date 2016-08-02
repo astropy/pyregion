@@ -1,6 +1,8 @@
-========
-Overview
-========
+.. _gs:
+
+***************
+Getting started
+***************
 
 pyregion is a python module to parse ds9 region files. It also supports
 ciao region files.
@@ -15,9 +17,9 @@ by ds9. Ruler, Compass and Projection types are ignored.
 +----------------------------------------+----------------------------------------+
 | ds9                                    | pyregion + matplotlib                  |
 +========================================+========================================+
-| .. image:: ../_static/region_ds9.jpg   | .. image:: ../_static/region_mpl.png   |
+| .. image:: _static/region_ds9.jpg      | .. image:: _static/region_mpl.png      |
 |   :width: 300px                        |   :width: 300px                        |
-|   :target: ../static/region_ds9.jpg    |   :target: ../static/region_mpl.png    |
+|   :target: static/region_ds9.jpg       |   :target: static/region_mpl.png       |
 +----------------------------------------+----------------------------------------+
 
 

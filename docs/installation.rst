@@ -1,8 +1,11 @@
-.. _installing:
+.. _install:
 
-**********
-Installing
-**********
+************
+Installation
+************
+
+Instructions
+============
 
 *pyregion* is registered in pypi, thus you can install it by ::
 
@@ -26,16 +29,16 @@ To install with necessary dependency (pyparsing, see below), you may do
     pip install "pyparsing>=2"
     pip install pyregion
 
-The developement version of pyregion can be fount on the github page.
+The development version of pyregion can be found on the github page.
 
 * `Download <http://github.com/astropy/pyregion>`__
 
 To fetch the source
 code by cloning my git repository for any recent bug fix. ::
 
- # git clone git://github.com/astropy/pyregion.git
- # cd pyregion
- # python setup.py install
+    git clone git://github.com/astropy/pyregion.git
+    cd pyregion
+    python setup.py install
 
 For any bug reporting or any suggestion, please use the github issue
 tracker.
