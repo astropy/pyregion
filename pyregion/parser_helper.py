@@ -2,6 +2,10 @@ from pyparsing import (Literal, CaselessKeyword, Optional, OneOrMore,
                        ZeroOrMore, restOfLine, MatchFirst, And, Or)
 
 
+__all__ = [
+    'Shape',
+]
+
 def as_comma_separated_list(al):
 
     l = [al[0]]
@@ -123,6 +127,30 @@ def define_simple_literals(literal_list, parseAction=None):
 
 
 class Shape(object):
+    """Shape.
+
+    Parameters
+    ----------
+    shape_name : str
+        Shape name
+    params : list
+        List of parameters
+
+    Examples
+    --------
+    >>> region_string = 'fk5;circle(290.96388,14.019167,843.31194")'
+    >>> shape_list = pyregion.parse(region_string)
+    >>> shape = shape_list[0]
+    >>> print(shape.__dict__)
+    {'attr': ([], {}),
+     'comment': None,
+     'continued': None,
+     'coord_format': 'fk5',
+     'coord_list': [290.96388, 14.019167, 0.23425331666666666],
+     'exclude': False,
+     'name': 'circle',
+     'params': [Number(290.96388), Number(14.019167), Ang(843.31194")]}
+    """
 
     def __init__(self, shape_name, shape_params):
         self.name = shape_name
