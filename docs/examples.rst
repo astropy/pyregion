@@ -1,5 +1,8 @@
-pyregion examples
-=================
+.. _examples:
+
+********
+Examples
+********
 
 demo_region01.py
 ----------------
