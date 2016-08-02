@@ -3,11 +3,21 @@ from itertools import cycle
 from .ds9_region_parser import RegionParser
 from .wcs_converter import check_wcs as _check_wcs
 
+__all__ = [
+    'ShapeList',
+    'parse',
+    'open',
+    'read_region',
+    'read_region_as_imagecoord',
+    'get_mask',
+]
+
 _builtin_open = open
 
 
 class ShapeList(list):
-    """ A list of shape objects """
+    """A list of shape objects.
+    """
     def __init__(self, shape_list, comment_list=None):
         """
 
@@ -175,9 +185,17 @@ class ShapeList(list):
 
 
 def parse(region_string):
-    """
-    Parse the input string of a ds9 region definition.
-    Returns a list of Shape instances.
+    """Parse DS9 region string into a ShapeList.
+
+    Parameters
+    ----------
+    region_string : str
+        Region string
+
+    Returns
+    -------
+    shapes : `ShapeList`
+        List of shapes
     """
     rp = RegionParser()
     ss = rp.parse(region_string)
@@ -189,11 +207,34 @@ def parse(region_string):
 
 
 def open(fname):
+    """Open, read and parse DS9 region file.
+
+    Parameters
+    ----------
+    fname : str
+        Filename
+
+    Returns
+    -------
+    shapes : `ShapeList`
+        List of shapes
+    """
     region_string = _builtin_open(fname).read()
     return parse(region_string)
 
 
 def read_region(s):
+    """Read region
+
+    Parameters
+    ----------
+    s : str
+        Region string
+
+    Returns
+    -------
+
+    """
     rp = RegionParser()
     ss = rp.parse(s)
     sss1 = rp.convert_attr(ss)
@@ -203,6 +244,18 @@ def read_region(s):
 
 
 def read_region_as_imagecoord(s, header, rot_wrt_axis=1):
+    """Read region as image coordinates.
+
+    Parameters
+    ----------
+    s
+    header
+    rot_wrt_axis
+
+    Returns
+    -------
+
+    """
     rp = RegionParser()
     ss = rp.parse(s)
     sss1 = rp.convert_attr(ss)
@@ -213,7 +266,8 @@ def read_region_as_imagecoord(s, header, rot_wrt_axis=1):
 
 
 def get_mask(region, hdu, origin=1):
-    """
+    """Get mask.
+
     Examples
     --------
     >>> from astropy.io import fits
