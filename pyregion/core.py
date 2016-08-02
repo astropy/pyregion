@@ -3,22 +3,30 @@ from itertools import cycle
 from .ds9_region_parser import RegionParser
 from .wcs_converter import check_wcs as _check_wcs
 
+__all__ = [
+    'ShapeList',
+    'parse',
+    'open',
+    'read_region',
+    'read_region_as_imagecoord',
+    'get_mask',
+]
+
 _builtin_open = open
 
 
 class ShapeList(list):
-    """ A list of shape objects """
+    """A list of shape objects.
+
+    Parameters
+    ----------
+    shape_list : list
+        List of 'pyregion.parse_helper.Shape' objects
+    comment_list : list, None
+        List of comment strings for each argument
+    """
+
     def __init__(self, shape_list, comment_list=None):
-        """
-
-        Parameters
-        ----------
-        shape_list : a list of 'pyregion.parse_helper.Shape' objects
-        comment_list : list, None
-         list of comment strings for each argument
-
-
-        """
         if comment_list is not None:
             if len(comment_list) != len(shape_list):
                 err = "Ambiguous number of comments {} for number of shapes {}"
@@ -37,16 +45,31 @@ class ShapeList(list):
         return self[max(0, i):max(0, j):]
 
     def check_imagecoord(self):
+        """Are all shapes in image coordinates?
+
+        Returns ``True`` if yes, and ``False`` if not.
+        """
         if [s for s in self if s.coord_format != "image"]:
             return False
         else:
             return True
 
     def as_imagecoord(self, header, rot_wrt_axis=1):
-        """
-        Return a new `ShapeList` where the coordinate of the each shape
-        is converted to the image coordinate using the given header
-        information.
+        """New shape list in image coordinates.
+
+        Parameters
+        ----------
+        header : `~astropy.io.fits.Header`
+            FITS header
+        rot_wrt_axis : bool
+            Rotate with respect to the image axis?
+
+        Returns
+        -------
+        shape_list : `ShapeList`
+            New shape list, with coordinates of the each shape
+            converted to the image coordinate using the given header
+            information.
         """
 
         comment_list = self._comment_list
@@ -100,9 +123,26 @@ class ShapeList(list):
         return region_filter
 
     def get_mask(self, hdu=None, header=None, shape=None, rot_wrt_axis=1):
-        """
-        creates a 2-d mask.
+        """Create a 2-d mask.
 
+        Parameters
+        ----------
+        hdu : `astropy.io.fits.ImageHDU`
+            FITS image HDU
+        header : `~astropy.io.fits.Header`
+            FITS header
+        shape : tuple
+            Image shape
+        rot_wrt_axis : bool
+            Rotate with respect to the image axis?
+
+        Returns
+        -------
+        mask : `numpy.array`
+            Boolean mask
+
+        Examples
+        --------
         get_mask(hdu=f[0])
         get_mask(shape=(10,10))
         get_mask(header=f[0].header, shape=(10,10))
@@ -119,7 +159,13 @@ class ShapeList(list):
         return mask
 
     def write(self, outfile):
-        """ Writes the current shape list out as a region file """
+        """Write this shape list to a region file.
+
+        Parameters
+        ----------
+        outfile : str
+            File name
+        """
         if len(self) < 1:
             print("WARNING: The region list is empty. The region file "
                   "'{:s}' will be empty.".format(outfile))
@@ -143,25 +189,25 @@ class ShapeList(list):
 
             attr0 = self[0].attr[1]
             defaultline = " ".join(["{:s}={:s}".format(a, attr0[a])
-                                    for a in attr0 if a != 'text' ] )
+                                    for a in attr0 if a != 'text'])
 
             # first line is globals
-            print >>outf, "global", defaultline
+            print >> outf, "global", defaultline
             # second line must be a coordinate format
-            print >>outf, prev_cs
+            print >> outf, prev_cs
 
             for shape in self:
                 shape_attr = '' if prev_cs == shape.coord_format \
-                    else shape.coord_format+"; "
+                    else shape.coord_format + "; "
                 shape_excl = '-' if shape.exclude else ''
-                text_coordlist = ["{:f}".format(f) for f in shape.coord_list ]
+                text_coordlist = ["{:f}".format(f) for f in shape.coord_list]
                 shape_coords = "(" + ",".join(text_coordlist) + ")"
                 shape_comment = " # " + shape.comment if shape.comment else ''
 
                 shape_str = shape_attr + shape_excl + shape.name + \
                             shape_coords + shape_comment
 
-                print >>outf, shape_str
+                print >> outf, shape_str
 
         except IOError as e:
             cmsg = "Unable to create region file \'{:s}\'.".format(outfile)
@@ -171,13 +217,22 @@ class ShapeList(list):
                 e.args = (cmsg,)
             raise e
         finally:
-            if outf: outf.close()
+            if outf:
+                outf.close()
 
 
 def parse(region_string):
-    """
-    Parse the input string of a ds9 region definition.
-    Returns a list of Shape instances.
+    """Parse DS9 region string into a ShapeList.
+
+    Parameters
+    ----------
+    region_string : str
+        Region string
+
+    Returns
+    -------
+    shapes : `ShapeList`
+        List of shapes
     """
     rp = RegionParser()
     ss = rp.parse(region_string)
@@ -189,11 +244,35 @@ def parse(region_string):
 
 
 def open(fname):
+    """Open, read and parse DS9 region file.
+
+    Parameters
+    ----------
+    fname : str
+        Filename
+
+    Returns
+    -------
+    shapes : `ShapeList`
+        List of shapes
+    """
     region_string = _builtin_open(fname).read()
     return parse(region_string)
 
 
 def read_region(s):
+    """Read region.
+
+    Parameters
+    ----------
+    s : str
+        Region string
+
+    Returns
+    -------
+    shapes : list
+        List of shapes
+    """
     rp = RegionParser()
     ss = rp.parse(s)
     sss1 = rp.convert_attr(ss)
@@ -203,6 +282,22 @@ def read_region(s):
 
 
 def read_region_as_imagecoord(s, header, rot_wrt_axis=1):
+    """Read region as image coordinates.
+
+    Parameters
+    ----------
+    s : str
+        Region string
+    header : `~astropy.io.fits.Header`
+        FITS header
+    rot_wrt_axis : bool
+        Rotate with respect to the image axis?
+
+    Returns
+    -------
+    shapes : list
+        List of `~pyregion.Shape`
+    """
     rp = RegionParser()
     ss = rp.parse(s)
     sss1 = rp.convert_attr(ss)
@@ -213,7 +308,22 @@ def read_region_as_imagecoord(s, header, rot_wrt_axis=1):
 
 
 def get_mask(region, hdu, origin=1):
-    """
+    """Get mask.
+
+    Parameters
+    ----------
+    region : list
+        List of `~pyregion.Shape`
+    hdu : `~astropy.io.fits.ImageHDU`
+        FITS image HDU
+    origin : float
+        TODO: document me
+
+    Returns
+    -------
+    mask : `~numpy.array`
+        Boolean mask
+
     Examples
     --------
     >>> from astropy.io import fits
