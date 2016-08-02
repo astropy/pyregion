@@ -41,6 +41,6 @@ Status
 New regions package
 -------------------
 
-See also the in-development `regions` package
+See also the in-development ``regions`` package
 at https://github.com/astropy/regions
 a new astronomy package for regions based on Astropy.
