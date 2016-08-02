@@ -31,20 +31,19 @@ by ds9. Ruler, Compass and Projection types are ignored.
 Read Region Files
 =================
 
-*pyregion.open* takes the region name as an argument and returns a
-ShapeList object, which is basically a list of Shape objects. ::
+`pyregion.open` takes the region name as an argument and returns a
+`~pyregion.ShapeList` object, which is basically a list of Shape objects. ::
 
     import pyregion
     region_name = "ds9.reg"
     r = pyregion.open(region_name)
 
-You may use *pyregion.parse* if you have a string that defines a region ::
+You may use `pyregion.parse` if you have a string that defines a region ::
 
     region = 'fk5;circle(290.96388,14.019167,843.31194")'
     r = pyregion.parse(region)
 
-The shape object is a python representation of each region
-definition. For example,::
+The shape object is a python representation of each region definition. For example,::
 
     import pyregion
 
@@ -68,28 +67,28 @@ And you have::
 
 The shape object has the following attributes,
 
-* name : name of the shape. e.g., circle, box, etc.. ::
+* ``name`` : name of the shape. e.g., circle, box, etc.. ::
 
    >>> print r[0].name
    circle
 
-* coord_format : coordinate format. e.g., "fk5", "image", "physical", etc... ::
+* ``coord_format`` : coordinate format. e.g., "fk5", "image", "physical", etc... ::
 
    >>> print r[0].coord_format
    fk5
 
-* coord_list : list of coordinates in *coord_format*. The coordinate
+* ``coord_list`` : list of coordinates in *coord_format*. The coordinate
   value for sky coordinates is degree.  ::
 
    >>> print r[0].coord_list
    [171.10095833333332, -59.250611111111112, 0.0051418888888888886]
 
-* comment : comment string associated with the shape (can be None) ::
+* ``comment`` : comment string associated with the shape (can be None) ::
 
    >>> print r[0].comment
    color=cyan background
 
-* attr : attributes of the shape. This includes global attributes
+* ``attr`` : attributes of the shape. This includes global attributes
   defined by the global command and local attributes defined in the
   comment. The first item is a list of key-only attributes without
   associated values (e.g., background..) and the second item is a
@@ -117,16 +116,16 @@ The shape object has the following attributes,
   currently supported (the last definition overrides any previous ones).
 
 
-The ShapeList class have a few methods that could be
-useful. *ShapeList.as_imagecoord* returns a new ShapeList instance
+The `pyregion.ShapeList` class have a few methods that could be
+useful. `ShapeList.as_imagecoord <pyregion.ShapeList.as_imagecoord>` returns a new `~pyregion.ShapeList` instance
 with the coordinates converted to the image coordinate system. It
-requires an astropy.io.fits.Header instance.::
+requires an `astropy.io.fits.Header` instance. ::
 
     from astropy.io import fits
     f = fits.open("t1.fits")
     r2 = pyregion.parse(region_string).as_imagecoord(f[0].header)
 
-The return value is a new ShapeList instance, but the coordinate is
+The return value is a new `~pyregion.ShapeList` instance, but the coordinate is
 converted to image coordinates. ::
 
     >>> print r2[0].coord_format
@@ -135,8 +134,8 @@ converted to image coordinates. ::
     >>> print r2[0].coord_list
     [482.27721401429852, 472.76641383805912, 18.811792596807045]
 
-*ShapeList.as_imagecoord* can take a WCS object instead of a header. This is useful
-if your fits file is not a simple 2D image, as you can then use only the celestial
+`ShapeList.as_imagecoord <pyregion.ShapeList.as_imagecoord>` can take a `astropy.wcs.WCS` object instead of a header.
+This is useful if your FITS file is not a simple 2D image, as you can then use only the celestial
 subset of the co-ordinates to parse the region: ::
 
     from astropy.io import fits
@@ -149,14 +148,14 @@ subset of the co-ordinates to parse the region: ::
 Draw Regions with Matplotlib
 ============================
 
-pyregion can help you draw ds9 regions with
-matplotlib. *ShapeList.get_mpl_patches_texts* returns a list of
-matplotlib.Artist ::
+pyregion can help you draw ds9 regions with matplotlib.
+`ShapeList.get_mpl_patches_texts <pyregion.ShapeList.get_mpl_patches_texts>` returns a list of
+`matplotlib.artist.Artist` objects ::
 
     r2 = pyregion.parse(region_string).as_imagecoord(f[0].header)
     patch_list, artist_list = r2.get_mpl_patches_texts()
 
-The first item is a list of matplotlib.Patch, and the second one is
+The first item is a list of `matplotlib.patches.Patch`, and the second one is
 other kinds of artists (usually Text). It is your responsibility to add
 these to the axes. ::
 
@@ -168,11 +167,11 @@ these to the axes. ::
 
 .. plot:: figures/region_drawing.py
 
-The (optional) argument of the *get_mpl_patches_texts* method is a
+The (optional) argument of the ``get_mpl_patches_texts`` method is a
 callable object that takes the shape object as an argument and returns
 a dictionary object that will be used as a keyword arguments (e.g.,
 colors and line width) for creating the mpl artists. By default, it
-uses pyregion.mpl_helper.properties_func_default, which tries to respect
+uses ``pyregion.mpl_helper.properties_func_default``, which tries to respect
 the ds9 attributes. However, the colors (and other attributes) of some
 complex shapes are not correctly handled as shown in above example,
 and you need to manually adjust the associated attributes of patches.
@@ -186,7 +185,7 @@ and you need to manually adjust the associated attributes of patches.
 Use Regions for Spatial Filtering
 =================================
 
-*pyregion* includes some basic spatial filter support. ::
+``pyregion`` includes some basic spatial filter support. ::
 
  >>> import pyregion._region_filter as filter
  >>> myfilter = filter.Circle(0, 0, 10) & filter.Box(15, 0, 10, 10)
@@ -198,17 +197,16 @@ Use Regions for Spatial Filtering
  array([False,  True], dtype=bool)
 
 
-ShapeList.get_filter method returns the filter from the parsed
-region. The filter is meant to be used in the image coordinate, thus
-you need to convert the region to the image coordinate before calling
-get_filter. ::
+The `ShapeList.get_filter <pyregion.ShapeList.get_filter>` method returns the filter from the parsed region.
+The filter is meant to be used in the image coordinate, thus you need to convert the region
+to the image coordinate before calling ``get_filter``. ::
 
     r2 = pyregion.parse(region_string).as_imagecoord(f[0].header)
     myfilter = r2.get_filter()
     myfilter.inside1(50, 30)
 
-The returned filter has a *mask* method that creates an 2d mask. You
-can create the mask directly from the ShapeList object. ::
+The returned filter has a ``mask`` method that creates a 2d mask.
+You can create the mask directly from the ShapeList object. ::
 
     r2 = pyregion.parse(region_string)
     mymask = r2.get_mask(hdu=f[0])
@@ -221,6 +219,6 @@ necessary).
    :include-source:
 
 Note that this will fail if your template image is not a simple 2D image.
-To work around this you may use the *shape* optional argument of *get_mask*: ::
+To work around this you may use the ``shape`` optional argument of ``get_mask``: ::
 
     mymask = r2.get_mask(hdu=f[0],shape=(1024,1024))
