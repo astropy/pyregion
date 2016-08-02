@@ -44,3 +44,19 @@ def test_global():
     ss = rp.parseLine(s)[0]
 
     assert isinstance(ss[0], Global)
+
+
+def test_space_delimited_region():
+    s = 'J2000; circle 188.5557102 12.0314056 1" # color=red'
+
+    rp = RegionParser()
+    ss = rp.parseLine(s)[0]
+
+    from ..parser_helper import CoordCommand, Shape
+    assert isinstance(ss[0], CoordCommand)
+    assert ss[0].text == "J2000"
+
+    from ..region_numbers import SimpleNumber, AngularDistance
+    assert isinstance(ss[1], Shape)
+    assert map(type, ss[1].params) == [SimpleNumber, SimpleNumber,
+                                       AngularDistance]
