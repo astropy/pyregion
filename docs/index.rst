@@ -27,16 +27,8 @@ Documentation
    installation
    getting_started
    examples
-
+   api
 
 .. note::
-  *pyregion* is rather slow, likely due to a inefficient
-  parser. Any contribution will be welcomed.
-
-
-Indices and tables
-==================
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
+  *pyregion* is rather slow, likely due to a inefficient parser.
+  Any contribution will be welcome.
