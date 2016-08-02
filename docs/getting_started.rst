@@ -32,7 +32,8 @@ Read Region Files
 =================
 
 `pyregion.open` takes the region name as an argument and returns a
-`~pyregion.ShapeList` object, which is basically a list of `~pyregion.Shape` objects. ::
+`~pyregion.ShapeList` object, which is basically a list of `~pyregion.Shape` objects
+(`~pyregion.ShapeList` is a sub-class of the Python built-in `list` class). ::
 
     import pyregion
     region_name = "ds9.reg"

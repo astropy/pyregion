@@ -61,8 +61,8 @@ class ShapeList(list):
         ----------
         header : `~astropy.io.fits.Header`
             FITS header
-        rot_srt_axis : bool
-            TODO: document me
+        rot_wrt_axis : bool
+            Rotate with respect to the image axis?
 
         Returns
         -------
@@ -127,11 +127,19 @@ class ShapeList(list):
 
         Parameters
         ----------
-        TODO
+        hdu : `astropy.io.fits.ImageHDU`
+            FITS image HDU
+        header : `~astropy.io.fits.Header`
+            FITS header
+        shape : tuple
+            Image shape
+        rot_wrt_axis : bool
+            Rotate with respect to the image axis?
 
         Returns
         -------
-        TODO
+        mask : `numpy.array`
+            Boolean mask
 
         Examples
         --------
@@ -253,7 +261,7 @@ def open(fname):
 
 
 def read_region(s):
-    """Read region
+    """Read region.
 
     Parameters
     ----------
@@ -262,7 +270,8 @@ def read_region(s):
 
     Returns
     -------
-    TODO: ShapeList?
+    shapes : list
+        List of shapes
     """
     rp = RegionParser()
     ss = rp.parse(s)
@@ -277,13 +286,17 @@ def read_region_as_imagecoord(s, header, rot_wrt_axis=1):
 
     Parameters
     ----------
-    s
-    header
-    rot_wrt_axis
+    s : str
+        Region string
+    header : `~astropy.io.fits.Header`
+        FITS header
+    rot_wrt_axis : bool
+        Rotate with respect to the image axis?
 
     Returns
     -------
-    TODO: ShapeList?
+    shapes : list
+        List of `~pyregion.Shape`
     """
     rp = RegionParser()
     ss = rp.parse(s)
@@ -299,11 +312,17 @@ def get_mask(region, hdu, origin=1):
 
     Parameters
     ----------
-    TODO
+    region : list
+        List of `~pyregion.Shape`
+    hdu : `~astropy.io.fits.ImageHDU`
+        FITS image HDU
+    origin : float
+        TODO: document me
 
     Returns
     -------
-    TODO
+    mask : `~numpy.array`
+        Boolean mask
 
     Examples
     --------
