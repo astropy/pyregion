@@ -1,6 +1,6 @@
 import re
 import numpy as np
-from astropy.wcs import WCS
+from astropy.wcs import WCS, WCSSUB_CELESTIAL
 from astropy.io.fits import Header
 
 from .kapteyn_celestial import skymatrix, longlat2xyz, dotrans, xyz2longlat
@@ -177,6 +177,9 @@ class ProjectionPywcsNd(_ProjectionSubInterface, ProjectionBase):
         else:
             raise ValueError("header must be an instance of "
                              "astropy.io.fits.Header or a WCS object")
+
+        if self._pywcs.wcs.naxis > 2:
+            self._pywcs = self._pywcs.sub([WCSSUB_CELESTIAL])
 
         ProjectionBase.__init__(self)
 
