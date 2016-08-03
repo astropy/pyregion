@@ -52,8 +52,8 @@ class ShapeList(list):
         ----------
         header : `~astropy.io.fits.Header`
             FITS header
-        rot_wrt_axis : bool
-            Rotate with respect to the image axis?
+        rot_wrt_axis : {1, 2}
+            Use rotation with respect to axis 1 (X-axis) or axis 2 (Y-axis) and north.
 
         Returns
         -------
@@ -91,13 +91,28 @@ class ShapeList(list):
         return patches, txts
 
     def get_filter(self, header=None, origin=1, rot_wrt_axis=1):
-        """
+        """Get filter.
+
         Often, the regions files implicitly assume the lower-left
         corner of the image as a coordinate (1,1). However, the python
         convetion is that the array index starts from 0. By default
         (``origin=1``), coordinates of the returned mpl artists have
         coordinate shifted by (1, 1). If you do not want this shift,
         use ``origin=0``.
+
+        Parameters
+        ----------
+        header : `astropy.io.fits.Header`
+            FITS header
+        origin : {0, 1}
+            Pixel coordinate origin
+        rot_wrt_axis : {1, 2}
+            Use rotation with respect to axis 1 (X-axis) or axis 2 (Y-axis) and north.
+
+        Returns
+        -------
+        filter : TODO
+            Filter object
         """
 
         from .region_to_filter import as_region_filter
@@ -124,8 +139,8 @@ class ShapeList(list):
             FITS header
         shape : tuple
             Image shape
-        rot_wrt_axis : bool
-            Rotate with respect to the image axis?
+        rot_wrt_axis : {1, 2}
+            Use rotation with respect to axis 1 (X-axis) or axis 2 (Y-axis) and north.
 
         Returns
         -------
@@ -282,8 +297,8 @@ def read_region_as_imagecoord(s, header, rot_wrt_axis=1):
         Region string
     header : `~astropy.io.fits.Header`
         FITS header
-    rot_wrt_axis : bool
-        Rotate with respect to the image axis?
+    rot_wrt_axis : {1, 2}
+        Use rotation with respect to axis 1 (X-axis) or axis 2 (Y-axis) and north.
 
     Returns
     -------
