@@ -32,9 +32,11 @@ def convert_to_imagecoord(cl, fl, wcs_proj, sky_to_sky, xy0, rot_wrt_axis=1):
             if rot_wrt_axis == 1:
                 # use the angle between the X axis and North
                 new_cl.append(cl[0]+rot1-180.)
-            else:
+            elif rot_wrt_axis == 2:
                 # use the angle between the Y axis and North
                 new_cl.append(cl[0]+rot2-90.)
+            else:
+                raise ValueError('Invalid rot_wrt_axis: {}. Allowed values: 1 or 2.'.format(rot_wrt_axis))
             cl = cl[1:]
             fl = fl[1:]
         else:

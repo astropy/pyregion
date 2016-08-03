@@ -162,6 +162,21 @@ class RegionParser(RegionPusher):
 
     @staticmethod
     def sky_to_image(l, header, rot_wrt_axis=1):
+        """
+
+        Parameters
+        ----------
+        l : TODO
+            TODO
+        header : `~astropy.io.fits.Header`
+            FITS header
+        rot_wrt_axis : {1, 2}
+            Use rotation with respect to axis 1 (X-axis) or axis 2 (Y-axis) and north.
+
+        Returns
+        -------
+        TODO
+        """
 
         try:  # this is a hack to test if header is fits header of wcs object.
             header["NAXIS"]
