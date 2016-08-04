@@ -21,8 +21,7 @@
 
 - https://pypi.org/project/pyregion/1.1.4/
 - The changelog for this release is incomplete.
-
-- Change tag attribute from string to list of strings [26]
+- Change tag attribute from string to list of strings. [#26]
 
 1.1 (March 15, 2013)
 --------------------
