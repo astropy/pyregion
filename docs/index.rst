@@ -34,6 +34,7 @@ Documentation
    getting_started
    examples
    api
+   changelog
 
 .. note::
   *pyregion* is rather slow, likely due to a inefficient parser.
