@@ -5,29 +5,29 @@ class PhysicalCoordinate(object):
         # check if physical coordinate is defined. FIXME!
         for C in ["P", "L"]:
             try:
-                if (header["WCSTY1"+C].strip() == "PHYSICAL") \
-                   and (header["WCSTY2"+C].strip() == "PHYSICAL"):
+                if (header["WCSTY1" + C].strip() == "PHYSICAL") \
+                        and (header["WCSTY2" + C].strip() == "PHYSICAL"):
                     phys_coord = C
             except KeyError:
                 pass
 
             try:
-                if (header["CTYPE1"+C].strip() == "X") \
-                   and (header["CTYPE2"+C].strip() == "Y"):
+                if (header["CTYPE1" + C].strip() == "X") \
+                        and (header["CTYPE2" + C].strip() == "Y"):
                     phys_coord = C
             except KeyError:
                 pass
 
         if phys_coord:
             C = phys_coord
-            cv1, cr1, cd1 = header["CRVAL1"+C], header["CRPIX1"+C], header[" CDELT1"+C]
-            cv2, cr2, cd2 = header["CRVAL2"+C], header["CRPIX2"+C], header[" CDELT2"+C]
+            cv1, cr1, cd1 = header["CRVAL1" + C], header["CRPIX1" + C], header[" CDELT1" + C]
+            cv2, cr2, cd2 = header["CRVAL2" + C], header["CRPIX2" + C], header[" CDELT2" + C]
 
             self._physical_coord_not_defined = False
 
             self.cv1_cr1_cd1 = cv1, cr1, cd1
             self.cv2_cr2_cd2 = cv2, cr2, cd2
-            self.cdelt = (cd1*cd2)**.5
+            self.cdelt = (cd1 * cd2) ** .5
 
         else:
             self._physical_coord_not_defined = True
@@ -66,11 +66,11 @@ class PhysicalCoordinate(object):
         if self._physical_coord_not_defined:
             return im_distance
 
-        return im_distance*self.cdelt
+        return im_distance * self.cdelt
 
     def to_image_distance(self, im_physical):
 
         if self._physical_coord_not_defined:
             return im_physical
 
-        return im_physical/self.cdelt
+        return im_physical / self.cdelt

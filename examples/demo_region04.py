@@ -1,7 +1,4 @@
-import math
-
 import matplotlib.pyplot as plt
-
 import pyregion
 
 reg_name = "test04_img.reg"

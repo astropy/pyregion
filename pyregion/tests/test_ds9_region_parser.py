@@ -4,17 +4,21 @@ from ..region_numbers import SimpleNumber, AngularDistance
 
 
 def test_regionLine():
-    test_string_1 = ["circle(109,253,28.950304) # comment 1",
-                     "polygon(257,290,300.78944,271.78944,300.78944,178.21056,258,216,207.21056,178.21056)",
-                     "polygon(273.98971,175.01029,274.01029,175.01029,274.01029,174.98971,273.98971,174.98971)",
-                     "-rotbox(162,96.5,134,41,43.801537)",
-                     "ellipse(172,328,23,41,27.300813)"]
+    test_string_1 = [
+        "circle(109,253,28.950304) # comment 1",
+        "polygon(257,290,300.78944,271.78944,300.78944,178.21056,258,216,207.21056,178.21056)",
+        "polygon(273.98971,175.01029,274.01029,175.01029,274.01029,174.98971,273.98971,174.98971)",
+        "-rotbox(162,96.5,134,41,43.801537)",
+        "ellipse(172,328,23,41,27.300813)",
+    ]
 
-    test_names = ["circle",
-                  "polygon",
-                  "polygon",
-                  "rotbox",
-                  "ellipse"]
+    test_names = [
+        "circle",
+        "polygon",
+        "polygon",
+        "rotbox",
+        "ellipse",
+    ]
 
     rp = RegionParser()
 

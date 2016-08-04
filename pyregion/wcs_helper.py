@@ -64,7 +64,7 @@ class sky2sky(object):
 
 def coord_system_guess(ctype1_name, ctype2_name, equinox):
     if ctype1_name.upper().startswith("RA") and \
-       ctype2_name.upper().startswith("DEC"):
+            ctype2_name.upper().startswith("DEC"):
         if equinox == 2000.0:
             return "fk5"
         elif equinox == 1950.0:
@@ -85,7 +85,7 @@ def coord_system_guess(ctype1_name, ctype2_name, equinox):
 
 def fix_lon(lon, lon_ref):
     lon_ = lon - lon_ref
-    lon2 = lon_ - 360*np.floor_divide(lon_, 360.)
+    lon2 = lon_ - 360 * np.floor_divide(lon_, 360.)
     if lon_ == 360:
         lon2 = 360
     return lon2 + lon_ref
@@ -122,7 +122,7 @@ class ProjectionBase(object):
 
         if lon_ref is not None:
             lon_ = lon - lon_ref
-            lon2 = lon_ - 360*np.floor_divide(lon_, 360.)
+            lon2 = lon_ - 360 * np.floor_divide(lon_, 360.)
             lon2[lon_ == 360] = 360
             return lon2 + lon_ref
         else:
@@ -164,6 +164,7 @@ class ProjectionPywcsNd(_ProjectionSubInterface, ProjectionBase):
     """
     A wrapper for WCS
     """
+
     def __init__(self, header):
         """
         header could be astropy.io.fits.Header or astropy.wcs.WCS instance
@@ -225,6 +226,7 @@ class ProjectionPywcsSub(_ProjectionSubInterface, ProjectionBase):
     """
     A wrapper for WCS
     """
+
     def __init__(self, proj, axis_nums_to_keep, ref_pixel):
         """
         ProjectionPywcsSub(proj, [0, 1], (0, 0, 0))
@@ -316,19 +318,19 @@ def estimate_cdelt(wcs_proj, x0, y0):
 
     lon_ref = lon0 - 180.
 
-    lon1, lat1 = wcs_proj.toworld(([x0+1], [y0]))
+    lon1, lat1 = wcs_proj.toworld(([x0 + 1], [y0]))
     lon1 = fix_lon(lon1, lon_ref)
-    dlon = (lon1[0]-lon0[0])*np.cos(lat0[0]/180.*np.pi)
-    dlat = (lat1[0]-lat0[0])
-    cd1 = (dlon**2 + dlat**2)**.5
+    dlon = (lon1[0] - lon0[0]) * np.cos(lat0[0] / 180. * np.pi)
+    dlat = (lat1[0] - lat0[0])
+    cd1 = (dlon ** 2 + dlat ** 2) ** .5
 
-    lon2, lat2 = wcs_proj.toworld(([x0], [y0+1]))
+    lon2, lat2 = wcs_proj.toworld(([x0], [y0 + 1]))
     lon2 = fix_lon(lon2, lon_ref)
-    dlon = (lon2[0]-lon0[0])*np.cos(lat0[0]/180.*np.pi)
-    dlat = (lat2[0]-lat0[0])
-    cd2 = (dlon**2 + dlat**2)**.5
+    dlon = (lon2[0] - lon0[0]) * np.cos(lat0[0] / 180. * np.pi)
+    dlat = (lat2[0] - lat0[0])
+    cd2 = (dlon ** 2 + dlat ** 2) ** .5
 
-    return ((cd1*cd2)**.5)
+    return ((cd1 * cd2) ** .5)
 
 
 def estimate_angle(wcs_proj, x0, y0, sky_to_sky=None):
@@ -346,12 +348,12 @@ def estimate_angle(wcs_proj, x0, y0, sky_to_sky=None):
     ll = wcs_proj.toworld(([x0], [y0]))
     lon0, lat0 = sky_to_sky.inverted()(ll[0], ll[1])
 
-    ll = sky_to_sky(lon0 + cdelt*np.cos(lat0/180.*np.pi), lat0)
+    ll = sky_to_sky(lon0 + cdelt * np.cos(lat0 / 180. * np.pi), lat0)
     x1, y1 = wcs_proj.topixel(ll)
-    a1 = np.arctan2(y1-y0, x1-x0)/np.pi*180.
+    a1 = np.arctan2(y1 - y0, x1 - x0) / np.pi * 180.
 
-    ll = sky_to_sky(lon0, lat0+cdelt)
+    ll = sky_to_sky(lon0, lat0 + cdelt)
     x2, y2 = wcs_proj.topixel(ll)
-    a2 = np.arctan2(y2-y0, x2-x0)/np.pi*180.
+    a2 = np.arctan2(y2 - y0, x2 - x0) / np.pi * 180.
 
     return a1[0], a2[0]

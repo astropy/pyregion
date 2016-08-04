@@ -1,11 +1,13 @@
 import matplotlib.pyplot as plt
-
 from demo_helper import show_region
 
-region_list = ["test_annuli.reg", "test_annuli_wcs.reg",
-               "test_annuli_ciao.reg"]
+region_list = [
+    "test_annuli.reg",
+    "test_annuli_wcs.reg",
+    "test_annuli_ciao.reg",
+]
 
-fig = plt.figure(figsize=(6,6))
+fig = plt.figure(figsize=(6, 6))
 
 ax_list = show_region(fig, region_list)
 for ax in ax_list:

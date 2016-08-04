@@ -9,6 +9,7 @@ cdef extern from "stdlib.h":
 cimport  c_numpy
 from c_numpy cimport npy_bool
 cimport c_python
+
 c_numpy.import_array()
 
 ctypedef int Py_ssize_t
@@ -28,15 +29,12 @@ cdef struct Metric:
     double g_x
     double g_y
 
-
 cdef int MetricSetOrigin(Metric *m, double x0, double y0):
     m.x0 = x0
     m.y0 = y0
 
-
 cdef struct _RegionContext:
     int (*update_metric)(Metric *m)
-
 
 cdef class RegionContext:
     cdef _RegionContext c
@@ -47,19 +45,16 @@ cdef class RegionContext:
     cdef set_update_func(self, int (*update_metric)(Metric *m)):
         self.c.update_metric = update_metric
 
-
 cdef int _update_metric_default(Metric *m):
     m.g_x = 1.
     m.g_y = 1.
 
-
 cdef int _update_metric_wcs(Metric *m):
     cdef double theta
-    theta = m.y0/180.*3.1415926;
+    theta = m.y0 / 180. * 3.1415926;
 
     m.g_x = cos(theta)
     m.g_y = 1.
-
 
 cdef RegionContext metric_wcs
 metric_wcs = RegionContext()
@@ -196,10 +191,10 @@ cdef class RegionBase:
         xyd = <double *> c_numpy.PyArray_DATA(xya)
         rd = <npy_bool *> c_numpy.PyArray_DATA(ra)
 
-        n = xya.dimensions[0] # c_numpy.PyArray_SIZE(xya) / 2
+        n = xya.dimensions[0]  # c_numpy.PyArray_SIZE(xya) / 2
         #_inside_ptr = self._inside
         for i from 0 <= i < n:
-            rd[i] = self._inside(xyd[2*i], xyd[2*i+1])
+            rd[i] = self._inside(xyd[2 * i], xyd[2 * i + 1])
         return ra
 
     def inside_x_y(self, x, y):
@@ -239,7 +234,6 @@ cdef class RegionBase:
             #print xd[i], yd[i], rd[i]
         return ra
 
-
 cdef class RegionNot(RegionBase):
     """
     >>> r = RegionNot(r2)
@@ -250,8 +244,7 @@ cdef class RegionNot(RegionBase):
         self.child_region = child_region
 
     cdef npy_bool _inside(self, double x, double y):
-        return not(self.child_region._inside(x, y))
-
+        return not (self.child_region._inside(x, y))
 
 cdef class RegionList(RegionBase):
     cdef object child_regions
@@ -286,7 +279,6 @@ cdef class RegionList(RegionBase):
     def asList(self):
         return self.child_regions
 
-
 cdef class RegionOrList(RegionList):
     """
     >>> r = RegionOrList(r1, r2, r3, r4, ...)
@@ -303,11 +295,9 @@ cdef class RegionOrList(RegionList):
         return 0
 
     def __repr__(self):
-        return "Or"+repr(self.child_regions)
-
+        return "Or" + repr(self.child_regions)
 
 cdef class RegionAndList(RegionList):
-
     """
     >>> r = RegionAndList(r1, r2, r3, r4, ...)
     """
@@ -324,8 +314,7 @@ cdef class RegionAndList(RegionList):
         return 1
 
     def __repr__(self):
-        return "And"+repr(self.child_regions)
-
+        return "And" + repr(self.child_regions)
 
 def RegionAnd(RegionBase region1, RegionBase region2):
     """
@@ -343,7 +332,6 @@ def RegionAnd(RegionBase region1, RegionBase region2):
 
     return RegionAndList(*(region1_list + region2_list))
 
-
 def RegionOr(RegionBase region1, RegionBase region2):
     """
     >>> r = RegionOr(reg1, reg2)
@@ -359,7 +347,6 @@ def RegionOr(RegionBase region1, RegionBase region2):
         region2_list = [region2]
 
     return RegionOrList(*(region1_list + region2_list))
-
 
 cdef class Transform(RegionBase):
     cdef RegionBase child_region
@@ -411,7 +398,7 @@ cdef class Rotated(Transform):
 
         Transform.__init__(self, child_region)
 
-        theta = degree / 180. * M_PI #3.1415926
+        theta = degree / 180. * M_PI  #3.1415926
         self.sin_theta = sin(theta)
         self.cos_theta = cos(theta)
 
@@ -430,12 +417,11 @@ cdef class Rotated(Transform):
         x1 = x - ox
         y1 = y - oy
 
-        x2 =  ct*x1 + st*y1
-        y2 = -st*x1 + ct*y1
+        x2 = ct * x1 + st * y1
+        y2 = -st * x1 + ct * y1
 
         xp[0] = x2 + ox
         yp[0] = y2 + oy
-
 
 cdef class Translated(Transform):
     """
@@ -449,7 +435,6 @@ cdef class Translated(Transform):
 
     def __init__(self, RegionBase child_region,
                  double dx, double dy):
-
         Transform.__init__(self, child_region)
 
         self.dx = dx
@@ -458,7 +443,6 @@ cdef class Translated(Transform):
     cdef int _transform(self, double x, double y, double *xp, double *yp):
         xp[0] = x - self.dx
         yp[0] = y - self.dy
-
 
 # Basic Shapes
 
@@ -478,26 +462,24 @@ cdef class Circle(RegionBase):
         self.xc = xc
         self.yc = yc
         self.radius = radius
-        self.radius2 = radius*radius
+        self.radius2 = radius * radius
 
     cdef _get_v(self):
         return (self.xc, self.yc, self.radius)
 
     def __init__(self, double xc, double yc, double radius,
                  RegionContext c=None):
-
         self.metric_set_origin(xc, yc, c)
         self._set_v(xc, yc, radius)
 
     cdef npy_bool _inside(self, double x, double y):
         cdef double dist2
 
-        dist2 = ((x-self.xc)*self.m.g_x)**2 + ((y-self.yc)*self.m.g_y)**2
+        dist2 = ((x - self.xc) * self.m.g_x) ** 2 + ((y - self.yc) * self.m.g_y) ** 2
         return (dist2 <= self.radius2)
 
     def __repr__(self):
         return "Circle(%f, %f, %f)" % (self.xc, self.yc, self.radius)
-
 
 cdef class Ellipse(RegionBase):
     """
@@ -517,7 +499,6 @@ cdef class Ellipse(RegionBase):
     def __init__(self, double xc, double yc,
                  double radius_major, double radius_minor,
                  RegionContext c=None):
-
         # check inside
         # (x-xc)**2/radius_major**2 + (y-yc)**2/radius_minor**2 < 1
         # radius_minor**2*(x-xc)**2 + radius_major**2*(y-yc)**2 < (radius_major*radius_minor)**2
@@ -526,8 +507,8 @@ cdef class Ellipse(RegionBase):
         self.yc = yc
         self.radius_major = radius_major
         self.radius_minor = radius_minor
-        self.radius_major_2 = radius_major**2
-        self.radius_minor_2 = radius_minor**2
+        self.radius_major_2 = radius_major ** 2
+        self.radius_minor_2 = radius_minor ** 2
         self.radius_major_2_radius_minor_2 = self.radius_major_2 * self.radius_minor_2
 
         self.metric_set_origin(xc, yc, c)
@@ -535,12 +516,11 @@ cdef class Ellipse(RegionBase):
     cdef npy_bool _inside(self, double x, double y):
         cdef double dist2
 
-        dist2 = self.radius_minor_2*(x-self.xc)**2 + self.radius_major_2*(y-self.yc)**2
+        dist2 = self.radius_minor_2 * (x - self.xc) ** 2 + self.radius_major_2 * (y - self.yc) ** 2
         return (dist2 <= self.radius_major_2_radius_minor_2)
 
     def __repr__(self):
         return "Ellipse(%f, %f, %f, %f)" % (self.xc, self.yc, self.radius_major, self.radius_minor)
-
 
 cdef class Box(RegionBase):
     """
@@ -559,8 +539,8 @@ cdef class Box(RegionBase):
         cdef double halfwidth
         cdef double halfheight
 
-        halfwidth = width*.5
-        halfheight = height*.5
+        halfwidth = width * .5
+        halfheight = height * .5
 
         self.x1 = xc - halfwidth
         self.x2 = xc + halfwidth
@@ -571,7 +551,6 @@ cdef class Box(RegionBase):
 
     cdef npy_bool _inside(self, double x, double y):
         return (self.x1 <= x) & (x <= self.x2) & (self.y1 <= y) & (y <= self.y2)
-
 
 cdef class Polygon(RegionBase):
     """
@@ -619,21 +598,20 @@ cdef class Polygon(RegionBase):
             y_yp_i = y - yp[i]
             y_yp_j = y - yp[j]
 
-            if (y_yp_i == 0.) & (y_yp_j == 0.): # special case for horizontal line
-                if (xp[i]-x)*(xp[j]-x) <= 0.:
+            if (y_yp_i == 0.) & (y_yp_j == 0.):  # special case for horizontal line
+                if (xp[i] - x) * (xp[j] - x) <= 0.:
                     return 1
 
-            if ((0<=y_yp_i) & (0>y_yp_j) | (0<=y_yp_j) & (0>y_yp_i)):
-                _t = xp[i]+y_yp_i/(yp[j]-yp[i])*(xp[j]-xp[i])
-                if _t == x: # return true immediately if point over the poly-edge
+            if ((0 <= y_yp_i) & (0 > y_yp_j) | (0 <= y_yp_j) & (0 > y_yp_i)):
+                _t = xp[i] + y_yp_i / (yp[j] - yp[i]) * (xp[j] - xp[i])
+                if _t == x:  # return true immediately if point over the poly-edge
                     return 1
                 # but above does not catch horizontal line
-                if (_t<x):
+                if (_t < x):
                     r = not r
-            j=i
+            j = i
 
         return r
-
 
 cdef class AngleRange(RegionBase):
     """
@@ -659,16 +637,16 @@ cdef class AngleRange(RegionBase):
         self.degree2 = degree2
 
         # theta in radian
-        self.radian1 = degree1/180.*M_PI#3.1415926
-        self.radian2 = self._fix_angle(degree2/180.*M_PI)
+        self.radian1 = degree1 / 180. * M_PI  #3.1415926
+        self.radian2 = self._fix_angle(degree2 / 180. * M_PI)
 
         self.metric_set_origin(xc, yc, c)
 
     cdef double _fix_angle(self, double a):
         if a > self.radian1:
-            return self.radian1 + fmod((a-self.radian1), 2*M_PI)
+            return self.radian1 + fmod((a - self.radian1), 2 * M_PI)
         else:
-            return self.radian1 + 2.*M_PI - fmod((self.radian1-a), 2*M_PI)
+            return self.radian1 + 2. * M_PI - fmod((self.radian1 - a), 2 * M_PI)
 
     cdef npy_bool _inside(self, double x, double y):
         cdef double dx, dy, theta

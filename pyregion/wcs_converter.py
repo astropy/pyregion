@@ -31,10 +31,10 @@ def convert_to_imagecoord(cl, fl, wcs_proj, sky_to_sky, xy0, rot_wrt_axis=1):
             rot1, rot2 = estimate_angle(wcs_proj, xy0[0], xy0[1], sky_to_sky)
             if rot_wrt_axis == 1:
                 # use the angle between the X axis and North
-                new_cl.append(cl[0]+rot1-180.)
+                new_cl.append(cl[0] + rot1 - 180.)
             elif rot_wrt_axis == 2:
                 # use the angle between the Y axis and North
-                new_cl.append(cl[0]+rot2-90.)
+                new_cl.append(cl[0] + rot2 - 90.)
             else:
                 raise ValueError('Invalid rot_wrt_axis: {}. Allowed values: 1 or 2.'.format(rot_wrt_axis))
             cl = cl[1:]
@@ -74,7 +74,6 @@ def convert_physical_to_imagecoord(cl, fl, pc):
 
 
 def check_wcs_and_convert(args, all_dms=False):
-
     is_wcs = False
 
     value_list = []

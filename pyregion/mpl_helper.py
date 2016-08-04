@@ -11,7 +11,7 @@ from matplotlib.text import Annotation
 
 def rotated_polygon(xy, ox, oy, angle):
     # angle in degree
-    theta = angle/180.*pi
+    theta = angle / 180. * pi
 
     st = sin(theta)
     ct = cos(theta)
@@ -21,8 +21,8 @@ def rotated_polygon(xy, ox, oy, angle):
     x1 = x - ox
     y1 = y - oy
 
-    x2 = ct*x1 + -st*y1
-    y2 = st*x1 +  ct*y1
+    x2 = ct * x1 + -st * y1
+    y2 = st * x1 + ct * y1
 
     xp = x2 + ox
     yp = y2 + oy
@@ -30,6 +30,7 @@ def rotated_polygon(xy, ox, oy, angle):
     return np.hstack((xp.reshape((-1, 1)), yp.reshape((-1, 1))))
 
     # sss3 = [s1[0] for s1 in sss2 if isinstance(s1[0], parser_ds9.Shape)]
+
 
 _point_type_dict = dict(circle="o",
                         box="s",
@@ -44,7 +45,6 @@ _ds9_to_mpl_colormap = dict(green="lime",
 
 
 def properties_func_default(shape, saved_attrs):
-
     attr_list = copy.copy(shape.attr[0])
     attr_dict = copy.copy(shape.attr[1])
 
@@ -178,9 +178,9 @@ def as_mpl_artists(shape_list,
 
         if saved_attrs is None and shape.continued:
             saved_attrs = shape.attr
-#         elif (shape.name in shape.attr[1]):
-#             if (shape.attr[1][shape.name] != "ignore"):
-#                 saved_attrs = shape.attr
+        #         elif (shape.name in shape.attr[1]):
+        #             if (shape.attr[1][shape.name] != "ignore"):
+        #                 saved_attrs = shape.attr
 
         if not shape.continued:
             saved_attrs = None
@@ -190,118 +190,118 @@ def as_mpl_artists(shape_list,
 
         if shape.name == "polygon":
             xy = np.array(shape.coord_list)
-            xy.shape = -1,2
+            xy.shape = -1, 2
 
             # -1 for change origin to 0,0
-            patches=[mpatches.Polygon(xy-origin, closed=True, **kwargs)]
+            patches = [mpatches.Polygon(xy - origin, closed=True, **kwargs)]
 
         elif shape.name == "rotbox" or shape.name == "box":
             xc, yc, w, h, rot = shape.coord_list
             # -1 for change origin to 0,0
-            xc, yc = xc-origin, yc-origin
-            _box = np.array([[-w/2., -h/2.],
-                             [-w/2., h/2.],
-                             [w/2., h/2.],
-                             [w/2., -h/2.]])
+            xc, yc = xc - origin, yc - origin
+            _box = np.array([[-w / 2., -h / 2.],
+                             [-w / 2., h / 2.],
+                             [w / 2., h / 2.],
+                             [w / 2., -h / 2.]])
             box = _box + [xc, yc]
             rotbox = rotated_polygon(box, xc, yc, rot)
             patches = [mpatches.Polygon(rotbox, closed=True, **kwargs)]
 
         elif shape.name == "ellipse":
-            xc, yc  = shape.coord_list[:2]
+            xc, yc = shape.coord_list[:2]
             # -1 for change origin to 0,0
-            xc, yc = xc-origin, yc-origin
+            xc, yc = xc - origin, yc - origin
             angle = shape.coord_list[-1]
 
             maj_list, min_list = shape.coord_list[2:-1:2], shape.coord_list[3:-1:2]
 
-            patches = [mpatches.Ellipse((xc, yc), 2*maj, 2*min,
+            patches = [mpatches.Ellipse((xc, yc), 2 * maj, 2 * min,
                                         angle=angle, **kwargs)
                        for maj, min in zip(maj_list, min_list)]
 
         elif shape.name == "annulus":
-            xc, yc  = shape.coord_list[:2]
+            xc, yc = shape.coord_list[:2]
             # -1 for change origin to 0,0
-            xc, yc = xc-origin, yc-origin
+            xc, yc = xc - origin, yc - origin
             r_list = shape.coord_list[2:]
 
-            patches = [mpatches.Ellipse((xc, yc), 2*r, 2*r, **kwargs) for r in r_list]
+            patches = [mpatches.Ellipse((xc, yc), 2 * r, 2 * r, **kwargs) for r in r_list]
 
         elif shape.name == "circle":
             xc, yc, major = shape.coord_list
             # -1 for change origin to 0,0
-            xc, yc = xc-origin, yc-origin
-            patches = [mpatches.Ellipse((xc, yc), 2*major, 2*major, angle=0, **kwargs)]
+            xc, yc = xc - origin, yc - origin
+            patches = [mpatches.Ellipse((xc, yc), 2 * major, 2 * major, angle=0, **kwargs)]
 
         elif shape.name == "panda":
             xc, yc, a1, a2, an, r1, r2, rn = shape.coord_list
             # -1 for change origin to 0,0
-            xc, yc = xc-origin, yc-origin
-            patches = [mpatches.Arc((xc, yc), rr*2, rr*2, angle=0,
+            xc, yc = xc - origin, yc - origin
+            patches = [mpatches.Arc((xc, yc), rr * 2, rr * 2, angle=0,
                                     theta1=a1, theta2=a2, **kwargs)
-                       for rr in np.linspace(r1, r2, rn+1)]
+                       for rr in np.linspace(r1, r2, rn + 1)]
 
-            for aa in np.linspace(a1, a2, an+1):
-                xx = np.array([r1, r2]) * np.cos(aa/180.*np.pi) + xc
-                yy = np.array([r1, r2]) * np.sin(aa/180.*np.pi) + yc
+            for aa in np.linspace(a1, a2, an + 1):
+                xx = np.array([r1, r2]) * np.cos(aa / 180. * np.pi) + xc
+                yy = np.array([r1, r2]) * np.sin(aa / 180. * np.pi) + yc
                 p = Path(np.transpose([xx, yy]))
                 patches.append(mpatches.PathPatch(p, **kwargs))
 
         elif shape.name == "pie":
             xc, yc, r1, r2, a1, a2 = shape.coord_list
             # -1 for change origin to 0,0
-            xc, yc = xc-origin, yc-origin
+            xc, yc = xc - origin, yc - origin
 
-            patches = [mpatches.Arc((xc, yc), rr*2, rr*2, angle=0,
+            patches = [mpatches.Arc((xc, yc), rr * 2, rr * 2, angle=0,
                                     theta1=a1, theta2=a2, **kwargs)
                        for rr in [r1, r2]]
 
             for aa in [a1, a2]:
-                xx = np.array([r1, r2]) * np.cos(aa/180.*np.pi) + xc
-                yy = np.array([r1, r2]) * np.sin(aa/180.*np.pi) + yc
+                xx = np.array([r1, r2]) * np.cos(aa / 180. * np.pi) + xc
+                yy = np.array([r1, r2]) * np.sin(aa / 180. * np.pi) + yc
                 p = Path(np.transpose([xx, yy]))
                 patches.append(mpatches.PathPatch(p, **kwargs))
 
         elif shape.name == "epanda":
             xc, yc, a1, a2, an, r11, r12, r21, r22, rn, angle = shape.coord_list
             # -1 for change origin to 0,0
-            xc, yc = xc-origin, yc-origin
+            xc, yc = xc - origin, yc - origin
 
             # mpl takes angle a1, a2 as angle as in circle before
             # transformation to ellipse.
 
-            x1, y1 = cos(a1/180.*pi), sin(a1/180.*pi)*r11/r12
-            x2, y2 = cos(a2/180.*pi), sin(a2/180.*pi)*r11/r12
+            x1, y1 = cos(a1 / 180. * pi), sin(a1 / 180. * pi) * r11 / r12
+            x2, y2 = cos(a2 / 180. * pi), sin(a2 / 180. * pi) * r11 / r12
 
-            a1, a2 = atan2(y1, x1)/pi*180., atan2(y2, x2)/pi*180.
+            a1, a2 = atan2(y1, x1) / pi * 180., atan2(y2, x2) / pi * 180.
 
-            patches = [mpatches.Arc((xc, yc), rr1*2, rr2*2,
+            patches = [mpatches.Arc((xc, yc), rr1 * 2, rr2 * 2,
                                     angle=angle, theta1=a1, theta2=a2,
                                     **kwargs)
-                       for rr1, rr2 in zip(np.linspace(r11, r21, rn+1),
-                                           np.linspace(r12, r22, rn+1))]
+                       for rr1, rr2 in zip(np.linspace(r11, r21, rn + 1),
+                                           np.linspace(r12, r22, rn + 1))]
 
-            for aa in np.linspace(a1, a2, an+1):
-                xx = np.array([r11, r21]) * np.cos(aa/180.*np.pi)
-                yy = np.array([r11, r21]) * np.sin(aa/180.*np.pi)
+            for aa in np.linspace(a1, a2, an + 1):
+                xx = np.array([r11, r21]) * np.cos(aa / 180. * np.pi)
+                yy = np.array([r11, r21]) * np.sin(aa / 180. * np.pi)
                 p = Path(np.transpose([xx, yy]))
-                tr = Affine2D().scale(1, r12/r11).rotate_deg(angle).translate(xc, yc)
+                tr = Affine2D().scale(1, r12 / r11).rotate_deg(angle).translate(xc, yc)
                 p2 = tr.transform_path(p)
                 patches.append(mpatches.PathPatch(p2, **kwargs))
 
         elif shape.name == "text":
-            xc, yc  = shape.coord_list[:2]
+            xc, yc = shape.coord_list[:2]
             # -1 for change origin to 0,0
-            xc, yc = xc-origin, yc-origin
+            xc, yc = xc - origin, yc - origin
 
             if txt:
                 _t = _get_text(txt, xc, yc, 0, 0, **kwargs)
                 artist_list.append(_t)
 
         elif shape.name == "point":
-            xc, yc  = shape.coord_list[:2]
+            xc, yc = shape.coord_list[:2]
             # -1 for change origin to 0,0
-            xc, yc = xc-origin, yc-origin
+            xc, yc = xc - origin, yc - origin
             artist_list.append(Line2D([xc], [yc],
                                       **kwargs))
 
@@ -316,9 +316,9 @@ def as_mpl_artists(shape_list,
 
         elif shape.name in ["line", "vector"]:
             if shape.name == "line":
-                x1, y1, x2, y2  = shape.coord_list[:4]
+                x1, y1, x2, y2 = shape.coord_list[:4]
                 # -1 for change origin to 0,0
-                x1, y1, x2, y2 = x1-origin, y1-origin, x2-origin, y2-origin
+                x1, y1, x2, y2 = x1 - origin, y1 - origin, x2 - origin, y2 - origin
 
                 a1, a2 = shape.attr[1].get("line", "0 0").strip().split()[:2]
 
@@ -329,10 +329,10 @@ def as_mpl_artists(shape_list,
                     arrowstyle = arrowstyle + ">"
 
             else:  # shape.name == "vector"
-                x1, y1, l, a  = shape.coord_list[:4]
+                x1, y1, l, a = shape.coord_list[:4]
                 # -1 for change origin to 0,0
-                x1, y1 = x1-origin, y1-origin
-                x2, y2 = x1 + l * np.cos(a/180.*np.pi), y1 + l * np.sin(a/180.*np.pi)
+                x1, y1 = x1 - origin, y1 - origin
+                x2, y2 = x1 + l * np.cos(a / 180. * np.pi), y1 + l * np.sin(a / 180. * np.pi)
                 v1 = int(shape.attr[1].get("vector", "0").strip())
 
                 if v1:
@@ -378,7 +378,7 @@ def as_mpl_artists(shape_list,
 
             _bbox = Bbox.union(_bb)
             x0, y0, x1, y1 = _bbox.extents
-            xc = .5*(x0+x1)
+            xc = .5 * (x0 + x1)
 
             _t = _get_text(txt, xc, y1, 0, text_offset,
                            va="bottom",
