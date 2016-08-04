@@ -5,12 +5,13 @@ def _unsigned_simple_number():
     # fnumber : 102.43, 12304.3e10,
     #           .32???
     point = Literal(".")
-    e     = Literal("e") | Literal("E")  # CaselessLiteral( "E" )
+    e = Literal("e") | Literal("E")  # CaselessLiteral( "E" )
     fnumber = Combine(Word(nums) +
                       Optional(point + Optional(Word(nums))) +
                       Optional(e + Word("+-" + nums, nums)))
 
     return fnumber  # .setParseAction(lambda s,l,t: (float(t[0]), t[0]))
+
 
 usn = _unsigned_simple_number()
 
@@ -20,7 +21,9 @@ def get_default(v):
         if tok:
             return tok
         return v
+
     return _f
+
 
 optional_sign = Optional(Literal("+") | Literal("-")).setParseAction(get_default(""))
 
@@ -42,6 +45,7 @@ def _simple_number():
     s.setParseAction(lambda s, l, tok: SimpleNumber(tok[0]))
 
     return s
+
 
 simple_number = _simple_number()
 
@@ -70,7 +74,7 @@ simple_integer = _unsigned_integer()
 
 class Sixty(object):
     def __init__(self, sn, d, m, s):
-        self.v = sn * (d +(m + s/60.)/60.)
+        self.v = sn * (d + (m + s / 60.) / 60.)
         self.degree = self.v
 
 
@@ -94,7 +98,7 @@ class HMS(object):
         else:
             d, m, s = float(kl[1]), 0., 0.
 
-        self.v = sn * (d +(m + s/60.)/60.)
+        self.v = sn * (d + (m + s / 60.) / 60.)
         self.degree = self.v * 15
 
 
@@ -118,7 +122,7 @@ class DMS(object):
         else:
             d, m, s = float(kl[1]), 0., 0.
 
-        self.v = sn * (d +(m + s/60.)/60.)
+        self.v = sn * (d + (m + s / 60.) / 60.)
         self.degree = self.v
 
 
@@ -137,7 +141,7 @@ class AngularDistance(object):
         else:
             s = float(kl[0])
 
-        self.v = (m + s/60.)/60.
+        self.v = (m + s / 60.) / 60.
         self.degree = self.v
 
 
@@ -148,6 +152,7 @@ def _sexadecimal():
         Optional(colon + usn)
 
     return s
+
 
 sexadecimal60 = _sexadecimal().setParseAction(lambda s, l, tok: DMS(tok))
 sexadecimal24 = _sexadecimal().setParseAction(lambda s, l, tok: HMS(tok))
@@ -176,6 +181,7 @@ def _dms_number():
 
     return dms
 
+
 hms_number = _hms_number()
 dms_number = _dms_number()
 
@@ -189,6 +195,7 @@ def _angular_distance():
     ms = ms.setParseAction(lambda s, l, tok: AngularDistance(tok))
 
     return ms
+
 
 angular_distance = _angular_distance()
 

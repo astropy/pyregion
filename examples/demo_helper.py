@@ -1,7 +1,6 @@
+import math
 import matplotlib.pyplot as plt
 import pyregion
-
-import math
 
 
 def demo_header():
@@ -13,13 +12,12 @@ def show_region(fig, region_list):
     h = demo_header()
 
     n = len(region_list)
-    nx = int(math.ceil(n**.5))
-    ny = int(math.ceil(1.*n/nx))
-
+    nx = int(math.ceil(n ** .5))
+    ny = int(math.ceil(1. * n / nx))
 
     nrows_ncols = (ny, nx)
 
-    grid = [plt.subplot(ny, nx, i+1) for i in range(n)]
+    grid = [plt.subplot(ny, nx, i + 1) for i in range(n)]
 
     for ax, reg_name in zip(grid, region_list):
         ax.set_aspect(1)
@@ -39,4 +37,3 @@ def show_region(fig, region_list):
             t.set_visible(False)
 
     return grid
-

@@ -1,18 +1,17 @@
 import matplotlib.pyplot as plt
 from mpl_toolkits.axes_grid.anchored_artists import AnchoredText
-
 from astropy.io.fits import Header
 from astropy.wcs import WCS
-
 from wcsaxes import WCSAxes
-
 import pyregion
 
-region_list = ["test_text.reg",
-               "test_context.reg"]
+region_list = [
+    "test_text.reg",
+    "test_context.reg",
+]
 
 # Create figure
-fig = plt.figure(figsize=(8,4))
+fig = plt.figure(figsize=(8, 4))
 
 # Parse WCS information
 header = Header.fromtextfile('sample_fits01.header')

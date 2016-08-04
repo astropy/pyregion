@@ -25,15 +25,15 @@ def as_region_filter(shape_list, origin=1):
         elif shape.name == "rotbox" or shape.name == "box":
             xc, yc, w, h, rot = shape.coord_list
             # -1 for change origin to 0,0
-            xc, yc = xc-origin, yc-origin
+            xc, yc = xc - origin, yc - origin
 
             f = region_filter.Rotated(region_filter.Box(xc, yc, w, h),
                                       rot, xc, yc)
 
         elif shape.name == "ellipse":
-            xc, yc  = shape.coord_list[:2]
+            xc, yc = shape.coord_list[:2]
             # -1 for change origin to 0,0
-            xc, yc = xc-origin, yc-origin
+            xc, yc = xc - origin, yc - origin
             angle = shape.coord_list[-1]
 
             maj_list, min_list = shape.coord_list[2:-1:2], shape.coord_list[3:-1:2]
@@ -43,7 +43,7 @@ def as_region_filter(shape_list, origin=1):
                 w2, h2 = min(maj_list), min(min_list)
 
                 f1 = region_filter.Ellipse(xc, yc, w1, h1) \
-                    & ~region_filter.Ellipse(xc, yc, w2, h2)
+                     & ~region_filter.Ellipse(xc, yc, w2, h2)
                 f = region_filter.Rotated(f1, angle, xc, yc)
             else:
                 w, h = maj_list[0], min_list[0]
@@ -51,9 +51,9 @@ def as_region_filter(shape_list, origin=1):
                                           angle, xc, yc)
 
         elif shape.name == "annulus":
-            xc, yc  = shape.coord_list[:2]
+            xc, yc = shape.coord_list[:2]
             # -1 for change origin to 0,0
-            xc, yc = xc-origin, yc-origin
+            xc, yc = xc - origin, yc - origin
             r_list = shape.coord_list[2:]
 
             r1 = max(r_list)
@@ -64,14 +64,14 @@ def as_region_filter(shape_list, origin=1):
         elif shape.name == "circle":
             xc, yc, r = shape.coord_list
             # -1 for change origin to 0,0
-            xc, yc = xc-origin, yc-origin
+            xc, yc = xc - origin, yc - origin
 
             f = region_filter.Circle(xc, yc, r)
 
         elif shape.name == "panda":
             xc, yc, a1, a2, an, r1, r2, rn = shape.coord_list
             # -1 for change origin to 0,0
-            xc, yc = xc-origin, yc-origin
+            xc, yc = xc - origin, yc - origin
 
             f1 = region_filter.Circle(xc, yc, r2) & ~region_filter.Circle(xc, yc, r1)
             f = f1 & region_filter.AngleRange(xc, yc, a1, a2)
@@ -79,7 +79,7 @@ def as_region_filter(shape_list, origin=1):
         elif shape.name == "pie":
             xc, yc, r1, r2, a1, a2 = shape.coord_list
             # -1 for change origin to 0,0
-            xc, yc = xc-origin, yc-origin
+            xc, yc = xc - origin, yc - origin
 
             f1 = region_filter.Circle(xc, yc, r2) & ~region_filter.Circle(xc, yc, r1)
             f = f1 & region_filter.AngleRange(xc, yc, a1, a2)
@@ -87,7 +87,7 @@ def as_region_filter(shape_list, origin=1):
         elif shape.name == "epanda":
             xc, yc, a1, a2, an, r11, r12, r21, r22, rn, angle = shape.coord_list
             # -1 for change origin to 0,0
-            xc, yc = xc-origin, yc-origin
+            xc, yc = xc - origin, yc - origin
 
             f1 = region_filter.Ellipse(xc, yc, r21, r22) & ~region_filter.Ellipse(xc, yc, r11, r12)
             f2 = f1 & region_filter.AngleRange(xc, yc, a1, a2)
@@ -97,7 +97,7 @@ def as_region_filter(shape_list, origin=1):
         elif shape.name == "bpanda":
             xc, yc, a1, a2, an, r11, r12, r21, r22, rn, angle = shape.coord_list
             # -1 for change origin to 0,0
-            xc, yc = xc-origin, yc-origin
+            xc, yc = xc - origin, yc - origin
 
             f1 = region_filter.Box(xc, yc, r21, r22) & ~region_filter.Box(xc, yc, r11, r12)
             f2 = f1 & region_filter.AngleRange(xc, yc, a1, a2)

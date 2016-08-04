@@ -14,42 +14,33 @@ from .wcs_converter import (convert_to_imagecoord,
                             convert_physical_to_imagecoord)
 from .physical_coordinate import PhysicalCoordinate
 
-
-ds9_shape_defs = dict(circle=wcs_shape(CoordOdd, CoordEven, Distance),
-                      rotbox=wcs_shape(CoordOdd, CoordEven, Distance,
-                                       Distance, Angle),
-                      box=wcs_shape(CoordOdd, CoordEven, Distance,
-                                    Distance, Angle),
-                      polygon=wcs_shape(CoordOdd, CoordEven,
-                                        repeat=(0, 2)),
-                      ellipse=wcs_shape(CoordOdd, CoordEven,
-                                        Distance, Distance,
-                                        Angle, repeat=(2, 4)),
-                      annulus=wcs_shape(CoordOdd, CoordEven,
-                                        Distance, repeat=(2, 3)),
-                      panda=wcs_shape(CoordOdd, CoordEven,
-                                      Angle, Angle, Integer,
-                                      Distance, Distance, Integer),
-                      pie=wcs_shape(CoordOdd, CoordEven,
-                                    Distance, Distance,
-                                    Angle, Angle),
-                      epanda=wcs_shape(CoordOdd, CoordEven,
-                                       Angle, Angle, Integer,
-                                       Distance, Distance, Distance,
-                                       Distance, Integer, Angle),
-                      bpanda=wcs_shape(CoordOdd, CoordEven,
-                                       Angle, Angle, Integer,
-                                       Distance, Distance, Distance,
-                                       Distance, Integer, Angle),
-                      point=wcs_shape(CoordOdd, CoordEven),
-                      line=wcs_shape(CoordOdd, CoordEven, CoordOdd, CoordEven),
-                      vector=wcs_shape(CoordOdd, CoordEven, Distance, Angle),
-                      text=wcs_shape(CoordOdd, CoordEven)
-                      )
+ds9_shape_defs = dict(
+    circle=wcs_shape(CoordOdd, CoordEven, Distance),
+    rotbox=wcs_shape(CoordOdd, CoordEven, Distance, Distance, Angle),
+    box=wcs_shape(CoordOdd, CoordEven, Distance, Distance, Angle),
+    polygon=wcs_shape(CoordOdd, CoordEven, repeat=(0, 2)),
+    ellipse=wcs_shape(CoordOdd, CoordEven, Distance, Distance, Angle, repeat=(2, 4)),
+    annulus=wcs_shape(CoordOdd, CoordEven, Distance, repeat=(2, 3)),
+    panda=wcs_shape(CoordOdd, CoordEven, Angle, Angle, Integer, Distance, Distance, Integer),
+    pie=wcs_shape(CoordOdd, CoordEven,
+                  Distance, Distance,
+                  Angle, Angle),
+    epanda=wcs_shape(CoordOdd, CoordEven,
+                     Angle, Angle, Integer,
+                     Distance, Distance, Distance,
+                     Distance, Integer, Angle),
+    bpanda=wcs_shape(CoordOdd, CoordEven,
+                     Angle, Angle, Integer,
+                     Distance, Distance, Distance,
+                     Distance, Integer, Angle),
+    point=wcs_shape(CoordOdd, CoordEven),
+    line=wcs_shape(CoordOdd, CoordEven, CoordOdd, CoordEven),
+    vector=wcs_shape(CoordOdd, CoordEven, Distance, Angle),
+    text=wcs_shape(CoordOdd, CoordEven),
+)
 
 
 class RegionParser(RegionPusher):
-
     def __init__(self):
 
         RegionPusher.__init__(self)
@@ -87,7 +78,7 @@ class RegionParser(RegionPusher):
         line_w_composite = And([regionAtom,
                                 CaselessKeyword("||").setParseAction(self.set_continued)
                                 ]) \
-                                + Optional(regionComment)
+                           + Optional(regionComment)
 
         line = Or([line_simple, line_w_composite])
 

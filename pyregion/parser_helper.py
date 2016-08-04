@@ -3,7 +3,6 @@ from pyparsing import (Literal, CaselessKeyword, Optional, OneOrMore,
 
 
 def as_comma_separated_list(al):
-
     l = [al[0]]
     comma = Literal(",").suppress()
 
@@ -82,7 +81,6 @@ def define_shape_helper(shape_defs):
 
 
 def define_expr(regionShape, negate_func):
-
     minus = Literal("-").suppress()
     regionExclude = (minus + regionShape).setParseAction(negate_func)
     regionExpr = (regionShape | regionExclude)
@@ -93,7 +91,6 @@ def define_expr(regionShape, negate_func):
 def define_line(atom,
                 separator,
                 comment):
-
     atomSeparator = separator.suppress()
 
     atomList = atom + ZeroOrMore(atomSeparator + atom)
@@ -104,7 +101,6 @@ def define_line(atom,
 
 
 def comment_shell_like(comment_begin, parseAction=None):
-
     c = comment_begin + restOfLine
     if parseAction:
         c = c.setParseAction(parseAction)
@@ -113,7 +109,6 @@ def comment_shell_like(comment_begin, parseAction=None):
 
 
 def define_simple_literals(literal_list, parseAction=None):
-
     l = MatchFirst([CaselessKeyword(k) for k in literal_list])
 
     if parseAction:
@@ -203,7 +198,7 @@ class RegionPusher(object):
         self.stack.append(tok[-1])
 
     def pushComment(self, s, l, tok):
-        self.comment  = tok[-1].strip()
+        self.comment = tok[-1].strip()
 
     def set_continued(self, s, l, tok):
         self.continued = True

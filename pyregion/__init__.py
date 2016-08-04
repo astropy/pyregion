@@ -13,7 +13,6 @@ a new astronomy package for regions based on Astropy.
 # should keep this content at the top.
 # ----------------------------------------------------------------------------
 from ._astropy_init import *
-# ----------------------------------------------------------------------------
 
 # For egg_info test builds to pass, put package imports here.
 if not _ASTROPY_SETUP_:
