@@ -1,11 +1,10 @@
 import re
 import numpy as np
+from astropy.extern import six
 from astropy.wcs import WCS
 from astropy.io.fits import Header
-
-from .kapteyn_celestial import skymatrix, longlat2xyz, dotrans, xyz2longlat
-from . import kapteyn_celestial
-from astropy.extern import six
+from .extern.kapteyn_celestial import skymatrix, longlat2xyz, dotrans, xyz2longlat
+from .extern import kapteyn_celestial
 
 _pattern_ra = re.compile(r"^RA")
 _pattern_dec = re.compile(r"^DEC")
