@@ -23,6 +23,7 @@ env:
         - CONDA_DEPENDENCIES='matplotlib pyparsing Cython'
         - SETUP_CMD='test'
         - SETUP_XVFB=True
+        - CONDA_CHANNELS='astropy-ci-extras'
 
     matrix:
         - SETUP_CMD='egg_info'
