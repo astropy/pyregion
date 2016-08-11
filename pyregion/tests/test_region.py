@@ -1,47 +1,69 @@
 import os
-import numpy as np
 from os.path import join
 from astropy.io.fits import Header
-from ..wcs_helper import fix_lon
 from .. import open as pyregion_open
+import pytest
+import numpy as np
+from numpy.testing import assert_allclose
 
-rootdir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'examples')
+rootdir = join(os.path.dirname(os.path.abspath(__file__)), 'data')
 
 
-def demo_header():
+@pytest.fixture(scope="module")
+def header():
     return Header.fromtextfile(join(rootdir, "sample_fits01.header"))
 
 
-def test_region():
-    ref_name = "test01_img.reg"
-
-    region_list = ["test01_fk5_sexagecimal.reg",
-                   "test01_gal.reg",
-                   "test01_ds9_physical.reg",
-                   "test01_fk5_degree.reg",
-                   "test01_mixed.reg",
-                   "test01_ciao.reg",
-                   "test01_ciao_physical.reg",
-                   ]
-
-    header = demo_header()
-
+@pytest.mark.parametrize(("ref_name", "reg_name", "header_name"), [
+    ("test01_img.reg", "test01_fk5_sexagecimal.reg", "sample_fits01.header"),
+    ("test01_img.reg", "test01_gal.reg", "sample_fits01.header"),
+    ("test01_img.reg", "test01_ds9_physical.reg", "sample_fits01.header"),
+    ("test01_img.reg", "test01_fk5_degree.reg", "sample_fits01.header"),
+    ("test01_img.reg", "test01_mixed.reg", "sample_fits01.header"),
+    ("test01_img.reg", "test01_ciao.reg", "sample_fits01.header"),
+    ("test01_img.reg", "test01_ciao_physical.reg", "sample_fits01.header"),
+    ("test01_img.reg", "test01_fk5.reg", "sample_fits01.header"),
+    ("test01_img.reg", "test01_fk4.reg", "sample_fits01.header"),
+    ("test01_img.reg", "test01_icrs.reg", "sample_fits01.header"),
+    ("test02_1_img.reg", "test02_1_fk5.reg", "sample_fits02.header"),
+    ("test_annuli.reg", "test_annuli_wcs.reg", "sample_fits01.header"),
+    ("test03_img.reg", "test03_fk5.reg", "sample_fits03.header"),
+    ("test03_img.reg", "test03_icrs.reg", "sample_fits03.header"),
+    ("test03_img.reg", "test03_ciao_physical.reg", "sample_fits03.header"),
+    ("test03_img.reg", "test03_gal.reg", "sample_fits03.header"),
+])
+def test_region(ref_name, reg_name, header_name):
+    header = Header.fromtextfile(join(rootdir, header_name))
     ref_region = pyregion_open(join(rootdir, ref_name)).as_imagecoord(header)
 
-    for reg_name in region_list:
-        r = pyregion_open(join(rootdir, reg_name)).as_imagecoord(header)
-        for reg0, reg in zip(ref_region, r):
-            if reg.name == "rotbox":
-                reg.name = "box"
+    r = pyregion_open(join(rootdir, reg_name)).as_imagecoord(header)
 
-            assert reg0.name == reg.name
-            if reg0.name in ["ellipse", "box"]:
-                assert np.allclose(reg0.coord_list[:-1], reg.coord_list[:-1],
-                                   atol=0.01)
-                a0 = reg0.coord_list[-1]
-                a1 = fix_lon(reg.coord_list[-1], 0)
-                assert np.allclose([a0], [a1], atol=0.02)
-            else:
-                assert np.allclose(reg0.coord_list, reg.coord_list,
-                                   atol=0.01)
-            assert reg0.exclude == reg.exclude
+    assert len(r) == len(ref_region)
+
+    for ref_reg, reg in zip(ref_region, r):
+        if reg.name == "rotbox":
+            reg.name = "box"
+
+        assert ref_reg.name == reg.name
+
+        # Normalize everything like angles
+        ref_list = np.asarray(ref_reg.coord_list)
+        reg_list = np.asarray(reg.coord_list)
+        assert_allclose((ref_list + 180) % 360 - 180,
+                        (reg_list + 180) % 360 - 180,
+                        atol=0.03)
+
+        assert ref_reg.exclude == reg.exclude
+
+
+@pytest.mark.parametrize(("reg_name"), [
+    ("test_annuli_ciao.reg"),  # subset of test03_img.reg
+    ("test_context.reg"),
+    ("test02.reg"),
+    ("test04_img.reg"),
+    ("test_text.reg"),
+    ("test01.reg"),
+])
+def test_open_regions(reg_name, header):
+    # TODO: Better test. Like figure out how these files relate to each other
+    pyregion_open(join(rootdir, reg_name)).as_imagecoord(header)

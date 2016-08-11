@@ -45,15 +45,13 @@ class ShapeList(list):
         else:
             return True
 
-    def as_imagecoord(self, header, rot_wrt_axis=1):
+    def as_imagecoord(self, header):
         """New shape list in image coordinates.
 
         Parameters
         ----------
         header : `~astropy.io.fits.Header`
             FITS header
-        rot_wrt_axis : {1, 2}
-            Use rotation with respect to axis 1 (X-axis) or axis 2 (Y-axis) and north.
 
         Returns
         -------
@@ -68,7 +66,7 @@ class ShapeList(list):
             comment_list = cycle([None])
 
         r = RegionParser.sky_to_image(zip(self, comment_list),
-                                      header, rot_wrt_axis=rot_wrt_axis)
+                                      header)
         shape_list, comment_list = zip(*list(r))
         return ShapeList(shape_list, comment_list=comment_list)
 
@@ -90,9 +88,8 @@ class ShapeList(list):
 
         return patches, txts
 
-    def get_filter(self, header=None, origin=1, rot_wrt_axis=1):
+    def get_filter(self, header=None, origin=1):
         """Get filter.
-
         Often, the regions files implicitly assume the lower-left
         corner of the image as a coordinate (1,1). However, the python
         convetion is that the array index starts from 0. By default
@@ -106,8 +103,6 @@ class ShapeList(list):
             FITS header
         origin : {0, 1}
             Pixel coordinate origin
-        rot_wrt_axis : {1, 2}
-            Use rotation with respect to axis 1 (X-axis) or axis 2 (Y-axis) and north.
 
         Returns
         -------
@@ -119,16 +114,17 @@ class ShapeList(list):
 
         if header is None:
             if not self.check_imagecoord():
-                raise RuntimeError("the region has non-image coordinate. header is required.")
+                raise RuntimeError("the region has non-image coordinate." +
+                                   "header is required.")
             reg_in_imagecoord = self
         else:
-            reg_in_imagecoord = self.as_imagecoord(header, rot_wrt_axis=rot_wrt_axis)
+            reg_in_imagecoord = self.as_imagecoord(header)
 
         region_filter = as_region_filter(reg_in_imagecoord, origin=origin)
 
         return region_filter
 
-    def get_mask(self, hdu=None, header=None, shape=None, rot_wrt_axis=1):
+    def get_mask(self, hdu=None, header=None, shape=None):
         """Create a 2-d mask.
 
         Parameters
@@ -139,8 +135,6 @@ class ShapeList(list):
             FITS header
         shape : tuple
             Image shape
-        rot_wrt_axis : {1, 2}
-            Use rotation with respect to axis 1 (X-axis) or axis 2 (Y-axis) and north.
 
         Returns
         -------
@@ -159,7 +153,7 @@ class ShapeList(list):
         if hdu and shape is None:
             shape = hdu.data.shape
 
-        region_filter = self.get_filter(header=header, rot_wrt_axis=rot_wrt_axis)
+        region_filter = self.get_filter(header=header)
         mask = region_filter.mask(shape)
 
         return mask
@@ -210,8 +204,8 @@ class ShapeList(list):
                 shape_coords = "(" + ",".join(text_coordlist) + ")"
                 shape_comment = " # " + shape.comment if shape.comment else ''
 
-                shape_str = shape_attr + shape_excl + shape.name + \
-                            shape_coords + shape_comment
+                shape_str = (shape_attr + shape_excl + shape.name +
+                             shape_coords + shape_comment)
 
                 print >> outf, shape_str
 
@@ -262,7 +256,8 @@ def open(fname):
     shapes : `ShapeList`
         List of `~pyregion.Shape`
     """
-    region_string = _builtin_open(fname).read()
+    with _builtin_open(fname) as f:
+        region_string = f.read()
     return parse(region_string)
 
 
@@ -288,7 +283,7 @@ def read_region(s):
     return ShapeList(shape_list)
 
 
-def read_region_as_imagecoord(s, header, rot_wrt_axis=1):
+def read_region_as_imagecoord(s, header):
     """Read region as image coordinates.
 
     Parameters
@@ -297,8 +292,6 @@ def read_region_as_imagecoord(s, header, rot_wrt_axis=1):
         Region string
     header : `~astropy.io.fits.Header`
         FITS header
-    rot_wrt_axis : {1, 2}
-        Use rotation with respect to axis 1 (X-axis) or axis 2 (Y-axis) and north.
 
     Returns
     -------
@@ -309,7 +302,7 @@ def read_region_as_imagecoord(s, header, rot_wrt_axis=1):
     ss = rp.parse(s)
     sss1 = rp.convert_attr(ss)
     sss2 = _check_wcs(sss1)
-    sss3 = rp.sky_to_image(sss2, header, rot_wrt_axis=rot_wrt_axis)
+    sss3 = rp.sky_to_image(sss2, header)
 
     shape_list = rp.filter_shape(sss3)
     return ShapeList(shape_list)

@@ -23,11 +23,7 @@ FEATURES
 LICENSE
 -------
 
-All files (see exception below) are under MIT License. See LICENSE.
-
-* "lib/kapteyn_celestial.py" is from the Kapteyn package
-  (http://www.astro.rug.nl/software/kapteyn/). See
-  LICENSE_kapteyn.txt.
+All files are under MIT License. See LICENSE.
 
 Status
 ------
