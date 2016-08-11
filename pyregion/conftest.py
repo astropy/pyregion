@@ -4,10 +4,9 @@
 
 from astropy.tests.pytest_plugins import *
 
-## Uncomment the following line to treat all DeprecationWarnings as
-## exceptions
-# Deprecations are coming from upstream kapteyn, switching it off for now
-# enable_deprecations_as_exceptions()
+# Uncomment the following line to treat all DeprecationWarnings as
+# exceptions
+enable_deprecations_as_exceptions()
 
 # Add astropy to test header information and remove unused packages.
 # Pytest header customisation was introduced in astropy 1.0.
