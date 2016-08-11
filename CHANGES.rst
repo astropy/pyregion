@@ -1,10 +1,11 @@
 2.0 (unreleased)
 ----------------
 
-- tbd
+We plan to release pyregion v2.0 shortly (weeks) after v1.2.
 
-1.2 (unreleased)
-----------------
+
+1.2 (Aug 11, 2016)
+------------------
 
 - https://pypi.org/project/pyregion/1.2/
 - The changelog for this release is incomplete.
@@ -12,8 +13,8 @@
 
 - This release brings major changes to the code, docs and test setup,
   the package was converted to an Astropy affiliated package.
-- There are only a few bugfixes and there should be very few breaking changes,
-  this should be a mostly backwards-compatible release.
+- There are only a few bugfixes and there should be no changes
+  that break scripts or change results for pyregion users.
 
 
 1.1.4 (Oct 26, 2014)
