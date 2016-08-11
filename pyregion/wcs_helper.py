@@ -204,16 +204,16 @@ class ProjectionPywcsNd(_ProjectionSubInterface, ProjectionBase):
 
         xy1 = lon_lat.transpose()
 
-        # somehow, wcs_world2pix does not work for some cases
-        xy21 = [self._pywcs.wcs_world2pix([xy11], 1)[0] for xy11 in xy1]
-        # xy21 = self._pywcs.wcs_world2pix(xy1, 1)
+        # somehow, all_world2pix does not work for some cases
+        xy21 = [self._pywcs.all_world2pix([xy11], 1)[0] for xy11 in xy1]
+        # xy21 = self._pywcs.all_world2pix(xy1, 1)
 
         xy2 = np.array(xy21).transpose()
         return xy2
 
     def toworld(self, xy):
         """ 1, 1 base """
-        xy2 = self._pywcs.wcs_pix2world(np.asarray(xy).T, 1)
+        xy2 = self._pywcs.all_pix2world(np.asarray(xy).T, 1)
 
         lon_lat = xy2.T
         # fixme
@@ -273,7 +273,7 @@ class ProjectionPywcsSub(_ProjectionSubInterface, ProjectionBase):
                 s.fill(self._ref_world[i])
                 xyz[i] = s
 
-        # xyz2 = self._pywcs.wcs_world2pix(np.asarray(xyz).T, 1)
+        # xyz2 = self._pywcs.all_world2pix(np.asarray(xyz).T, 1)
         xyz2 = self.proj.topixel(np.array(xyz))
 
         # xyz2r = [d for (i, d) in enumerate(xyz2) if i in self._axis_nums_to_keep]
