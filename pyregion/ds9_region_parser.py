@@ -10,7 +10,6 @@ from .parser_helper import (wcs_shape, define_shape_helper, Shape, Global,
 from .ds9_attr_parser import Ds9AttrParser, get_attr
 from .wcs_converter import (convert_to_imagecoord,
                             convert_physical_to_imagecoord)
-from .physical_coordinate import PhysicalCoordinate
 
 ds9_shape_defs = dict(
     circle=wcs_shape(CoordOdd, CoordEven, Distance),
@@ -153,18 +152,15 @@ class RegionParser(RegionPusher):
                 yield l1, c1
 
     @staticmethod
-    def sky_to_image(shape_list, header, rot_wrt_axis=1):
+    def sky_to_image(shape_list, header):
         """Converts a `ShapeList` into shapes with coordinates in image coordinates
 
         Parameters
         ----------
         shape_list : `pyregion.ShapeList`
             The ShapeList to convert
-        header : `~astropy.io.fits.Header` or `~astropy.wcs.WCS`
+        header : `~astropy.io.fits.Header`
             Specifies what WCS transformations to use.
-        rot_wrt_axis : 1 or 2
-            Specifies whether to measure angles East of North or West of North.
-            Currently ignored. TODO
 
         Yields
         -------
@@ -181,8 +177,7 @@ class RegionParser(RegionPusher):
             if isinstance(shape, Shape) and \
                     (shape.coord_format not in image_like_coordformats):
 
-                new_coords = convert_to_imagecoord(shape, header,
-                                                   rot_wrt_axis=rot_wrt_axis)
+                new_coords = convert_to_imagecoord(shape, header)
 
                 l1n = copy.copy(shape)
 

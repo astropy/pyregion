@@ -4,6 +4,8 @@
 API Changes
 ^^^^^^^^^^^
 
+- Removed ``rot_wrt_axis`` parameter from ``ShapeList`` and internal methods.
+
 - ``pyregion.ds9_region_parser``
 
   - ``RegionParser.sky_to_image`` now calls its first parameter ``shape_list``
@@ -32,6 +34,12 @@ Other Changes and Additions
 
 - Astropy is used for all sky to image coordinate conversions.
 
+- Rotation angles are measured from the Y-axis instead of the X-axis, in order
+  to agree with DS9 and potentially other astronomy software. This is a change
+  from previous behavior, but only affects images with non-orthogonal axes.
+  Previously, this behavior was controlled by the ``rot_wrt_axis`` parameter.
+
+- Astropy 1.0 is now required.
 
 1.2 (Aug 11, 2016)
 ------------------
