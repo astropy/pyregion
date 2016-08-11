@@ -1,0 +1,27 @@
+# Region file format: DS9 version 4.1
+global color=green dashlist=8 3 width=1 font="helvetica 10 normal roman" select=1 highlite=1 dash=0 fixed=0 edit=1 move=1 delete=1 include=1 source=1
+image
+circle(55.999545,237.00008,11.935542) # font="helvetica 10 normal"
+ellipse(102.99988,241.99999,10,25,15.430008) # color=black width=4 font="helvetica 10 normal"
+box(164.50049,240.50007,43,23,28.902084) # color=white font="helvetica 10 normal" tag={Group 1}
+polygon(196.47911,217.02112,234.52161,217.0211,215.50036,242.99994,256.50007,222.99997,234.52148,178.97883,217.49965,173.99993,196.47842,178.97892) # color=red font="helvetica 10 normal"
+line(51.000257,190.50004,113.00049,187.49993) # line=0 0 font="helvetica 10 normal" dash=1
+# vector(73.999544,111.49999,60.373833,63.431533) vector=1 font="helvetica 10 normal"
+# text(150.00034,186.49993) font="helvetica 10 normal" text={Text}
+annulus(228.00031,131.49998,9,21.09345,28.1246) # color=yellow font="helvetica 10 normal"
+ellipse(152.00007,139.50003,14.56022,8.1679283,33.24154,18.647693,339.24549) # width=2 font="helvetica 10 normal" tag={Group 1}
+panda(72.999339,69.500035,359.99658,511.25658,2,16.6187,33.2374,1) # color=blue width=2 font="helvetica 10 normal"
+epanda(146.99975,66.499992,359.99658,448.05373,1,8.0622579,10.743007,21.009414,27.99517,1,8.1096144) # epanda=(359.99658 88.053729 228.19348 327.92106)(8.0622579 10.743007 21.009414 27.99517 28.012552 37.326893)(8.1096144) color=cyan font="helvetica 10 normal"
+epanda(146.99975,66.499992,359.99658,448.05373,1,21.009414,27.99517,28.012552,37.326893,1,8.1096144) # epanda=ignore
+epanda(146.99975,66.499992,88.053729,228.19348,1,8.0622579,10.743007,21.009414,27.99517,1,8.1096144) # epanda=ignore
+epanda(146.99975,66.499992,88.053729,228.19348,1,21.009414,27.99517,28.012552,37.326893,1,8.1096144) # epanda=ignore
+epanda(146.99975,66.499992,228.19348,327.92106,1,8.0622579,10.743007,21.009414,27.99517,1,8.1096144) # epanda=ignore
+epanda(146.99975,66.499992,228.19348,327.92106,1,21.009414,27.99517,28.012552,37.326893,1,8.1096144) # epanda=ignore
+point(201.99986,83.500049) # point=circle font="helvetica 10 normal"
+point(227.00014,83.50004) # point=box color=magenta font="helvetica 10 normal"
+point(251.00007,85.50005) # point=diamond font="helvetica 10 normal"
+point(203,61.499996) # point=cross font="helvetica 10 normal"
+point(224.99987,61.500064) # point=x font="helvetica 10 normal"
+point(203.00027,33.499944) # point=arrow font="helvetica 10 normal"
+point(227.99956,35.50006) # point=boxcircle font="helvetica 10 normal"
+bpanda(67.56482,36.104174,359.99658,649.99658,1,25.223491,12.270268,57.130062,27.7916,1,342.54158) # color=blue width=2 font="helvetica 10 normal"

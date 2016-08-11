@@ -1,0 +1,7 @@
+# Region file format: DS9 version 4.1
+global color=green dashlist=8 3 width=1 font="helvetica 10 normal roman" select=1 highlite=1 dash=0 fixed=0 edit=1 move=1 delete=1 include=1 source=1
+icrs
+-ellipse(11:24:37.956,-59:15:47.48,22.632",10.332",317.022) # width=3 font="helvetica 10 normal" background
+circle(11:24:24.226,-59:15:02.19,18.5108") # color=cyan font="helvetica 10 normal"
+box(11:24:39.210,-59:16:53.90,42.804",23.616",19.0435) # width=4 font="helvetica 10 normal"
+polygon(11:24:29.733,-59:16:07.71,11:24:21.720,-59:15:43.51,11:24:23.637,-59:17:08.63,11:24:29.732,-59:16:37.11) # font="helvetica 10 normal"
