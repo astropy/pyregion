@@ -1,8 +1,45 @@
 2.0 (unreleased)
 ----------------
 
-We plan to release pyregion v2.0 shortly (weeks) after v1.2.
+API Changes
+^^^^^^^^^^^
 
+- Removed ``rot_wrt_axis`` parameter from ``ShapeList`` and internal methods.
+
+- ``pyregion.ds9_region_parser``
+
+  - ``RegionParser.sky_to_image`` now calls its first parameter ``shape_list``
+    instead of ``l``.
+
+- ``pyregion.extern``
+
+  - ``kapteyn_celestial`` removed.
+
+-  ``pyregion.wcs_converter``
+
+  - ``convert_to_imagecoord`` changed signature with the switch to Astropy
+    and takes a ``Shape`` object.
+
+  - ``convert_physical_to_imagecoord`` changed signature to accept a ``Shape``
+    object.
+
+- ``pyregion.wcs_helper``
+
+  - All public methods and constants removed. They are replaced by Astropy,
+    or replaced by private methods.
+
+
+Other Changes and Additions
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+- Astropy is used for all sky to image coordinate conversions.
+
+- Rotation angles are measured from the Y-axis instead of the X-axis, in order
+  to agree with DS9 and potentially other astronomy software. This is a change
+  from previous behavior, but only affects images with non-orthogonal axes.
+  Previously, this behavior was controlled by the ``rot_wrt_axis`` parameter.
+
+- Astropy 1.0 is now required.
 
 1.2 (Aug 11, 2016)
 ------------------

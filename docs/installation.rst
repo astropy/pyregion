@@ -71,7 +71,7 @@ pyparsing
 
 astropy
 -------
-* OPTIONAL
+* REQUIRED
 * `Astropy <https://github.com/astropy/astropy/>`__
 
 matplotlib

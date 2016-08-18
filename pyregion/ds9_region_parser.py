@@ -7,12 +7,9 @@ from .parser_helper import (wcs_shape, define_shape_helper, Shape, Global,
                             RegionPusher, define_expr, define_line,
                             CoordCommand,
                             comment_shell_like, define_simple_literals)
-from .wcs_helper import (get_kapteyn_projection, sky2sky, UnknownWcs,
-                         image_like_coordformats, select_wcs)
 from .ds9_attr_parser import Ds9AttrParser, get_attr
 from .wcs_converter import (convert_to_imagecoord,
                             convert_physical_to_imagecoord)
-from .physical_coordinate import PhysicalCoordinate
 
 ds9_shape_defs = dict(
     circle=wcs_shape(CoordOdd, CoordEven, Distance),
@@ -39,8 +36,11 @@ ds9_shape_defs = dict(
     text=wcs_shape(CoordOdd, CoordEven),
 )
 
+image_like_coordformats = ["image", "physical", "detector", "logical"]
+
 
 class RegionParser(RegionPusher):
+
     def __init__(self):
 
         RegionPusher.__init__(self)
@@ -152,119 +152,54 @@ class RegionParser(RegionPusher):
                 yield l1, c1
 
     @staticmethod
-    def sky_to_image(l, header, rot_wrt_axis=1):
-        """
+    def sky_to_image(shape_list, header):
+        """Converts a `ShapeList` into shapes with coordinates in image coordinates
 
         Parameters
         ----------
-        l : TODO
-            TODO
+        shape_list : `pyregion.ShapeList`
+            The ShapeList to convert
         header : `~astropy.io.fits.Header`
-            FITS header
-        rot_wrt_axis : {1, 2}
-            Use rotation with respect to axis 1 (X-axis) or axis 2 (Y-axis) and north.
+            Specifies what WCS transformations to use.
 
-        Returns
+        Yields
         -------
-        TODO
+        shape, comment : Shape, str
+            Shape with image coordinates and the associated comment
+
+        Note
+        ----
+        The comments in the original `ShapeList` are unaltered
+
         """
 
-        try:  # this is a hack to test if header is fits header of wcs object.
-            header["NAXIS"]
-        except (KeyError, TypeError, ValueError):
-            pc = None
-        else:
-            pc = PhysicalCoordinate(header)
+        for shape, comment in shape_list:
+            if isinstance(shape, Shape) and \
+                    (shape.coord_format not in image_like_coordformats):
 
-        wcs_proj = get_kapteyn_projection(header)
+                new_coords = convert_to_imagecoord(shape, header)
 
-        for l1, c1 in l:
-            if isinstance(l1, Shape) and \
-                    (l1.coord_format not in image_like_coordformats):
-                tgt = wcs_proj.radesys
-                if l1.coord_format == UnknownWcs:
-                    src = tgt
-                else:
-                    src = select_wcs(l1.coord_format)
-                sky_to_sky = sky2sky(src, tgt)
+                l1n = copy.copy(shape)
 
-                cl = l1.coord_list
-                fl = ds9_shape_defs[l1.name].args_list
-
-                # take care of repeated items
-                if ds9_shape_defs[l1.name].args_repeat:
-                    n1, n2 = ds9_shape_defs[l1.name].args_repeat
-                else:
-                    n1 = 0
-                    n2 = len(cl)
-
-                xy0 = None
-
-                cl1, fl1 = cl[:n1], fl[:n1]
-                cl10, xy0 = convert_to_imagecoord(cl1, fl1, wcs_proj,
-                                                  sky_to_sky, xy0,
-                                                  rot_wrt_axis=rot_wrt_axis)
-
-                nn2 = len(cl) - (len(fl) - n2)
-                cl2, fl2 = cl[n1:nn2], fl[n1:n2]
-                cl20, xy0 = convert_to_imagecoord(cl2, fl2, wcs_proj,
-                                                  sky_to_sky, xy0,
-                                                  rot_wrt_axis=rot_wrt_axis)
-
-                cl3, fl3 = cl[nn2:], fl[n2:]
-                cl30, xy0 = convert_to_imagecoord(cl3, fl3, wcs_proj,
-                                                  sky_to_sky, xy0,
-                                                  rot_wrt_axis=rot_wrt_axis)
-
-                new_cl = cl10 + cl20 + cl30
-
-                l1n = copy.copy(l1)
-
-                l1n.coord_list = new_cl
+                l1n.coord_list = new_coords
                 l1n.coord_format = "image"
-                yield l1n, c1
+                yield l1n, comment
 
-            elif isinstance(l1, Shape) and (l1.coord_format == "physical"):
+            elif isinstance(shape, Shape) and shape.coord_format == "physical":
 
-                if pc is None:
+                if header is None:
                     raise RuntimeError("Physical coordinate is not known.")
 
-                cl = l1.coord_list
-                fl = ds9_shape_defs[l1.name].args_list
+                new_coordlist = convert_physical_to_imagecoord(shape, header)
 
-                # take care of repeated items
-                if ds9_shape_defs[l1.name].args_repeat:
-                    n1, n2 = ds9_shape_defs[l1.name].args_repeat
-                else:
-                    n1 = 0
-                    n2 = len(cl)
+                l1n = copy.copy(shape)
 
-                xy0 = None
-
-                cl1, fl1 = cl[:n1], fl[:n1]
-                cl10 = convert_physical_to_imagecoord(cl1, fl1, pc)
-                # cl10, xy0 = convert_to_imagecoord(cl1, fl1, wcs_proj,
-                #                sky_to_sky, xy0, rot_wrt_axis=rot_wrt_axis)
-
-                nn2 = len(cl) - (len(fl) - n2)
-                cl2, fl2 = cl[n1:nn2], fl[n1:n2]
-                cl20 = convert_physical_to_imagecoord(cl2, fl2, pc)
-                # cl20, xy0 = convert_to_imagecoord(cl2, fl2, wcs_proj,
-                #                sky_to_sky, xy0, rot_wrt_axis=rot_wrt_axis)
-
-                cl3, fl3 = cl[nn2:], fl[n2:]
-                cl30 = convert_physical_to_imagecoord(cl3, fl3, pc)
-
-                new_cl = cl10 + cl20 + cl30
-
-                l1n = copy.copy(l1)
-
-                l1n.coord_list = new_cl
+                l1n.coord_list = new_coordlist
                 l1n.coord_format = "image"
-                yield l1n, c1
+                yield l1n, comment
 
             else:
-                yield l1, c1
+                yield shape, comment
 
     def filter_shape(self, sss):
         return [s1[0] for s1 in sss if isinstance(s1[0], Shape)]
