@@ -6,6 +6,10 @@ API Changes
 
 - Removed ``rot_wrt_axis`` parameter from ``ShapeList`` and internal methods.
 
+- ``ShapeList.as_imagecoord`` no longer accepts a ``asropy.wcs.WCS`` object. The
+  conversion from pixel to image coordinates depends on the center of the
+  image defined in ``astropy.io.fits.Header`` in order to agree with DS9.
+
 - ``pyregion.ds9_region_parser``
 
   - ``RegionParser.sky_to_image`` now calls its first parameter ``shape_list``
@@ -15,7 +19,7 @@ API Changes
 
   - ``kapteyn_celestial`` removed.
 
--  ``pyregion.wcs_converter``
+- ``pyregion.wcs_converter``
 
   - ``convert_to_imagecoord`` changed signature with the switch to Astropy
     and takes a ``Shape`` object.
@@ -36,6 +40,9 @@ Other Changes and Additions
   change, as `SIP <http://irsa.ipac.caltech.edu/data/SPITZER/docs/files/spitzer/shupeADASS.pdf>`_
   and `distortion paper <http://www.atnf.csiro.au/people/mcalabre/WCS/dcs_20040422.pdf>`_
   corrections are now used if present in the FITS file.
+
+- Headers with more then 2 axes are now supported; only the celestial axes are
+  used.
 
 - Rotation angles are measured from the Y-axis instead of the X-axis, in order
   to agree with DS9 and potentially other astronomy software. This is a change

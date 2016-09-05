@@ -135,16 +135,9 @@ converted to image coordinates. ::
     >>> print r2[0].coord_list
     [482.27721401429852, 472.76641383805912, 18.811792596807045]
 
-`ShapeList.as_imagecoord <pyregion.ShapeList.as_imagecoord>` can take a `astropy.wcs.WCS` object instead of a header.
-This is useful if your FITS file is not a simple 2D image, as you can then use only the celestial
-subset of the co-ordinates to parse the region: ::
-
-    from astropy.io import fits
-    from astropy.WCS import WCS
-    f = fits.open("t1.fits")
-    w = WCS(f[0].header)
-    w_im = w.celestial
-    r2 = pyregion.parse(region_string).as_imagecoord(w_im)
+`ShapeList.as_imagecoord <pyregion.ShapeList.as_imagecoord>` will use the
+subset of the header defining a celestial coordinate system, ignoring any
+velocity or channel components.
 
 Draw Regions with Matplotlib
 ============================
