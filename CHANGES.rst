@@ -32,7 +32,10 @@ API Changes
 Other Changes and Additions
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-- Astropy is used for all sky to image coordinate conversions.
+- Astropy is used for all sky to image coordinate conversions. Science results may
+  change, as `SIP <http://irsa.ipac.caltech.edu/data/SPITZER/docs/files/spitzer/shupeADASS.pdf>`_
+  and `distortion paper <http://www.atnf.csiro.au/people/mcalabre/WCS/dcs_20040422.pdf>`_
+  corrections are now used if present in the FITS file.
 
 - Rotation angles are measured from the Y-axis instead of the X-axis, in order
   to agree with DS9 and potentially other astronomy software. This is a change
