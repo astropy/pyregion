@@ -128,5 +128,5 @@ setup(
     zip_safe=False,
     use_2to3=False,
     classifiers=classifiers,
-    **package_info,
+    **package_info
 )
