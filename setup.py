@@ -90,7 +90,7 @@ for root, dirs, files in os.walk(PACKAGENAME):
 package_info['package_data'][PACKAGENAME].extend(c_files)
 
 install_requires = [
-    'pyparsing>=2.0'
+    'pyparsing>=2.0',
     'numpy',
     'Cython',
     'astropy>=1.0',
@@ -112,20 +112,21 @@ classifiers = [
     'Topic :: Scientific/Engineering :: Astronomy',
 ]
 
-setup(name=PACKAGENAME,
-      version=VERSION,
-      description=DESCRIPTION,
-      scripts=scripts,
-      install_requires=install_requires,
-      provides=[PACKAGENAME],
-      author=AUTHOR,
-      author_email=AUTHOR_EMAIL,
-      license=LICENSE,
-      url=URL,
-      long_description=LONG_DESCRIPTION,
-      cmdclass=cmdclassd,
-      zip_safe=False,
-      use_2to3=False,
-      classifiers=classifiers,
-      **package_info
-      )
+setup(
+    name=PACKAGENAME,
+    version=VERSION,
+    description=DESCRIPTION,
+    scripts=scripts,
+    install_requires=install_requires,
+    provides=[PACKAGENAME],
+    author=AUTHOR,
+    author_email=AUTHOR_EMAIL,
+    license=LICENSE,
+    url=URL,
+    long_description=LONG_DESCRIPTION,
+    cmdclass=cmdclassd,
+    zip_safe=False,
+    use_2to3=False,
+    classifiers=classifiers,
+    **package_info,
+)
