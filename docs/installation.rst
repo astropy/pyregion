@@ -4,82 +4,74 @@
 Installation
 ************
 
-Instructions
-============
-
-*pyregion* is registered in pypi, thus you can install it by ::
-
- pip install pyregion
-
-This will also install pyparsing if not installed.
-
-The source file can be downloaded directly from the following page.
-
-* `PyPI page <https://pypi.python.org/pypi/pyregion>`__
-
-To install with necessary dependency (pyparsing, see below), you may do
-
-* in Python 2 ::
-
-    pip install "pyparsing<2"
-    pip install pyregion
-
-* in Python 3 ::
-
-    pip install "pyparsing>=2"
-    pip install pyregion
-
-The development version of pyregion can be found on the github page.
-
-* `Download <http://github.com/astropy/pyregion>`__
-
-To fetch the source
-code by cloning my git repository for any recent bug fix. ::
-
-    git clone git://github.com/astropy/pyregion.git
-    cd pyregion
-    python setup.py install
-
-For any bug reporting or any suggestion, please use the github issue
-tracker.
-
 Dependencies
 ============
 
-**Requirements**
+Python 2.7 and 3.4+ are supported.
 
-Being based on pyparsing module, pyparsing need to be installed to use
-pyregion. Optionally, you also requires pywcs
-module installed for coordinate
-conversion. Displaying regions is supported for matplotlib.  Some
-example uses wcsaxes.
+``pyregion`` has the following required dependencies:
 
-By default, pyregion build a filtering module, which requires a C compiler.
-If you don't want, edit "setup.py" ::
+* `Astropy <http://www.astropy.org/>`__ version 1.0 or later (which requires Numpy)
+* ``pyparsing`` version 2.0 or later for parsing the DS9 region files
+    * `Homepage <http://pyparsing.wikispaces.com/>`__
+    * `PyPI page <https://pypi.python.org/pypi/pyparsing>`__
 
-  WITH_FILTER = False
+``pyregion`` has the following optional dependencies for plotting:
 
+* `matplotlib <http://matplotlib.org/>`__
+* `wcsaxes <https://github.com/astrofrog/wcsaxes>`__
 
-pyparsing
+To work with the development version, you'll need Cython and a C compiler,
+because the code to generate masks from regions is written in Cython.
+
+Stable version
+==============
+
+Installing the latest stable version is possible either using pip or conda.
+
+Using pip
 ---------
-* REQUIRED
-* `Homepage <http://pyparsing.wikispaces.com/>`__
-* `PyPI page <https://pypi.python.org/pypi/pyparsing>`__
-* pyparsing version >= 2.0 suports Python 3. But it seems that it does
-  not support Python 2.
-* For Python 2, install older version (v1.5.7).
 
-astropy
--------
-* REQUIRED
-* `Astropy <https://github.com/astropy/astropy/>`__
+To install pyregion with `pip <http://www.pip-installer.org/en/latest/>`_
+from `PyPI <https://pypi.python.org/pypi/pyregion>`_
+simply run::
 
-matplotlib
-----------
-* OPTIONAL
-* `Homepage <http://matplotlib.org/>`__
+    pip install --no-deps pyregion
 
-wcsaxes
--------
-* OPTIONAL
-* `Homepage <https://github.com/astrofrog/wcsaxes>`__
+.. note::
+
+    The ``--no-deps`` flag is optional, but highly recommended if you already
+    have Numpy installed, since otherwise pip will sometimes try to "help" you
+    by upgrading your Numpy installation, which may not always be desired.
+
+Using conda
+-----------
+
+To install regions with `Anaconda <https://www.continuum.io/downloads>`_
+from the `astropy channel on anaconda.org <https://anaconda.org/astropy/pyregion>`__
+simply run::
+
+    conda install -c astropy pyregion
+
+
+Testing installation
+--------------------
+
+To check if your install is OK, run the tests:
+
+.. code-block:: bash
+
+    python -c 'import pyregion; pyregion.test()'
+
+Development version
+===================
+
+Install the latest development version from https://github.com/astropy/pyregion :
+
+.. code-block:: bash
+
+    git clone https://github.com/astropy/pyregion
+    cd pyregion
+    python setup.py install
+    python setup.py test
+    python setup.py build_sphinx

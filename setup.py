@@ -8,7 +8,7 @@ import sys
 import ah_bootstrap
 from setuptools import setup
 
-#A dirty hack to get around some early import/configurations ambiguities
+# A dirty hack to get around some early import/configurations ambiguities
 if sys.version_info[0] >= 3:
     import builtins
 else:
@@ -68,7 +68,6 @@ generate_version_py(PACKAGENAME, VERSION, RELEASE,
 scripts = [fname for fname in glob.glob(os.path.join('scripts', '*'))
            if os.path.basename(fname) != 'README.rst']
 
-
 # Get configuration information from all of the various subpackages.
 # See the docstring for setup_helpers.update_package_files for more
 # details.
@@ -90,13 +89,28 @@ for root, dirs, files in os.walk(PACKAGENAME):
                     os.path.relpath(root, PACKAGENAME), filename))
 package_info['package_data'][PACKAGENAME].extend(c_files)
 
-if sys.version_info[0] >= 3:
-    install_requires = ['pyparsing>=2.0.0']
-else:
-    # For Python 2.6 and 2.7, any version *except* 2.0.0 will work
-    install_requires = ['pyparsing!=2.0.0']
+install_requires = [
+    'pyparsing>=2.0'
+    'numpy',
+    'Cython',
+    'astropy>=1.0',
+]
 
-install_requires += ['astropy>=1.0.0', 'numpy', 'Cython']
+classifiers = [
+    'Development Status :: 5 - Production/Stable',
+    'Intended Audience :: Science/Research',
+    'License :: OSI Approved :: MIT License',
+    'Operating System :: MacOS :: MacOS X',
+    'Operating System :: POSIX :: Linux',
+    'Programming Language :: Cython',
+    'Programming Language :: Python',
+    'Programming Language :: Python :: 2',
+    'Programming Language :: Python :: 2.7',
+    'Programming Language :: Python :: 3',
+    'Programming Language :: Python :: 3.4',
+    'Programming Language :: Python :: 3.5',
+    'Topic :: Scientific/Engineering :: Astronomy',
+]
 
 setup(name=PACKAGENAME,
       version=VERSION,
@@ -112,15 +126,6 @@ setup(name=PACKAGENAME,
       cmdclass=cmdclassd,
       zip_safe=False,
       use_2to3=False,
-      classifiers=['Development Status :: 5 - Production/Stable',
-                   'Intended Audience :: Science/Research',
-                   'License :: OSI Approved :: MIT License',
-                   'Operating System :: MacOS :: MacOS X',
-                   'Operating System :: POSIX :: Linux',
-                   'Programming Language :: Cython',
-                   'Programming Language :: Python',
-                   'Programming Language :: Python :: 3',
-                   'Topic :: Scientific/Engineering :: Astronomy',
-                   ],
+      classifiers=classifiers,
       **package_info
-)
+      )
