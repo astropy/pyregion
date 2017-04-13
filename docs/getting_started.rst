@@ -151,7 +151,7 @@ Draw Regions with Matplotlib
 
 pyregion can help you draw ds9 regions with matplotlib.
 `ShapeList.get_mpl_patches_texts <pyregion.ShapeList.get_mpl_patches_texts>` returns a list of
-`matplotlib.artist.Artist` objects ::
+``matplotlib.artist.Artist`` objects ::
 
     r2 = pyregion.parse(region_string).as_imagecoord(f[0].header)
     patch_list, artist_list = r2.get_mpl_patches_texts()
