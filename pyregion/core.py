@@ -191,9 +191,9 @@ class ShapeList(list):
                                     for a in attr0 if a != 'text'])
 
             # first line is globals
-            print >> outf, "global", defaultline
+            outf.write("global {0}\n".format(defaultline))
             # second line must be a coordinate format
-            print >> outf, prev_cs
+            outf.write("{0}\n".format(prev_cs))
 
             for shape in self:
                 shape_attr = '' if prev_cs == shape.coord_format \
@@ -206,7 +206,7 @@ class ShapeList(list):
                 shape_str = shape_attr + shape_excl + shape.name + \
                             shape_coords + shape_comment
 
-                print >> outf, shape_str
+                outf.write("{0}\n".format(shape_str))
 
         except IOError as e:
             cmsg = "Unable to create region file \'{:s}\'.".format(outfile)
