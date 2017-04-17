@@ -169,7 +169,7 @@ class ShapeList(list):
             print("WARNING: The region list is empty. The region file "
                   "'{:s}' will be empty.".format(outfile))
             try:
-                outf = open(outfile, 'w')
+                outf = _builtin_open(outfile, 'w')
                 outf.close()
                 return
             except IOError as e:
