@@ -11,6 +11,7 @@ recursive-include docs *
 recursive-include licenses *
 recursive-include cextern *
 recursive-include scripts *
+recursive-include pyregion *.pxd
 
 prune build
 prune docs/_build
