@@ -93,7 +93,8 @@ def define_line(atom,
                 comment):
     atomSeparator = separator.suppress()
 
-    atomList = atom + ZeroOrMore(atomSeparator + atom)
+    atomList = atom + ZeroOrMore(atomSeparator + atom) + \
+               Optional(atomSeparator)
 
     line = (atomList + Optional(comment)) | comment
 
