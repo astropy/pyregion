@@ -39,6 +39,8 @@ class Ds9AttrParser(object):
                                          vector=wcs_shape(CoordOdd, CoordEven,
                                                           Distance, Angle),
                                          composite=wcs_shape(CoordOdd, CoordEven, Angle),
+                                         ruler=wcs_shape(CoordOdd, CoordEven, CoordOdd, CoordEven),
+                                         compass=wcs_shape(CoordOdd, CoordEven, Distance),
                                          projection=wcs_shape(CoordOdd, CoordEven, CoordOdd, CoordEven, Distance),
                                          segment=wcs_shape(CoordOdd, CoordEven,
                                                            repeat=(0, 2)),
