@@ -13,8 +13,10 @@ from .wcs_converter import (convert_to_imagecoord,
 
 ds9_shape_defs = dict(
     circle=wcs_shape(CoordOdd, CoordEven, Distance),
-    rotbox=wcs_shape(CoordOdd, CoordEven, Distance, Distance, Angle),
-    box=wcs_shape(CoordOdd, CoordEven, Distance, Distance, Angle),
+    rotbox=wcs_shape(CoordOdd, CoordEven, Distance, Distance, Angle,
+                     repeat=(2, 4)),
+    box=wcs_shape(CoordOdd, CoordEven, Distance, Distance, Angle,
+                  repeat=(2, 4)),
     polygon=wcs_shape(CoordOdd, CoordEven, repeat=(0, 2)),
     ellipse=wcs_shape(CoordOdd, CoordEven, Distance, Distance, Angle, repeat=(2, 4)),
     annulus=wcs_shape(CoordOdd, CoordEven, Distance, repeat=(2, 3)),
