@@ -1,7 +1,9 @@
 import copy
 import warnings
-from pyparsing import (Literal, CaselessKeyword, Optional, And, Or,
-                       StringEnd, ParseException)
+from pyparsing import (Literal, CaselessKeyword, CaselessLiteral,
+                       Optional, And, Or, Word,
+                       StringEnd, ParseException, Combine,
+                       alphas)
 from .region_numbers import CoordOdd, CoordEven, Distance, Angle, Integer
 from .parser_helper import (wcs_shape, define_shape_helper, Shape, Global,
                             RegionPusher, define_expr, define_line,
@@ -13,8 +15,10 @@ from .wcs_converter import (convert_to_imagecoord,
 
 ds9_shape_defs = dict(
     circle=wcs_shape(CoordOdd, CoordEven, Distance),
-    rotbox=wcs_shape(CoordOdd, CoordEven, Distance, Distance, Angle),
-    box=wcs_shape(CoordOdd, CoordEven, Distance, Distance, Angle),
+    rotbox=wcs_shape(CoordOdd, CoordEven, Distance, Distance, Angle,
+                     repeat=(2, 4)),
+    box=wcs_shape(CoordOdd, CoordEven, Distance, Distance, Angle,
+                  repeat=(2, 4)),
     polygon=wcs_shape(CoordOdd, CoordEven, repeat=(0, 2)),
     ellipse=wcs_shape(CoordOdd, CoordEven, Distance, Distance, Angle, repeat=(2, 4)),
     annulus=wcs_shape(CoordOdd, CoordEven, Distance, repeat=(2, 3)),
@@ -57,8 +61,11 @@ class RegionParser(RegionPusher):
                               'J2000', 'GALACTIC', 'ECLIPTIC', 'ICRS',
                               'LINEAR', 'AMPLIFIER', 'DETECTOR']
 
-        coordCommand = define_simple_literals(coord_command_keys,
-                                              parseAction=lambda s, l, tok: CoordCommand(tok[-1]))
+        coordCommandLiterals = define_simple_literals(coord_command_keys)
+        coordCommandWCS = Combine(CaselessLiteral("WCS") + Optional(Word(alphas)))
+
+        coordCommand = (coordCommandLiterals | coordCommandWCS)
+        coordCommand.setParseAction(lambda s, l, tok: CoordCommand(tok[-1]))
 
         regionGlobal = comment_shell_like(CaselessKeyword("global"),
                                           lambda s, l, tok: Global(tok[-1]))
