@@ -32,9 +32,15 @@ def _generate_arg_types(coordlist_length, shape_name):
 
     """
     from .ds9_region_parser import ds9_shape_defs
+    from .ds9_attr_parser import ds9_shape_in_comment_defs
 
-    initial_arg_types = ds9_shape_defs[shape_name].args_list
-    arg_repeats = ds9_shape_defs[shape_name].args_repeat
+    if shape_name in ds9_shape_defs:
+        shape_def = ds9_shape_defs[shape_name]
+    else:
+        shape_def = ds9_shape_in_comment_defs[shape_name]
+
+    initial_arg_types = shape_def.args_list
+    arg_repeats = shape_def.args_repeat
 
     if arg_repeats is None:
         return initial_arg_types
