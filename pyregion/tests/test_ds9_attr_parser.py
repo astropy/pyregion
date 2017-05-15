@@ -7,6 +7,7 @@ def test_attr():
     assert p.parseString("font=\"123 123\"")[0] == ("font", '"123 123"')
     assert p.parseString("color")[0] == ("color",)
     assert p.parseString("tag={group 1}")[0] == ("tag", "group 1")
+    assert p.parseString('color=#6a8')[0] == ("color", "#6a8")
 
 
 def test_get_attr():

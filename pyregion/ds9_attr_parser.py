@@ -13,6 +13,7 @@ def get_ds9_attr_parser():
     lhs = Word(alphas)
     paren = QuotedString("(", endQuoteChar=")")
     rhs = Or([Word(alphas + nums),
+              Combine(Literal("#") + Word(alphas + nums)),  # color with '#'
               Combine(Word(alphas) + White() + Word(nums)),  # for point
               quotedString,
               QuotedString("{", endQuoteChar="}"),
