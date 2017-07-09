@@ -19,7 +19,11 @@ Python 2.7 and 3.4+ are supported.
 ``pyregion`` has the following optional dependencies for plotting:
 
 * `matplotlib <http://matplotlib.org/>`__
-* `wcsaxes <https://github.com/astrofrog/wcsaxes>`__
+
+If you are using Astropy version 1.3 or later,
+then you have ``astropy.visualization.wcsaxes``.
+For older versions of Astropy, you have to install the separate package:
+`wcsaxes <https://github.com/astrofrog/wcsaxes>`__
 
 To work with the development version, you'll need Cython and a C compiler,
 because the code to generate masks from regions is written in Cython.
