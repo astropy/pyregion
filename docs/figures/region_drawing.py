@@ -9,7 +9,7 @@ f_xray = fits.open(xray_name)
 
 try:
     from astropy.wcs import WCS
-    from wcsaxes import WCSAxes
+    from astropy.visualization.wcsaxes import WCSAxes
 
     wcs = WCS(f_xray[0].header)
     fig = plt.figure()
