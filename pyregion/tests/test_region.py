@@ -1,9 +1,9 @@
 import os
+import pytest
 import numpy as np
 from os.path import join
 from astropy.io.fits import Header
 from .. import open as pyregion_open
-from astropy.tests.helper import pytest
 from numpy.testing import assert_allclose
 
 rootdir = join(os.path.dirname(os.path.abspath(__file__)), 'data')

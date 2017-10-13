@@ -1,12 +1,11 @@
-from astropy.tests.helper import pytest
-
+import pytest
+import os.path
+from numpy.testing import assert_allclose
+from astropy.io.fits import Header
 from ..ds9_region_parser import ds9_shape_defs
 from ..region_numbers import CoordOdd, CoordEven
 from .. import wcs_converter
 from ..wcs_helper import _calculate_rotation_angle
-from astropy.io.fits import Header
-import os.path
-from numpy.testing import assert_allclose
 
 rootdir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'data')
 
@@ -20,7 +19,7 @@ def test__generate_arg_types_min_list():
 
 
 @pytest.mark.parametrize(("name", "length", "result"), [
-    ("polygon", 6, 3*[CoordOdd, CoordEven]),
+    ("polygon", 6, 3 * [CoordOdd, CoordEven]),
 ])
 def test__generate_arg_types_with_repeats(name, length, result):
     test_list = wcs_converter._generate_arg_types(length, name)
