@@ -49,8 +49,8 @@ def _generate_arg_types(coordlist_length, shape_name):
     n1, n2 = arg_repeats
     arg_types = list(initial_arg_types[:n1])
     num_of_repeats = coordlist_length - (len(initial_arg_types) - n2)
-    arg_types.extend((num_of_repeats-n1) //
-                        (n2 - n1) * initial_arg_types[n1:n2])
+    arg_types.extend((num_of_repeats - n1) //
+                     (n2 - n1) * initial_arg_types[n1:n2])
     arg_types.extend(initial_arg_types[n2:])
     return arg_types
 

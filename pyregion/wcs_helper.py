@@ -22,9 +22,7 @@ def _estimate_angle(angle, reg_coordinate_frame, header):
     -------
     angle : float
         The angle, measured from the Y axis in the WCS defined by ``header'`
-
     """
-
     y_axis_rot = _calculate_rotation_angle(reg_coordinate_frame, header)
     return angle - y_axis_rot
 
@@ -64,8 +62,8 @@ def _calculate_rotation_angle(reg_coordinate_frame, header):
         equinox=region_frame.equinox)
 
     origin = SkyCoord.from_pixel(
-        header['NAXIS1']/2,
-        header['NAXIS2']/2,
+        header['NAXIS1'] / 2,
+        header['NAXIS2'] / 2,
         wcs=new_wcs,
         origin=1).transform_to(region_frame)
 
@@ -76,13 +74,13 @@ def _calculate_rotation_angle(reg_coordinate_frame, header):
     origin_lat = origin.data.lat.degree
 
     offset_point = SkyCoord(
-        origin_lon, origin_lat+offset, unit='degree',
+        origin_lon, origin_lat + offset, unit='degree',
         frame=origin.frame.name, obstime='J2000')
     offset_x, offset_y = offset_point.to_pixel(new_wcs, origin=1)
 
     north_rot = np.arctan2(
-        offset_y-origin_y,
-        offset_x-origin_x) / np.pi*180.
+        offset_y - origin_y,
+        offset_x - origin_x) / np.pi * 180.
 
     cdelt = new_wcs.wcs.get_cdelt()
     if (cdelt > 0).all() or (cdelt < 0).all():

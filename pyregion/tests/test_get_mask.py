@@ -20,4 +20,4 @@ def test_region():
 
     assert isinstance(mask, np.ndarray) and mask.shape == (100, 100)
 
-    # TODO: assert the contect of the mask, too
+    # TODO: assert the content of the mask, too

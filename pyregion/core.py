@@ -203,8 +203,8 @@ class ShapeList(list):
                 shape_coords = "(" + ",".join(text_coordlist) + ")"
                 shape_comment = " # " + shape.comment if shape.comment else ''
 
-                shape_str = shape_attr + shape_excl + shape.name + \
-                            shape_coords + shape_comment
+                shape_str = (shape_attr + shape_excl + shape.name +
+                             shape_coords + shape_comment)
 
                 outf.write("{0}\n".format(shape_str))
 

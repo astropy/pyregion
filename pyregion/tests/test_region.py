@@ -56,13 +56,13 @@ def test_region(ref_name, reg_name, header_name):
         assert ref_reg.exclude == reg.exclude
 
 
-@pytest.mark.parametrize(("reg_name"), [
-    ("test_annuli_ciao.reg"),  # subset of test03_img.reg
-    ("test_context.reg"),
-    ("test02.reg"),
-    ("test04_img.reg"),
-    ("test_text.reg"),
-    ("test01.reg"),
+@pytest.mark.parametrize("reg_name", [
+    "test_annuli_ciao.reg",  # subset of test03_img.reg
+    "test_context.reg",
+    "test02.reg",
+    "test04_img.reg",
+    "test_text.reg",
+    "test01.reg",
 ])
 def test_open_regions(reg_name, header):
     # TODO: Better test. Like figure out how these files relate to each other

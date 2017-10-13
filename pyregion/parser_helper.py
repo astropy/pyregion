@@ -125,11 +125,12 @@ class Shape(object):
     ----------
     shape_name : str
         Shape name
-    params : list
+    shape_params : list
         List of parameters
 
     Examples
     --------
+    >>> import pyregion
     >>> region_string = 'fk5;circle(290.96388,14.019167,843.31194")'
     >>> shape_list = pyregion.parse(region_string)
     >>> shape = shape_list[0]
