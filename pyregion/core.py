@@ -328,10 +328,10 @@ def get_mask(region, hdu, origin=1):
     --------
     >>> from astropy.io import fits
     >>> from pyregion import read_region_as_imagecoord, get_mask
-    >>> f = fits.read("test.fits")
+    >>> hdu = fits.open("test.fits")[0]
     >>> region = "test01.reg"
     >>> reg = read_region_as_imagecoord(open(region), f[0].header)
-    >>> mask = get_mask(reg, f[0])
+    >>> mask = get_mask(reg, hdu)
     """
     from pyregion.region_to_filter import as_region_filter
 
