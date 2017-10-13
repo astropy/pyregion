@@ -1,5 +1,25 @@
-2.0 (unreleased)
-----------------
+2.0 (Oct 14, 2017)
+------------------
+
+This is a major new release of **pyregion**. There are some API changes
+(listed below), but overall our goal was to keep backwards-compatibility
+as much as possible while fixing code and installation issues
+and refactor the internals to use Astropy more.
+
+We note that we are developing a new **regions** package that is supposed
+to become a superset of the functionality that is now in **pyregion** and
+might be moved in the Astropy core package as **astropy.regions** in the future.
+The main difference is that it represents regions as classes and uses Astropy
+angle and coordinate objects, allowing for easier region-based analysis.
+It is not feature complete, especially the DS9 region file parser is not a
+complete replacement for **pyregion** yet. Still, you are encouraged to try
+it out ( http://astropy-regions.readthedocs.io/ ), give feedback or even contribute.
+
+For **pyregion**, the plan is to continue to do bugfixes and releases,
+but to keep API changes to a minimum to avoid breaking existing scripts or pipelines.
+If you have any questions or issues or requests, please open an issue in the **pyregion**
+issue tracker on Github.
+
 
 API Changes
 ^^^^^^^^^^^
