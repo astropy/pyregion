@@ -51,6 +51,8 @@ Other Changes and Additions
 
 - Astropy 1.0 is now required.
 
+- Shape conversion for multi-dimenstional HDU does not raise exceptions.
+
 - Parser supports hex color in attributes
 
 1.2 (Aug 11, 2016)
