@@ -255,7 +255,8 @@ def open(fname):
     shapes : `ShapeList`
         List of `~pyregion.Shape`
     """
-    region_string = _builtin_open(fname).read()
+    with _builtin_open(fname) as fh:
+        region_string = fh.read()
     return parse(region_string)
 
 
