@@ -38,7 +38,7 @@ matrix:
         # Check for sphinx doc build warnings - we do this first because it
         # may run for a long time
         - python: 2.7
-          env: SETUP_CMD='build_docs -w' PIP_DEPENDENCIES='sphinx_rtd_theme'
+          env: SETUP_CMD='build_docs' PIP_DEPENDENCIES='sphinx_rtd_theme'
         - python: 3.5
           env: SETUP_CMD='build_docs -w' PIP_DEPENDENCIES='sphinx_rtd_theme'
 
