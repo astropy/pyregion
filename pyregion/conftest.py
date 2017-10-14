@@ -4,20 +4,17 @@
 
 from astropy.tests.pytest_plugins import *
 
-# Uncomment the following line to treat all DeprecationWarnings as
-# exceptions
+# Uncomment the following line to treat all DeprecationWarnings as exceptions
 enable_deprecations_as_exceptions()
 
-# Add astropy to test header information and remove unused packages.
-# Pytest header customisation was introduced in astropy 1.0.
-import os
-
-try:
-    PYTEST_HEADER_MODULES['Astropy'] = 'astropy'
-    del PYTEST_HEADER_MODULES['h5py']
-    del PYTEST_HEADER_MODULES['Scipy']
-except NameError:
-    pass
+PYTEST_HEADER_MODULES.clear()
+PYTEST_HEADER_MODULES.update([
+    ('numpy', 'numpy'),
+    ('cython', 'cython'),
+    ('Astropy', 'astropy'),
+    ('pyparsing', 'pyparsing'),
+    ('matplotlib', 'matplotlib'),
+])
 
 # This is to figure out the affiliated package version, rather than
 # using Astropy's
@@ -26,5 +23,6 @@ try:
 except ImportError:
     version = 'dev'
 
+import os
 packagename = os.path.basename(os.path.dirname(__file__))
 TESTED_VERSIONS[packagename] = version
