@@ -27,15 +27,17 @@ def get_ds9_attr_parser():
     return ZeroOrMore(expr)
 
 
-ds9_shape_in_comment_defs = dict(text=wcs_shape(CoordOdd, CoordEven),
-                                 vector=wcs_shape(CoordOdd, CoordEven,
-                                                  Distance, Angle),
-                                 composite=wcs_shape(CoordOdd, CoordEven, Angle),
-                                 ruler=wcs_shape(CoordOdd, CoordEven, CoordOdd, CoordEven),
-                                 compass=wcs_shape(CoordOdd, CoordEven, Distance),
-                                 projection=wcs_shape(CoordOdd, CoordEven, CoordOdd, CoordEven, Distance),
-                                 segment=wcs_shape(CoordOdd, CoordEven,
-                                                   repeat=(0, 2)))
+ds9_shape_in_comment_defs = dict(
+    text=wcs_shape(CoordOdd, CoordEven),
+    vector=wcs_shape(CoordOdd, CoordEven,
+                     Distance, Angle),
+    composite=wcs_shape(CoordOdd, CoordEven, Angle),
+    ruler=wcs_shape(CoordOdd, CoordEven, CoordOdd, CoordEven),
+    compass=wcs_shape(CoordOdd, CoordEven, Distance),
+    projection=wcs_shape(CoordOdd, CoordEven, CoordOdd, CoordEven, Distance),
+    segment=wcs_shape(CoordOdd, CoordEven,
+                      repeat=(0, 2))
+)
 
 
 class Ds9AttrParser(object):

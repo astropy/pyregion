@@ -203,8 +203,8 @@ class ShapeList(list):
                 shape_coords = "(" + ",".join(text_coordlist) + ")"
                 shape_comment = " # " + shape.comment if shape.comment else ''
 
-                shape_str = shape_attr + shape_excl + shape.name + \
-                            shape_coords + shape_comment
+                shape_str = (shape_attr + shape_excl + shape.name +
+                             shape_coords + shape_comment)
 
                 outf.write("{0}\n".format(shape_str))
 
@@ -255,7 +255,8 @@ def open(fname):
     shapes : `ShapeList`
         List of `~pyregion.Shape`
     """
-    region_string = _builtin_open(fname).read()
+    with _builtin_open(fname) as fh:
+        region_string = fh.read()
     return parse(region_string)
 
 
@@ -327,10 +328,10 @@ def get_mask(region, hdu, origin=1):
     --------
     >>> from astropy.io import fits
     >>> from pyregion import read_region_as_imagecoord, get_mask
-    >>> f = fits.read("test.fits")
+    >>> hdu = fits.open("test.fits")[0]
     >>> region = "test01.reg"
     >>> reg = read_region_as_imagecoord(open(region), f[0].header)
-    >>> mask = get_mask(reg, f[0])
+    >>> mask = get_mask(reg, hdu)
     """
     from pyregion.region_to_filter import as_region_filter
 

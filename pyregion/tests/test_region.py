@@ -1,9 +1,9 @@
 import os
+import pytest
 import numpy as np
 from os.path import join
 from astropy.io.fits import Header
 from .. import open as pyregion_open
-from astropy.tests.helper import pytest
 from numpy.testing import assert_allclose
 
 rootdir = join(os.path.dirname(os.path.abspath(__file__)), 'data')
@@ -56,13 +56,13 @@ def test_region(ref_name, reg_name, header_name):
         assert ref_reg.exclude == reg.exclude
 
 
-@pytest.mark.parametrize(("reg_name"), [
-    ("test_annuli_ciao.reg"),  # subset of test03_img.reg
-    ("test_context.reg"),
-    ("test02.reg"),
-    ("test04_img.reg"),
-    ("test_text.reg"),
-    ("test01.reg"),
+@pytest.mark.parametrize("reg_name", [
+    "test_annuli_ciao.reg",  # subset of test03_img.reg
+    "test_context.reg",
+    "test02.reg",
+    "test04_img.reg",
+    "test_text.reg",
+    "test01.reg",
 ])
 def test_open_regions(reg_name, header):
     # TODO: Better test. Like figure out how these files relate to each other

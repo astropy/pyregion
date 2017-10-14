@@ -12,7 +12,6 @@ def demo_header():
 
 
 def test_cube():
-
     header = demo_header()
 
     region_string = 'circle(12:04:15.065,+18:26:51.00,173.029")'

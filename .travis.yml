@@ -31,20 +31,18 @@ env:
 matrix:
     include:
 
-        # Do a coverage test in Python 2.
-        - python: 2.7
+        # The main test, where we measure coverage
+        - python: 3.6
           env: SETUP_CMD='test --coverage'
 
         # Check for sphinx doc build warnings - we do this first because it
         # may run for a long time
         - python: 2.7
-          env: SETUP_CMD='build_docs -w' PIP_DEPENDENCIES='sphinx_rtd_theme'
+          env: SETUP_CMD='build_docs' PIP_DEPENDENCIES='sphinx_rtd_theme'
         - python: 3.5
           env: SETUP_CMD='build_docs -w' PIP_DEPENDENCIES='sphinx_rtd_theme'
 
         # Try Astropy development and LTS version
-        - python: 2.7
-          env: ASTROPY_VERSION=development
         - python: 3.5
           env: ASTROPY_VERSION=development
         - python: 2.7
