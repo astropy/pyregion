@@ -43,7 +43,7 @@ matrix:
           env: SETUP_CMD='build_docs -w' PIP_DEPENDENCIES='sphinx_rtd_theme'
 
         # Try Astropy development and LTS version
-        - python: 3.5
+        - python: 3.6
           env: ASTROPY_VERSION=development
         - python: 2.7
           env: ASTROPY_VERSION=lts
@@ -59,8 +59,8 @@ matrix:
           env: NUMPY_VERSION=1.9
         - python: 2.7
           env: NUMPY_VERSION=1.8
-        - python: 2.7
-          env: NUMPY_VERSION=1.7
+        - python: 3.6
+          env: NUMPY_VERSION=1.13
 
         # Try numpy pre-release
         - python: 3.5
