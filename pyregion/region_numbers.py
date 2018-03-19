@@ -1,3 +1,4 @@
+from math import pi
 from pyparsing import Literal, Optional, Combine, Or, Word, nums
 
 
@@ -133,15 +134,20 @@ class AngularDistance(object):
     def __init__(self, kl):
         self.text = "".join(kl)
 
-        m, s = 0, 0
-        if kl[1] == "'":
-            m = float(kl[0])
-            if len(kl) == 4:
-                s = float(kl[2])
-        else:
-            s = float(kl[0])
+        d, m, s = 0, 0, 0
+        if kl[1] == "d": # format of "3.5d"
+            d = float(kl[0])
+        elif kl[1] == "r": # format of "3.5r"
+            d = float(kl[0]) / pi * 180.
+        else: # 3'5" or 3'
+            if kl[1] == "'":
+                m = float(kl[0])
+                if len(kl) == 4:
+                    s = float(kl[2])
+            else:  # should be a format of 5"
+                s = float(kl[0])
 
-        self.v = (m + s / 60.) / 60.
+        self.v = d + (m + s / 60.) / 60.
         self.degree = self.v
 
 
@@ -189,8 +195,10 @@ dms_number = _dms_number()
 def _angular_distance():
     _m = (usn + Literal("\'").leaveWhitespace())
     _s = (usn + Literal("\"").leaveWhitespace())
+    _dr = (usn + Or([Literal("d"),
+                     Literal("r")]).leaveWhitespace())
 
-    ms = Or([_m + Optional(_s), _s])
+    ms = Or([_m + Optional(_s), _s, _dr])
 
     ms = ms.setParseAction(lambda s, l, tok: AngularDistance(tok))
 

@@ -1,3 +1,4 @@
+from math import pi
 from ..region_numbers import (usn, simple_integer, sexadecimal60, Sixty,
                               hms_number, dms_number, angular_distance,
                               CoordOdd, HMS)
@@ -42,6 +43,8 @@ def test_ang_distance():
 
     assert s("32.3'")[0].v == Sixty(1, 0, 32.3, 0.).v
     assert s("32\'24\"")[0].v == Sixty(1, 0, 32, 24).v
+    assert s("0.3d")[0].v == Sixty(1, 0.3, 0, 0).v
+    assert s("1r")[0].v == Sixty(1, 1./pi*180., 0, 0).v
 
 
 def test_coord_odd():
