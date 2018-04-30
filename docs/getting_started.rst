@@ -179,19 +179,10 @@ and you need to manually adjust the associated attributes of patches.
 Use Regions for Spatial Filtering
 =================================
 
-``pyregion`` includes some basic spatial filter support. ::
-
- >>> import pyregion._region_filter as filter
- >>> myfilter = filter.Circle(0, 0, 10) & filter.Box(15, 0, 10, 10)
- >>> myfilter.inside1(0, 0)
- 0
- >>> myfilter.inside1(10, 0)
- 1
- >>> myfilter.inside([0, 10], [0, 0])
- array([False,  True], dtype=bool)
-
+``pyregion`` includes some basic spatial filter support.
 
 The `ShapeList.get_filter <pyregion.ShapeList.get_filter>` method returns the filter from the parsed region.
+
 The filter is meant to be used in the image coordinate, thus you need to convert the region
 to the image coordinate before calling ``get_filter``. ::
 
@@ -213,6 +204,6 @@ necessary).
    :include-source:
 
 Note that this will fail if your template image is not a simple 2D image.
-To work around this you may use the ``shape`` optional argument of ``get_mask``: ::
+To work around this you may use the ``shape`` optional argument of `ShapeList.get_mask <pyregion.ShapeList.get_mask>`: ::
 
     mymask = r2.get_mask(hdu=f[0],shape=(1024,1024))
