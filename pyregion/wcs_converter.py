@@ -66,6 +66,12 @@ def convert_to_imagecoord(shape, header, wcs=None):
     header : `~astropy.io.fits.Header`
         Specifies what WCS transformations to use.
 
+    wcs : `~astropy.wcs.WCS`, optional
+        Full image WCS.  If not specified, will be parsed from `header` if 
+        necessary, e.g., with
+           
+           >>> new_wcs = astropy.wcs.WCS(header)
+
     Returns
     -------
     new_coordlist : list

@@ -52,7 +52,10 @@ class ShapeList(list):
         ----------
         header : `~astropy.io.fits.Header`
             FITS header
-
+        
+        wcs : `~astropy.wcs.WCS`, optional
+            Full image WCS.  If not specified, will be parsed from `header`.
+            
         Returns
         -------
         shape_list : `ShapeList`
@@ -103,7 +106,10 @@ class ShapeList(list):
             FITS header
         origin : {0, 1}
             Pixel coordinate origin
-
+        wcs : `~astropy.wcs.WCS`, optional
+            Full image WCS.  If not specified, will be parsed from `header if
+            necessary.
+        
         Returns
         -------
         filter : TODO
@@ -134,6 +140,9 @@ class ShapeList(list):
             FITS header
         shape : tuple
             Image shape
+        wcs : `~astropy.wcs.WCS`, optional
+            Full image WCS.  If not specified, will be parsed from `header` if 
+            necessary.
 
         Returns
         -------

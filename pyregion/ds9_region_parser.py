@@ -168,7 +168,10 @@ class RegionParser(RegionPusher):
             The ShapeList to convert
         header : `~astropy.io.fits.Header`
             Specifies what WCS transformations to use.
-
+        wcs : `~astropy.wcs.WCS`, optional
+            Full image WCS.  If not specified, will be parsed from `header` if 
+            necessary.
+            
         Yields
         -------
         shape, comment : Shape, str
