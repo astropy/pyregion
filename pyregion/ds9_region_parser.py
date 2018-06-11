@@ -159,7 +159,7 @@ class RegionParser(RegionPusher):
                 yield l1, c1
 
     @staticmethod
-    def sky_to_image(shape_list, header):
+    def sky_to_image(shape_list, header, wcs=None):
         """Converts a `ShapeList` into shapes with coordinates in image coordinates
 
         Parameters
@@ -184,7 +184,7 @@ class RegionParser(RegionPusher):
             if isinstance(shape, Shape) and \
                     (shape.coord_format not in image_like_coordformats):
 
-                new_coords = convert_to_imagecoord(shape, header)
+                new_coords = convert_to_imagecoord(shape, header, wcs=wcs)
 
                 l1n = copy.copy(shape)
 

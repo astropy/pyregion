@@ -55,7 +55,7 @@ def _generate_arg_types(coordlist_length, shape_name):
     return arg_types
 
 
-def convert_to_imagecoord(shape, header):
+def convert_to_imagecoord(shape, header, wcs=None):
     """Convert the coordlist of `shape` to image coordinates
 
     Parameters
@@ -78,7 +78,11 @@ def convert_to_imagecoord(shape, header):
     is_even_distance = True
     coord_list_iter = iter(zip(shape.coord_list, arg_types))
 
-    new_wcs = WCS(header)
+    if wcs is None:
+        new_wcs = WCS(header)
+    else:
+        new_wcs = wcs
+        
     pixel_scales = proj_plane_pixel_scales(new_wcs)
 
     for coordinate, coordinate_type in coord_list_iter:
