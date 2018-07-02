@@ -1,7 +1,10 @@
 2.1 (unreleased)
 ----------------
 
-- No changes yet
+Other Changes and Additions
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+- Support for angular units of 'd' and 'r' added.
 
 
 2.0 (Oct 14, 2017)
