@@ -97,6 +97,13 @@ def properties_func_default(shape, saved_attrs):
             kwargs["linestyle"] = "dashed"
 
     else:
+        # The default behavior of matplotlib edgecolor has changed, and it does
+        # not draw edges by default. To remdy this, simply use black edgecolor
+        # if None.
+        # https://matplotlib.org/stable/users/dflt_style_changes.html#patch-edges-and-color
+
+        if color is None:
+            color = "k"
         kwargs = dict(edgecolor=color,
                       linewidth=int(attr_dict.get("width", 1)),
                       facecolor="none"
@@ -343,11 +350,9 @@ def as_mpl_artists(shape_list,
             patches = [mpatches.FancyArrowPatch(posA=(x1, y1),
                                                 posB=(x2, y2),
                                                 arrowstyle=arrowstyle,
-                                                arrow_transmuter=None,
                                                 connectionstyle="arc3",
                                                 patchA=None, patchB=None,
                                                 shrinkA=0, shrinkB=0,
-                                                connector=None,
                                                 **kwargs)]
 
         else:
