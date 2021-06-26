@@ -5,7 +5,9 @@ import glob
 import os
 import sys
 
-import ah_bootstrap
+# ah_bootstrap fails with "python -m build". Disabling it for now.
+
+# import ah_bootstrap
 from setuptools import setup
 
 # A dirty hack to get around some early import/configurations ambiguities
@@ -30,24 +32,39 @@ conf = ConfigParser()
 conf.read(['setup.cfg'])
 metadata = dict(conf.items('metadata'))
 
-PACKAGENAME = metadata.get('package_name', 'packagename')
+PACKAGENAME = metadata.get('name', 'packagename')
 DESCRIPTION = metadata.get('description', 'Astropy affiliated package')
 AUTHOR = metadata.get('author', '')
 AUTHOR_EMAIL = metadata.get('author_email', '')
 LICENSE = metadata.get('license', 'unknown')
 URL = metadata.get('url', 'http://astropy.org')
 
+# It tries to import itself, which does not seem to work with 'python -m build'.
+# Instead, put the description here. FIXME: This is a temporary workaround.
+
 # Get the long description from the package's docstring
-__import__(PACKAGENAME)
-package = sys.modules[PACKAGENAME]
-LONG_DESCRIPTION = package.__doc__
+# __import__(PACKAGENAME)
+# package = sys.modules[PACKAGENAME]
+# LONG_DESCRIPTION = package.__doc__
+
+LONG_DESCRIPTION = """
+pyregion - a Python parser for ds9 region files
+
+* Code : https://github.com/astropy/pyregion
+* Docs : http://pyregion.readthedocs.io/
+
+See also the in-development ``regions`` package
+at https://github.com/astropy/regions
+a new astronomy package for regions based on Astropy.
+"""
 
 # Store the package name in a built-in variable so it's easy
 # to get from other parts of the setup infrastructure
 builtins._ASTROPY_PACKAGE_NAME_ = PACKAGENAME
 
 # VERSION should be PEP386 compatible (http://www.python.org/dev/peps/pep-0386)
-VERSION = '2.1.dev'
+# VERSION = '1.9.0'
+VERSION = metadata.get("version")
 
 # Indicates if this version is a release version
 RELEASE = 'dev' not in VERSION

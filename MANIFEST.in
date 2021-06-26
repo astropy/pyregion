@@ -2,7 +2,6 @@ include LICENSE
 include README.rst
 include CHANGES.rst
 
-include ez_setup.py
 include ah_bootstrap.py
 include setup.cfg
 
