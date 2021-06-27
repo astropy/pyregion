@@ -14,7 +14,5 @@ a new astronomy package for regions based on Astropy.
 # ----------------------------------------------------------------------------
 from ._astropy_init import *
 
-# For egg_info test builds to pass, put package imports here.
-if not _ASTROPY_SETUP_:
-    from .core import *
-    from .parser_helper import Shape
+from .core import *
+from .parser_helper import Shape
