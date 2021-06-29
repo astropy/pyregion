@@ -45,14 +45,17 @@ class ShapeList(list):
         else:
             return True
 
-    def as_imagecoord(self, header):
+    def as_imagecoord(self, header, wcs=None):
         """New shape list in image coordinates.
 
         Parameters
         ----------
         header : `~astropy.io.fits.Header`
             FITS header
-
+        
+        wcs : `~astropy.wcs.WCS`, optional
+            Full image WCS.  If not specified, will be parsed from `header`.
+            
         Returns
         -------
         shape_list : `ShapeList`
@@ -66,7 +69,7 @@ class ShapeList(list):
             comment_list = cycle([None])
 
         r = RegionParser.sky_to_image(zip(self, comment_list),
-                                      header)
+                                      header, wcs=wcs)
         shape_list, comment_list = zip(*list(r))
         return ShapeList(shape_list, comment_list=comment_list)
 
@@ -88,7 +91,7 @@ class ShapeList(list):
 
         return patches, txts
 
-    def get_filter(self, header=None, origin=1):
+    def get_filter(self, header=None, origin=1, wcs=None):
         """Get filter.
         Often, the regions files implicitly assume the lower-left
         corner of the image as a coordinate (1,1). However, the python
@@ -103,7 +106,10 @@ class ShapeList(list):
             FITS header
         origin : {0, 1}
             Pixel coordinate origin
-
+        wcs : `~astropy.wcs.WCS`, optional
+            Full image WCS.  If not specified, will be parsed from `header if
+            necessary.
+        
         Returns
         -------
         filter : TODO
@@ -117,13 +123,13 @@ class ShapeList(list):
                 raise RuntimeError("the region has non-image coordinate. header is required.")
             reg_in_imagecoord = self
         else:
-            reg_in_imagecoord = self.as_imagecoord(header)
+            reg_in_imagecoord = self.as_imagecoord(header, wcs=wcs)
 
         region_filter = as_region_filter(reg_in_imagecoord, origin=origin)
 
         return region_filter
 
-    def get_mask(self, hdu=None, header=None, shape=None):
+    def get_mask(self, hdu=None, header=None, shape=None, wcs=None):
         """Create a 2-d mask.
 
         Parameters
@@ -134,6 +140,9 @@ class ShapeList(list):
             FITS header
         shape : tuple
             Image shape
+        wcs : `~astropy.wcs.WCS`, optional
+            Full image WCS.  If not specified, will be parsed from `header` if 
+            necessary.
 
         Returns
         -------
@@ -152,7 +161,7 @@ class ShapeList(list):
         if hdu and shape is None:
             shape = hdu.data.shape
 
-        region_filter = self.get_filter(header=header)
+        region_filter = self.get_filter(header=header, wcs=wcs)
         mask = region_filter.mask(shape)
 
         return mask
