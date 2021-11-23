@@ -144,7 +144,6 @@ setup(
     long_description=LONG_DESCRIPTION,
     cmdclass=cmdclassd,
     zip_safe=False,
-    use_2to3=False,
     classifiers=classifiers,
     **package_info
 )
