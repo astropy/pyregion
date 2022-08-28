@@ -1,4 +1,0 @@
-pyparsing
-numpy
-Cython
-astropy
