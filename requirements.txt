@@ -1,0 +1,4 @@
+pyparsing
+numpy
+Cython
+astropy
