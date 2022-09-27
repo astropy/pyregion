@@ -2,39 +2,30 @@
 # by importing them here in conftest.py they are discoverable by py.test
 # no matter how it is invoked within the source tree.
 
+import os
+
 from astropy.version import version as astropy_version
 if astropy_version < '3.0':
-    # With older versions of Astropy, we actually need to import the pytest
-    # plugins themselves in order to make them discoverable by pytest.
     from astropy.tests.pytest_plugins import *
+    del pytest_report_header
 else:
-    # As of Astropy 3.0, the pytest plugins provided by Astropy are
-    # automatically made available when Astropy is installed. This means it's
-    # not necessary to import them here, but we still need to import global
-    # variables that are used for configuration.
-    from astropy.tests.plugins.display import PYTEST_HEADER_MODULES, TESTED_VERSIONS
+    from pytest_astropy_header.display import PYTEST_HEADER_MODULES, TESTED_VERSIONS
 
-from astropy.tests.helper import enable_deprecations_as_exceptions
 
-# Uncomment the following line to treat all DeprecationWarnings as exceptions
-enable_deprecations_as_exceptions()
+def pytest_configure(config):
 
-PYTEST_HEADER_MODULES.clear()
-PYTEST_HEADER_MODULES.update([
-    ('numpy', 'numpy'),
-    ('cython', 'cython'),
-    ('Astropy', 'astropy'),
-    ('pyparsing', 'pyparsing'),
-    ('matplotlib', 'matplotlib'),
-])
+    config.option.astropy_header = True
 
-# This is to figure out the affiliated package version, rather than
-# using Astropy's
-try:
-    from .version import version
-except ImportError:
-    version = 'dev'
+    PYTEST_HEADER_MODULES.clear()
+    PYTEST_HEADER_MODULES.update([
+        ('numpy', 'numpy'),
+        ('cython', 'cython'),
+        ('Astropy', 'astropy'),
+        ('pyparsing', 'pyparsing'),
+        ('matplotlib', 'matplotlib'),
+    ])
 
-import os
-packagename = os.path.basename(os.path.dirname(__file__))
-TESTED_VERSIONS[packagename] = version
+    from .version import version, astropy_helpers_version
+    packagename = os.path.basename(os.path.dirname(__file__))
+    TESTED_VERSIONS[packagename] = version
+    TESTED_VERSIONS['astropy_helpers'] = astropy_helpers_version
