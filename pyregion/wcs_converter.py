@@ -89,7 +89,7 @@ def convert_to_imagecoord(shape, header):
                                       frame=shape.coord_format, unit='degree',
                                       obstime='J2000')
             new_coordlist.extend(
-                np.asscalar(x)
+                x.item()
                 for x in old_coordinate.to_pixel(new_wcs, origin=1)
             )
 
