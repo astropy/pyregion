@@ -2,10 +2,11 @@ import pytest
 import os.path
 from numpy.testing import assert_allclose
 from astropy.io.fits import Header
-from ..ds9_region_parser import ds9_shape_defs
-from ..region_numbers import CoordOdd, CoordEven
-from .. import wcs_converter
-from ..wcs_helper import _calculate_rotation_angle
+from pyregion.ds9_region_parser import ds9_shape_defs
+from pyregion.region_numbers import CoordOdd, CoordEven
+from pyregion import wcs_converter
+from pyregion.wcs_helper import _calculate_rotation_angle
+
 
 rootdir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'data')
 

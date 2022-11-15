@@ -3,8 +3,10 @@ import pytest
 import numpy as np
 from os.path import join
 from astropy.io.fits import Header
-from .. import open as pyregion_open
 from numpy.testing import assert_allclose
+
+from pyregion import open as pyregion_open
+
 
 rootdir = join(os.path.dirname(os.path.abspath(__file__)), 'data')
 
