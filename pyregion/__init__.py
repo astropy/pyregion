@@ -11,4 +11,4 @@ a new astronomy package for regions based on Astropy.
 
 from .core import *
 from .parser_helper import Shape
-from .version import version as __version__
+from .version import __version__
