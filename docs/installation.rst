@@ -16,13 +16,7 @@ To install pyregion with `pip <http://www.pip-installer.org/en/latest/>`_
 from `PyPI <https://pypi.python.org/pypi/pyregion>`_
 simply run::
 
-    pip install --no-deps pyregion
-
-.. note::
-
-    The ``--no-deps`` flag is optional, but highly recommended if you already
-    have Numpy installed, since otherwise pip will sometimes try to "help" you
-    by upgrading your Numpy installation, which may not always be desired.
+    pip install pyregion
 
 Using conda
 -----------
@@ -37,11 +31,12 @@ simply run::
 Testing installation
 --------------------
 
-To check if your install is OK, run the tests:
+To check if your install is OK, install the test dependencies and run the tests:
 
 .. code-block:: bash
 
-    python -c 'import pyregion; pyregion.test()'
+    pip install "pyregion[test]"
+    pytest --pyargs pyregion
 
 Development version
 ===================
@@ -52,14 +47,15 @@ Install the latest development version from https://github.com/astropy/pyregion 
 
     git clone https://github.com/astropy/pyregion
     cd pyregion
-    python setup.py install
-    python setup.py test
-    python setup.py build_docs
+    pip install -e .[test]
+    pytest
+    cd docs
+    make html
 
 Dependencies
 ============
 
-Python 2.7 and 3.4+ are supported.
+Python 3.7+ is supported.
 
 ``pyregion`` has the following required dependencies:
 
