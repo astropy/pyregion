@@ -28,6 +28,7 @@ needs_sphinx = '1.2'
 # ones.
 extensions = [
     'sphinx.ext.intersphinx',
+    'matplotlib.sphinxext.plot_directive',
     'pytest_doctestplus.sphinx.doctestplus',
     'sphinx.ext.autodoc',
     'sphinx_automodapi.automodapi',

@@ -10,5 +10,6 @@ a new astronomy package for regions based on Astropy.
 """
 
 from .core import *
+from .core import open
 from .parser_helper import Shape
 from .version import __version__
