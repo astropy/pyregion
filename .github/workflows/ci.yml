@@ -60,7 +60,7 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install -e .[test]
+          pip install .[test]
       - name: Test with pytest
         run: |
-          pytest
+          pytest --import-mode=importlib --pyargs pyregion
