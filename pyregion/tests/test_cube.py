@@ -1,5 +1,6 @@
 import os
 from os.path import join
+
 from astropy.io.fits import Header
 from numpy.testing import assert_allclose
 
