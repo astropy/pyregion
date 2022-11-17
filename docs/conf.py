@@ -119,4 +119,5 @@ intersphinx_mapping = {'https://docs.python.org/': None,
                        'http://docs.astropy.org/en/stable/': None}
 intersphinx_mapping["sphinx_automodapi"] = ("https://sphinx-automodapi.readthedocs.io/en/stable/", None)  # noqa: E501, F405
 
-
+# -- Turn on nitpicky mode for sphinx (to warn about references not found) ----
+nitpicky = True
