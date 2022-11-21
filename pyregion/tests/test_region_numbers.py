@@ -1,5 +1,5 @@
 from math import pi
-from ..region_numbers import (usn, simple_integer, sexadecimal60, Sixty,
+from pyregion.region_numbers import (usn, simple_integer, sexadecimal60, Sixty,
                               hms_number, dms_number, angular_distance,
                               CoordOdd, HMS)
 

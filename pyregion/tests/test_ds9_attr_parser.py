@@ -1,4 +1,4 @@
-from ..ds9_attr_parser import get_ds9_attr_parser, get_attr, Ds9AttrParser
+from pyregion.ds9_attr_parser import get_ds9_attr_parser, get_attr, Ds9AttrParser
 
 
 def test_attr():

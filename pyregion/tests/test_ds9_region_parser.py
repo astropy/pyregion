@@ -1,6 +1,6 @@
-from ..ds9_region_parser import RegionParser, Global
-from ..parser_helper import CoordCommand, Shape
-from ..region_numbers import SimpleNumber, AngularDistance
+from pyregion.ds9_region_parser import RegionParser, Global
+from pyregion.parser_helper import CoordCommand, Shape
+from pyregion.region_numbers import SimpleNumber, AngularDistance
 
 
 def test_regionLine():

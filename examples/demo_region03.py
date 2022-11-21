@@ -1,5 +1,5 @@
 import matplotlib.pyplot as plt
-from mpl_toolkits.axes_grid.anchored_artists import AnchoredText
+from matplotlib.offsetbox import AnchoredText
 from astropy.io.fits import Header
 from astropy.wcs import WCS
 from astropy.visualization.wcsaxes import WCSAxes

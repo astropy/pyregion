@@ -1,8 +1,8 @@
-from ..parser_helper import define_shape
+from pyregion.parser_helper import define_shape
+from pyregion.region_numbers import CoordOdd, CoordEven, Distance
 
 
 def test_define_shape():
-    from ..region_numbers import CoordOdd, CoordEven, Distance
     args = [s.parser for s in [CoordOdd, CoordEven, Distance]]
     circle_parser = define_shape("circle", args, args_repeat=None)
 

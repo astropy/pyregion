@@ -56,7 +56,7 @@ def properties_func_default(shape, saved_attrs):
 
     if shape.name == "text":
         kwargs = dict(color=color,
-                      rotation=attr_dict.get("textangle", 0),
+                      rotation=float(attr_dict.get("textangle", 0)),
                       )
         font = attr_dict.get("font")
         if font:
