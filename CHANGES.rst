@@ -1,5 +1,14 @@
-2.1 (unreleased)
-----------------
+2.2.0 (2022-12-09)
+------------------
+
+Other Changes and Additions
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+- Fixed build, installation, and testing issues. [#161]
+
+
+2.1.1 (2021-06-25)
+------------------
 
 Other Changes and Additions
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
