@@ -38,7 +38,8 @@ jobs:
       test_command: pytest -p no:warnings --pyargs pyregion
       targets: |
         - cp*-manylinux_x86_64
-        - cp*-macosx_x86_64
+        - target: cp*-macosx_x86_64
+          runs-on: macos-13
         - cp*-macosx_arm64
         - cp*-win_amd64
 
