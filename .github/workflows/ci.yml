@@ -32,14 +32,13 @@ jobs:
 
   publish:
     needs: tests
-    uses: OpenAstronomy/github-actions-workflows/.github/workflows/publish.yml@924441154cf3053034c6513d5e06c69d262fb9a6  # v1.13.0
+    uses: OpenAstronomy/github-actions-workflows/.github/workflows/publish.yml@8c0fde6f7e926df6ed7057255d29afa9c1ad5320  # v1.16.0
     with:
       test_extras: test
       test_command: pytest -p no:warnings --pyargs pyregion
       targets: |
         - cp*-manylinux_x86_64
-        - target: cp*-macosx_x86_64
-          runs-on: macos-13
+        - cp*-macosx_x86_64
         - cp*-macosx_arm64
         - cp*-win_amd64
 
