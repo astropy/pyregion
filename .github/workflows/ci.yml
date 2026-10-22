@@ -15,7 +15,7 @@ concurrency:
 jobs:
 
   tests:
-    uses: OpenAstronomy/github-actions-workflows/.github/workflows/tox.yml@9f1fedda61294df4c004c05519a3fbf3b8e1f32f  # v2.3.1
+    uses: OpenAstronomy/github-actions-workflows/.github/workflows/tox.yml@8d5ad7efc8e84a051639373f6ea0d10441eafee1  # v3.2.1
     with:
       envs: |
         - macos: py310-test-oldestdeps
@@ -32,7 +32,7 @@ jobs:
 
   publish:
     needs: tests
-    uses: OpenAstronomy/github-actions-workflows/.github/workflows/publish.yml@9f1fedda61294df4c004c05519a3fbf3b8e1f32f  # v2.3.1
+    uses: OpenAstronomy/github-actions-workflows/.github/workflows/publish.yml@8d5ad7efc8e84a051639373f6ea0d10441eafee1  # v3.2.1
     with:
       test_extras: test
       test_command: pytest -p no:warnings --pyargs pyregion
