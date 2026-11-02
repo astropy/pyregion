@@ -2,8 +2,8 @@ name: CI
 
 on:
   schedule:
-    # run every day at 4am UTC
-    - cron: '0 4 * * *'
+    # run every month at 4am UTC
+    - cron: '0 4 1 * *'
   push:
   pull_request:
   workflow_dispatch:
