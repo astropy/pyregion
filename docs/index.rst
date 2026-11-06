@@ -5,14 +5,16 @@ pyregion
 :Release: |version|
 :Date: |today|
 
-pyregion is a python module to parse ds9 region files.
-It also supports ciao region files.
 
 .. note::
 
-    See also the in-development ``regions`` package
+    The ``regions`` package
     at https://github.com/astropy/regions
-    a new astronomy package for regions based on Astropy.
+    supercedes pyregion.
+    The pyregion package is deprecated and unmaintained.
+
+pyregion is a python module to parse ds9 region files.
+It also supports ciao region files.
 
 
 +----------------------------------------+----------------------------------------+

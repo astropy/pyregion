@@ -3,7 +3,11 @@ from itertools import cycle
 from .ds9_region_parser import RegionParser
 from .wcs_converter import check_wcs as _check_wcs
 
+from warnings import DeprecationWarning, warn
+
 _builtin_open = open
+
+warn("The pyregion package is deprecated.  Please switch to astropy regions.", DeprecationWarning)
 
 
 class ShapeList(list):

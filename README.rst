@@ -1,6 +1,12 @@
 pyregion
 ========
 
+DEPRECATION note
+----------------
+pyregion is deprecated in favor of astropy regions (https://astropy-regions.readthedocs.io/en/stable/), as pyregion is no longer maintained.
+
+Historic Documentation
+----------------------
 pyregion is a python module to parse ds9 region files.
 It also supports ciao region files.
 
